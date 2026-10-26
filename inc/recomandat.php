@@ -89,16 +89,50 @@ function aptv_episod_recomandat() {
 	if ( $bifate ) {
 		return $bifate[0];
 	}
+	// Rezervă: cel mai nou episod care NU e clip scurt (un clip vertical arată prost în zona mare).
 	$cele_mai_noi = get_posts(
 		array(
 			'post_type'      => 'post',
 			'post_status'    => 'publish',
 			'posts_per_page' => 1,
 			'no_found_rows'  => true,
+			'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery
+				'relation' => 'OR',
+				array(
+					'key'     => '_aptv_scurt',
+					'compare' => 'NOT EXISTS',
+				),
+				array(
+					'key'   => '_aptv_scurt',
+					'value' => '0',
+				),
+			),
 		)
 	);
 	return $cele_mai_noi ? $cele_mai_noi[0] : null;
 }
+
+/**
+ * Bifa poate fi citită și schimbată și prin interfața REST a WordPress
+ * (folosită de editorul de blocuri și de scripturile de administrare), doar de cine poate edita articole.
+ */
+add_action(
+	'init',
+	function () {
+		register_post_meta(
+			'post',
+			'_aptv_recomandat',
+			array(
+				'type'          => 'integer',
+				'single'        => true,
+				'show_in_rest'  => true,
+				'auth_callback' => function () {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+	}
+);
 
 /**
  * O coloană „★” în lista de articole din admin, ca să se vadă ce episoade sunt bifate.

@@ -124,6 +124,22 @@ function aptv_curata_titlu( $titlu, $nume_emisiune = '' ) {
 }
 
 /**
+ * Data difuzării episodului, în ora GMT (cum o cere WordPress).
+ *
+ * Multe emisiuni vechi au data difuzării în titlu („Stop cadru | 26.11.2017 | ...”),
+ * iar pe YouTube au fost încărcate câteva zile mai târziu. Dacă titlul conține o dată
+ * validă, o folosim pe aceea (ora 20:00, ora României); altfel, data încărcării pe YouTube.
+ */
+function aptv_data_difuzare( $titlu, $data_youtube ) {
+	if ( preg_match( '/(?<!\d)(\d{1,2})[.\s\/-](\d{1,2})[.\s\/-](\d{4})(?!\d)/', (string) $titlu, $m ) && checkdate( (int) $m[2], (int) $m[1], (int) $m[3] ) && (int) $m[3] >= 1990 ) {
+		$locala = sprintf( '%04d-%02d-%02d 20:00:00', $m[3], $m[2], $m[1] );
+		return get_gmt_from_date( $locala );
+	}
+	$moment = $data_youtube ? strtotime( $data_youtube ) : time();
+	return gmdate( 'Y-m-d H:i:s', $moment ? $moment : time() );
+}
+
+/**
  * Adresa (slug-ul) articolului: doar litere fără diacritice, cifre și cratime.
  * Exemplu: „Stop cadru Teodora Puianu · Descoperă Bucovina” → stop-cadru-teodora-puianu-descopera-bucovina
  */
@@ -243,7 +259,7 @@ function aptv_import_pas( $optiuni ) {
 		}
 
 		$titlu_site = ! empty( $optiuni['curata'] ) ? aptv_curata_titlu( $titlu, $categorie->name ) : $titlu;
-		$data_gmt   = gmdate( 'Y-m-d H:i:s', strtotime( $video['snippet']['publishedAt'] ?? 'now' ) );
+		$data_gmt   = aptv_data_difuzare( $titlu, $video['snippet']['publishedAt'] ?? '' );
 
 		if ( ! empty( $optiuni['simulare'] ) ) {
 			++$rezultat['create'];

@@ -144,7 +144,8 @@ function aptv_data_difuzare( $titlu, $data_youtube ) {
  * Exemplu: „Stop cadru Teodora Puianu · Descoperă Bucovina” → stop-cadru-teodora-puianu-descopera-bucovina
  */
 function aptv_slug( $text ) {
-	$text = remove_accents( (string) $text );
+	$text = preg_replace( '/&#?[A-Za-z0-9]+;/', ' ', (string) $text ); // coduri HTML (ex. emoji codificate)
+	$text = remove_accents( $text );
 	$text = preg_replace( '/[^A-Za-z0-9\s-]+/', ' ', $text );
 	return sanitize_title( mb_substr( trim( $text ), 0, 90 ) );
 }
@@ -270,13 +271,17 @@ function aptv_import_pas( $optiuni ) {
 		$descriere = trim( (string) ( $video['snippet']['description'] ?? '' ) );
 		$descriere = preg_replace( '/(^|\s)#[\p{L}\p{N}_]+/u', '', $descriere );
 
+		// Emoji (📍, 📢 ...) nu pot fi salvate direct în baza de date a serverului nostru
+		// (setul de caractere „utf8”). Le transformăm în coduri HTML, care se afișează la fel.
+		$titlu_site = wp_encode_emoji( $titlu_site );
+
 		$post_id = wp_insert_post(
 			array(
 				'post_type'     => 'post',
 				'post_status'   => 'draft' === $optiuni['stare'] ? 'draft' : 'publish',
 				'post_title'    => $titlu_site,
 				'post_name'     => aptv_slug( $categorie->name . ' ' . $titlu_site ),
-				'post_content'  => $descriere ? wp_kses_post( wpautop( make_clickable( esc_html( $descriere ) ) ) ) : '',
+				'post_content'  => $descriere ? wp_encode_emoji( wp_kses_post( wpautop( make_clickable( esc_html( $descriere ) ) ) ) ) : '',
 				'post_date_gmt' => $data_gmt,
 				'post_date'     => get_date_from_gmt( $data_gmt ),
 				'post_category' => array( $categorie->term_id ),
@@ -285,7 +290,7 @@ function aptv_import_pas( $optiuni ) {
 					'_aptv_video'       => $id,
 					'_aptv_durata'      => $durata,
 					'_aptv_scurt'       => $e_scurt ? 1 : 0,
-					'_aptv_titlu_yt'    => $titlu,
+					'_aptv_titlu_yt'    => wp_encode_emoji( $titlu ),
 				),
 			),
 			true

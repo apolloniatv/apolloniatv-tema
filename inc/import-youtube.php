@@ -72,6 +72,17 @@ function aptv_durata_secunde( $iso ) {
 }
 
 /**
+ * Scoate spațiile, cratimele, liniuțele, virgulele și două-punctele de la capetele unui text.
+ *
+ * ATENȚIE: nu folosiți aici trim( $text, '–—' ). trim() lucrează pe octeți, iar „–” și „—”
+ * au primii doi octeți comuni cu ghilimelele românești „ ” — le-ar tăia pe jumătate și
+ * textul ar deveni invalid (baza de date refuză atunci articolul).
+ */
+function aptv_taie_margini( $text ) {
+	return (string) preg_replace( '/^[\s\-–—,:]+|[\s\-–—,:]+$/u', '', (string) $text );
+}
+
+/**
  * Curăță titlul unui videoclip pentru site: scoate numele emisiunii (care apare deja
  * pe pagină), datele de tipul „26.11.2017” și etichetele „#shorts”.
  *
@@ -93,7 +104,7 @@ function aptv_curata_titlu( $titlu, $nume_emisiune = '' ) {
 	$bucati = preg_split( '/\s*\|\s*/u', $titlu );
 	$pastra = array();
 	foreach ( $bucati as $bucata ) {
-		$bucata = trim( $bucata, " \t-–—,:" );
+		$bucata = aptv_taie_margini( $bucata );
 		if ( '' === $bucata ) {
 			continue;
 		}
@@ -111,7 +122,7 @@ function aptv_curata_titlu( $titlu, $nume_emisiune = '' ) {
 		}
 		// Numele emisiunii la începutul bucății: „Colocviile ECRE, Lansare de carte” → „Lansare de carte”.
 		if ( $emisiune && 0 === strpos( $n, $emisiune ) ) {
-			$rest = trim( mb_substr( $bucata, mb_strlen( $nume_emisiune ) ), " \t-–—,:" );
+			$rest = aptv_taie_margini( mb_substr( $bucata, mb_strlen( $nume_emisiune ) ) );
 			if ( '' === $rest ) {
 				continue;
 			}

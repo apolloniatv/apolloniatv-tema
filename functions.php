@@ -19,6 +19,7 @@
  *   subsol.php           – subsolul site-ului
  *   episod.php           – găsește episodul anterior / următor și cele mai noi materiale
  *   import-youtube.php   – aduce episoadele din playlist-urile YouTube
+ *   actualizari.php      – versiunile noi ale temei de pe GitHub apar în Panou → Actualizări
  *
  * @package apolloniatv
  */
@@ -43,6 +44,7 @@ require APTV_DIR . '/inc/antet.php';
 require APTV_DIR . '/inc/subsol.php';
 require APTV_DIR . '/inc/episod.php';
 require APTV_DIR . '/inc/import-youtube.php';
+require APTV_DIR . '/inc/actualizari.php';
 
 /**
  * Încarcă stilurile și scripturile temei.

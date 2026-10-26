@@ -13,7 +13,7 @@ Pentru detalii tehnice, fiecare fișier de cod are la început o explicație în
 | **GeneratePress** (tema „părinte”) | tema de bază, gratuită, ușoară; se actualizează singură din WordPress |
 | **Apollonia TV** (tema „copil”, acest cod) | tot ce e specific site-ului: aspectul, meniul, prima pagină, importul YouTube |
 | **GitHub** (`apolloniatv/apolloniatv-tema`) | locul unde stă codul temei copil, cu istoricul tuturor modificărilor |
-| **Git Updater** (plugin) | aduce automat pe site versiunile noi ale temei din GitHub |
+| **Actualizările** (modul al temei) | WordPress vede singur versiunile noi ale temei de pe GitHub (Panou → Actualizări) |
 
 Codul nostru **nu modifică GeneratePress**. Dacă GeneratePress se actualizează, site-ul rămâne la fel.
 
@@ -103,7 +103,7 @@ Cheia se salvează doar în baza de date WordPress. Nu apare în cod, pe GitHub 
 
 1. Modificarea se face în codul temei și se trimite pe GitHub.
 2. **În `style.css` se mărește numărul de la „Version”** (ex. 0.1.0 → 0.1.1). Fără asta, actualizarea nu e observată.
-3. În WordPress: Panou → Actualizări (sau Git Updater) → actualizați tema „Apollonia TV”.
+3. În WordPress: **Panou → Actualizări** → „Verifică din nou” → bifați tema „Apollonia TV” → **Actualizează temele**.
 
 Fiecare versiune rămâne pe GitHub. Dacă o versiune nouă strică ceva, se poate reveni la cea anterioară.
 
@@ -138,6 +138,7 @@ inc/antet.php           bara de ajutor, A/A+/A++, logo, căutare, meniu
 inc/subsol.php          banda „Nu găsiți ce căutați?” și subsolul
 inc/episod.php          episodul anterior / următor, cele mai noi materiale
 inc/import-youtube.php  importul din YouTube și sincronizarea zilnică
+inc/actualizari.php     versiunile noi de pe GitHub apar în Panou → Actualizări
 front-page.php          prima pagină
 category.php            paginile de emisiuni, teme, emisiune, știri
 single.php              pagina unui episod

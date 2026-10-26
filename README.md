@@ -17,9 +17,8 @@ Site-ul este o poartă de acces simplă către emisiunile și știrile Apollonia
 ## Instalare
 
 1. Instalați și **lăsați instalată** tema GeneratePress (Aspect → Teme → Adaugă).
-2. Instalați plugin-ul [Git Updater](https://git-updater.com/) și adăugați acest repository (`apolloniatv/apolloniatv-tema`, branch `main`).
-   Alternativ: descărcați arhiva ZIP a repository-ului și încărcați-o la Aspect → Teme → Adaugă → Încarcă.
-3. Activați tema **Apollonia TV**.
+2. Încărcați tema o singură dată, ca arhivă ZIP care conține folderul `apolloniatv-tema/` (Aspect → Teme → Adaugă → Încarcă) și activați-o.
+3. De aici înainte, versiunile noi apar singure în **Panou → Actualizări** (modulul `inc/actualizari.php`; fără plugin-uri).
 4. Urmați pașii din [DOCUMENTATIE.md, secțiunea 4](DOCUMENTATIE.md#4-lucruri-care-se-fac-o-singură-dată-la-instalare).
 
 ## Cerințe
@@ -28,4 +27,4 @@ WordPress 6.4+, PHP 8.1+, GeneratePress 3.x.
 
 ## Publicarea unei versiuni noi
 
-Măriți `Version` din `style.css`, apoi faceți push pe `main`. Git Updater va oferi actualizarea în WordPress.
+Măriți `Version` din `style.css`, apoi faceți push pe `main`. În câteva ore (sau imediat, cu „Verifică din nou” în Panou → Actualizări) WordPress oferă actualizarea.

@@ -1,0 +1,21 @@
+/*
+Theme Name:        Apollonia TV
+Theme URI:         https://apolloniatv.ro
+Description:       Tema copil (child theme) pentru apolloniatv.ro, construită peste GeneratePress. Site gândit pentru acces ușor la emisiunile și știrile Apollonia TV, mai ales pentru vârstnici. Documentația completă este în fișierul DOCUMENTATIE.md.
+Author:            Echipa Apollonia TV
+Template:          generatepress
+Version:           0.1.0
+Requires at least: 6.4
+Requires PHP:      8.1
+Text Domain:       apolloniatv
+GitHub Theme URI:  apolloniatv/apolloniatv-tema
+Primary Branch:    main
+*/
+
+/*
+ * ATENȚIE: acest fișier conține doar „cartea de identitate” a temei (antetul de mai sus).
+ * Stilurile site-ului sunt în assets/css/tema.css.
+ *
+ * Când publicați o versiune nouă pe GitHub, măriți numărul de la „Version” (ex. 0.1.0 → 0.1.1),
+ * altfel plugin-ul Git Updater nu va observa că există o actualizare.
+ */

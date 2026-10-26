@@ -296,7 +296,9 @@ function aptv_import_pas( $optiuni ) {
 			true
 		);
 		if ( is_wp_error( $post_id ) ) {
-			$rezultat['jurnal'][] = 'Eroare la „' . $titlu . '”: ' . $post_id->get_error_message();
+			global $wpdb;
+			$detaliu              = $wpdb->last_error ? ' [' . mb_substr( $wpdb->last_error, 0, 200 ) . ']' : '';
+			$rezultat['jurnal'][] = 'Eroare la „' . $titlu . '”: ' . $post_id->get_error_message() . $detaliu;
 			continue;
 		}
 		++$rezultat['create'];

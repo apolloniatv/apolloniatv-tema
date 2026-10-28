@@ -27,6 +27,7 @@ while ( have_posts() ) :
 	$categorie   = aptv_categoria_episodului();
 	$tip         = $categorie ? aptv_tip_categorie( $categorie ) : '';
 	$e_emisiune  = 'emisiune' === $tip;
+	$e_proiect   = 'portofoliu' === $tip;
 	$numar       = $e_emisiune ? aptv_numar_episod( $post_curent, $categorie ) : 0;
 	$video       = aptv_video_id();
 	$scurt       = (bool) get_post_meta( get_the_ID(), '_aptv_scurt', true );
@@ -95,6 +96,11 @@ while ( have_posts() ) :
 							<?php endif; ?>
 							<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>"><?php echo $categorie->count > 1 ? 'Toate cele ' . esc_html( aptv_plural( (int) $categorie->count, 'episod', 'episoade' ) ) . ' ' . esc_html( $categorie->name ) : 'Pagina emisiunii ' . esc_html( $categorie->name ); ?></a>
 						</nav>
+					<?php elseif ( $e_proiect ) : ?>
+						<nav class="aptv-butoane aptv-episod-pagina__nav" aria-label="Portofoliu">
+							<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>">‹ Toate proiectele și serviciile</a>
+						</nav>
+						<?php aptv_cerere_oferta( 'Vreți un material asemănător?' ); ?>
 					<?php elseif ( $categorie ) : ?>
 						<nav class="aptv-butoane aptv-episod-pagina__nav" aria-label="Alte știri">
 							<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>">‹ Toate știrile <?php echo esc_html( mb_strtolower( $categorie->name ) ); ?></a>
@@ -111,14 +117,14 @@ while ( have_posts() ) :
 
 				<?php if ( $laterale ) : ?>
 					<aside class="aptv-episod-pagina__lateral" aria-labelledby="aptv-urmeaza">
-						<h2 id="aptv-urmeaza" class="aptv-titlu-banda"><?php echo $e_emisiune ? 'Mai departe în ' . esc_html( $categorie->name ) : 'Alte știri'; ?></h2>
+						<h2 id="aptv-urmeaza" class="aptv-titlu-banda"><?php echo $e_emisiune ? 'Mai departe în ' . esc_html( $categorie->name ) : ( $e_proiect ? 'Alte proiecte' : 'Alte știri' ); ?></h2>
 						<div class="aptv-lista-mica">
 							<?php foreach ( $laterale as $p ) : ?>
 								<?php aptv_card( $p, 'lista' ); ?>
 							<?php endforeach; ?>
 						</div>
 						<?php if ( $categorie ) : ?>
-							<a class="aptv-lista-mica__toate" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>"><?php echo $e_emisiune ? ( $categorie->count > 1 ? 'Toate cele ' . esc_html( aptv_plural( (int) $categorie->count, 'episod', 'episoade' ) ) . ' →' : 'Vezi emisiunea →' ) : 'Toate știrile →'; ?></a>
+							<a class="aptv-lista-mica__toate" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>"><?php echo $e_emisiune ? ( $categorie->count > 1 ? 'Toate cele ' . esc_html( aptv_plural( (int) $categorie->count, 'episod', 'episoade' ) ) . ' →' : 'Vezi emisiunea →' ) : ( $e_proiect ? 'Tot portofoliul →' : 'Toate știrile →' ); ?></a>
 						<?php endif; ?>
 					</aside>
 				<?php endif; ?>

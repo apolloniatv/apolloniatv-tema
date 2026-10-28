@@ -426,6 +426,21 @@ select:focus-visible {
 .aptv-subsol__retele svg { width: 1.3rem; height: 1.3rem; }
 .aptv-subsol__copyright { padding-bottom: 1.6rem; margin-block: 0; font-size: 16px; color: var(--aptv-gri); }
 
+/* Portofoliu: serviciile oferite și blocul „Cereți o ofertă”. */
+.aptv-servicii { list-style: none; margin: 0 0 2.6rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1.2rem; }
+.aptv-serviciu { margin: 0; padding: 1.2rem 1.3rem 1.3rem; border: 2px solid var(--aptv-chenar); background: #FFFFFF; }
+.aptv-serviciu__icon { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: var(--aptv-albastru-inchis); color: #FFFFFF; margin-bottom: 0.7rem; }
+.aptv-serviciu__icon svg { width: 28px; height: 28px; }
+.aptv-serviciu h3 { font-size: 1.2rem; line-height: 1.25; margin: 0 0 0.35em; }
+.aptv-serviciu p { margin: 0; color: #222222; }
+.aptv-proiecte { margin-bottom: 2.6rem; }
+@media (min-width: 1000px) { .aptv-servicii { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.aptv-oferta { background: var(--aptv-albastru-inchis); color: #FFFFFF; padding: 1.6rem 1.8rem; margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
+.aptv-oferta h2 { color: #FFFFFF; font-size: 1.5rem; margin: 0 0 0.25em; }
+.aptv-oferta p { margin: 0; max-width: 38rem; }
+.aptv-oferta__butoane { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+.aptv-episod-pagina__principal .aptv-oferta { margin-top: 1.6rem; }
+
 /* 11. Telefon și tabletă ------------------------------------------------- */
 @media (max-width: 760px) {
 	html { font-size: 18px; }
@@ -463,6 +478,8 @@ select:focus-visible {
 	.aptv-grila--scurte { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.aptv-univ__text, .aptv-univ__lista { padding-inline: 1.1rem; }
 	.aptv-ajutor__in { padding: 1.2rem; }
+	.aptv-oferta { padding: 1.2rem; }
+	.aptv-oferta__butoane, .aptv-oferta__butoane .aptv-buton { width: 100%; }
 	.aptv-ajutor .aptv-buton { width: 100%; }
 	.aptv-player__buton { min-height: 60px; font-size: 1.1rem; padding: 0 1.1em; }
 }

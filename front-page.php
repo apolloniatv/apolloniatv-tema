@@ -25,6 +25,7 @@ $recomandat   = aptv_episod_recomandat();
 $stiintifice  = get_term_by( 'slug', 'stiintifice', 'category' );
 $emisiuni     = get_term_by( 'slug', 'emisiuni', 'category' );
 $universitate = get_term_by( 'slug', 'universitate', 'category' );
+$portofoliu   = get_term_by( 'slug', 'portofoliu', 'category' );
 
 // Cele mai noi: fără clipurile scurte, fără „Necategorisite” și fără episodul deja recomandat sus.
 $cele_mai_noi = get_posts(
@@ -35,7 +36,7 @@ $cele_mai_noi = get_posts(
 		'no_found_rows'       => true,
 		'ignore_sticky_posts' => true,
 		'post__not_in'        => $recomandat ? array( $recomandat->ID ) : array(),
-		'category__not_in'    => array_filter( array( $stiintifice ? $stiintifice->term_id : 0, (int) get_option( 'default_category' ) ) ),
+		'category__not_in'    => array_filter( array( $stiintifice ? $stiintifice->term_id : 0, $portofoliu ? $portofoliu->term_id : 0, (int) get_option( 'default_category' ) ) ),
 	)
 );
 $scurte = $stiintifice ? aptv_cele_mai_noi( $stiintifice->term_id, 6 ) : array();

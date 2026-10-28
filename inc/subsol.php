@@ -58,6 +58,8 @@ add_action(
 	'generate_footer',
 	function () {
 		$email = aptv_setare( 'email' );
+		// În Portofoliu, banda galbenă e înlocuită de blocul „Cereți o ofertă” din pagină.
+		if ( ! aptv_e_portofoliu() ) :
 		?>
 		<section class="aptv-container aptv-ajutor" aria-labelledby="aptv-ajutor-titlu">
 			<div class="aptv-ajutor__in">
@@ -76,6 +78,7 @@ add_action(
 				</div>
 			</div>
 		</section>
+		<?php endif; ?>
 
 		<footer class="aptv-subsol" id="contact">
 			<div class="aptv-container aptv-subsol__grila">
@@ -86,7 +89,7 @@ add_action(
 				<div>
 					<h2 class="aptv-subsol__titlu">Pe site</h2>
 					<ul>
-						<?php foreach ( array( 'stiri', 'emisiuni', 'universitate' ) as $slug ) : ?>
+						<?php foreach ( array( 'stiri', 'emisiuni', 'universitate', 'portofoliu' ) as $slug ) : ?>
 							<?php $t = get_term_by( 'slug', $slug, 'category' ); ?>
 							<?php if ( $t ) : ?>
 								<li><a href="<?php echo esc_url( get_term_link( $t ) ); ?>"><?php echo esc_html( $t->name ); ?></a></li>

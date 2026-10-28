@@ -35,12 +35,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 function aptv_structura() {
 	return array(
 		'stiri'        => array(
-			'nume'   => 'Știri',
-			'desc'   => 'Ce se întâmplă în Iași, în țară și în lume.',
+			'nume'     => 'Știri',
+			'desc'     => 'Ce se întâmplă în Iași, în țară și în lume.',
+			// Playlistul „Stiri” de pe canalul @apolloniatvcultural. Fiecare știre importată aici
+			// e pusă automat la Locale, Naționale sau Externe (vezi aptv_ruteaza_stire în import-youtube.php).
+			'playlist' => 'PLZiC4LBfhp6o',
+			'auto'     => true,
 			'copii'  => array(
-				'externe'     => array( 'nume' => 'Externe', 'ordine' => 1, 'desc' => 'Știri din lume, din arhiva Apollonia TV.' ),
-				'nationale'   => array( 'nume' => 'Naționale', 'ordine' => 2, 'desc' => 'Știri din țară, din arhiva Apollonia TV.' ),
-				'locale'      => array( 'nume' => 'Locale', 'ordine' => 3, 'desc' => 'Știri din Iași și din Moldova, din arhiva Apollonia TV.' ),
+				'externe'     => array( 'nume' => 'Externe', 'ordine' => 1, 'desc' => 'Ce se întâmplă în lume, pe scurt.' ),
+				'nationale'   => array( 'nume' => 'Naționale', 'ordine' => 2, 'desc' => 'Știri din țară: sănătate, societate, viața de zi cu zi.' ),
+				'locale'      => array( 'nume' => 'Locale', 'ordine' => 3, 'desc' => 'Știri din Iași și din Moldova.' ),
 				// Toate încărcările canalului (UU...), doar clipurile scurte, importate automat zilnic.
 				'stiintifice' => array( 'nume' => 'Științifice', 'ordine' => 4, 'desc' => 'Studii și descoperiri din medicină și știință, explicate în mai puțin de un minut.', 'playlist' => 'UUA5cYbtmQExq5QuYj3U8OlQ', 'filtru' => 'scurte', 'auto' => true ),
 			),
@@ -66,6 +70,8 @@ function aptv_structura() {
 						'stop-cadru'          => array( 'nume' => 'Stop cadru', 'desc' => 'Reportaje despre tradiții, concerte și evenimente culturale din Moldova.', 'playlist' => 'PLPOwGDShVMnfH6pdWm7RP2El1MT15-pQd' ),
 						'mirajul-muzicii'     => array( 'nume' => 'Mirajul Muzicii', 'desc' => 'Concerte, colinde și invitați din lumea muzicii ieșene.', 'playlist' => 'PLPOwGDShVMndZAbLcyRaMpbSKDxPf6p_O' ),
 						'portrete-in-miscare' => array( 'nume' => 'Portrete în mișcare', 'desc' => 'Oameni și locuri: sportivi, meșteri și poveștile Bucovinei.', 'playlist' => 'PLPOwGDShVMncJqgAQ33fmZQ_O2EDRF8UZ' ),
+						// Canalul @apolloniatvcultural.
+						'scena'               => array( 'nume' => 'Scena', 'desc' => 'Teatru și dans: actori, regizori și profesori de teatru despre spectacole, festivaluri și școala de actorie.', 'playlist' => 'PL_SY0YzDw6YmWt_dcJ3O-38LrT0K1UM5v', 'auto' => true ),
 					),
 				),
 				'sanatate'    => array(
@@ -84,7 +90,9 @@ function aptv_structura() {
 					'culoare' => '#14527F',
 					'copii'   => array(
 						'noaptea-generalilor' => array( 'nume' => 'Noaptea Generalilor', 'desc' => 'Generali și experți analizează conflicte, alianțe și securitatea regiunii.', 'playlist' => 'PLPOwGDShVMndFJoqFQEjTXSdVKxWwSqld' ),
-						'editie-speciala'     => array( 'nume' => 'Ediție Specială', 'desc' => '[Descrierea emisiunii — de completat]' ),
+						// Ediție Specială și Tribuna liberă vin de pe canalul @apolloniatvcultural.
+						'editie-speciala'     => array( 'nume' => 'Ediție Specială', 'desc' => 'Interviuri cu invitați de seamă — diplomați, oameni politici și profesori — despre identitate, educație și viitor.', 'playlist' => 'PLTfUotFeqyeI', 'auto' => true ),
+						'tribuna-libera'      => array( 'nume' => 'Tribuna liberă', 'desc' => 'Dezbateri despre Iași, educație, democrație și viitorul țării.', 'playlist' => 'PL_SY0YzDw6Ym_TX4pAmG0i9v0lITbUngO', 'auto' => true ),
 					),
 				),
 			),
@@ -97,8 +105,63 @@ function aptv_structura() {
 				'congresul-apollonia-2022' => array( 'nume' => 'Congresul Apollonia 2022', 'desc' => 'Comunicările congresului, pe secțiuni.', 'playlist' => 'PLPOwGDShVMnfTkwIvLDKApbXMKuB501sr' ),
 			),
 		),
+		// Proiecte video făcute de Apollonia TV pentru alții + serviciile oferite (vezi category.php).
+		'portofoliu'   => array(
+			'nume' => 'Portofoliu',
+			'desc' => 'Proiecte video realizate de Apollonia TV pentru instituții, companii și organizații.',
+		),
 	);
 }
+
+/**
+ * Actualizări de structură pentru site-ul deja instalat. Rulează o singură dată
+ * (la prima încărcare a panoului de administrare după actualizarea temei).
+ *  - 2: canalul @apolloniatvcultural (Scena, Tribuna liberă, Ediție Specială, știrile),
+ *       secțiunea Portofoliu și noile descrieri pentru Externe / Naționale / Locale.
+ */
+add_action(
+	'admin_init',
+	function () {
+		if ( (int) get_option( 'aptv_versiune_structura', 1 ) >= 2 || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		aptv_creeaza_structura(); // doar categoriile care lipsesc (Scena, Tribuna liberă, Portofoliu)
+
+		$setari = array(
+			'stiri'           => array( 'playlist' => 'PLZiC4LBfhp6o', 'auto' => true ),
+			'editie-speciala' => array( 'playlist' => 'PLTfUotFeqyeI', 'auto' => true ),
+			'scena'           => array( 'auto' => true ),
+			'tribuna-libera'  => array( 'auto' => true ),
+		);
+		foreach ( $setari as $slug => $info ) {
+			$t = get_term_by( 'slug', $slug, 'category' );
+			if ( ! $t ) {
+				continue;
+			}
+			if ( ! empty( $info['playlist'] ) && ! get_term_meta( $t->term_id, 'aptv_playlist', true ) ) {
+				update_term_meta( $t->term_id, 'aptv_playlist', $info['playlist'] );
+			}
+			if ( ! empty( $info['auto'] ) ) {
+				update_term_meta( $t->term_id, 'aptv_auto', 1 );
+			}
+		}
+		// Descrierile vechi („din arhiva Apollonia TV”) și cea provizorie de la Ediție Specială.
+		$structura = aptv_structura();
+		$noi       = array(
+			'externe'         => $structura['stiri']['copii']['externe']['desc'],
+			'nationale'       => $structura['stiri']['copii']['nationale']['desc'],
+			'locale'          => $structura['stiri']['copii']['locale']['desc'],
+			'editie-speciala' => $structura['emisiuni']['copii']['actualitate']['copii']['editie-speciala']['desc'],
+		);
+		foreach ( $noi as $slug => $desc ) {
+			$t = get_term_by( 'slug', $slug, 'category' );
+			if ( $t && ( false !== strpos( $t->description, 'din arhiva Apollonia TV' ) || false !== strpos( $t->description, 'de completat' ) ) ) {
+				wp_update_term( $t->term_id, 'category', array( 'description' => $desc ) );
+			}
+		}
+		update_option( 'aptv_versiune_structura', 2 );
+	}
+);
 
 /**
  * Creează recursiv categoriile care lipsesc. Nu modifică și nu șterge categoriile existente.
@@ -173,11 +236,12 @@ function aptv_sectiune( $categorie ) {
 }
 
 /**
- * Tipul categoriei: 'sectiune' | 'tema' | 'emisiune' | 'stiri'.
+ * Tipul categoriei: 'sectiune' | 'tema' | 'emisiune' | 'stiri' | 'portofoliu'.
  *  - sectiune: Știri, Emisiuni, Universitate
  *  - tema:     Educație, Cultură... (copiii lui Emisiuni)
  *  - emisiune: Stop cadru... (copiii unei teme) și copiii lui Universitate
  *  - stiri:    Externe, Naționale, Locale, Științifice
+ *  - portofoliu: secțiunea Portofoliu (are o pagină proprie, cu serviciile oferite)
  */
 function aptv_tip_categorie( $categorie ) {
 	$categorie = get_term( $categorie, 'category' );
@@ -188,6 +252,9 @@ function aptv_tip_categorie( $categorie ) {
 	$sectiune = aptv_sectiune( $categorie );
 	$slug     = $sectiune ? $sectiune->slug : '';
 
+	if ( 'portofoliu' === $slug ) {
+		return 'portofoliu';
+	}
 	if ( 1 === $nivel ) {
 		return 'sectiune';
 	}
@@ -272,7 +339,7 @@ add_action(
 			<th scope="row"><label for="aptv-playlist">Playlist YouTube</label></th>
 			<td>
 				<input id="aptv-playlist" name="aptv_playlist" type="text" value="<?php echo esc_attr( $playlist ); ?>">
-				<p class="description">Doar pentru emisiuni. ID-ul playlist-ului (începe cu „PL”) sau linkul complet. Folosit de „Import YouTube”.</p>
+				<p class="description">Pentru emisiuni (și pentru „Știri”, unde fiecare știre e pusă automat la Locale / Naționale / Externe). ID-ul playlist-ului (începe cu „PL”) sau linkul complet. Folosit de „Import YouTube”.</p>
 			</td>
 		</tr>
 		<tr class="form-field">

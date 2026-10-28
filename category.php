@@ -9,6 +9,7 @@
  *   Universitate          → emisiunile din universitate (carduri)
  *   Stop cadru (emisiune) → banda emisiunii + lista episoadelor în ordine cronologică
  *   Știri / Locale ...    → butoane cu tipurile de știri + cele mai noi știri
+ *   Portofoliu            → serviciile video oferite + proiectele realizate + „Cereți o ofertă”
  *
  * @package apolloniatv
  */
@@ -201,6 +202,69 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 		<?php else : ?>
 			<p class="aptv-gol">Știrile din această categorie vor fi adăugate în curând.</p>
 		<?php endif; ?>
+	</div>
+
+<?php elseif ( 'portofoliu' === $tip ) : ?>
+	<?php /* ---------------- Portofoliu: servicii + proiecte ---------------- */ ?>
+	<section class="aptv-banda aptv-c" style="<?php echo esc_attr( aptv_stil_culoare( $categorie ) ); ?>">
+		<div class="aptv-container">
+			<?php aptv_unde_va_aflati( $categorie ); ?>
+			<div class="aptv-banda__in">
+				<div class="aptv-banda__text">
+					<span class="aptv-banda__supra">SERVICII VIDEO APOLLONIA TV</span>
+					<h1><?php echo esc_html( $categorie->name ); ?></h1>
+					<p><?php echo esc_html( aptv_setare( 'portofoliu_intro' ) ); ?></p>
+				</div>
+				<a class="aptv-buton aptv-buton--galben aptv-buton--mare" href="#aptv-oferta-titlu">Cereți o ofertă</a>
+			</div>
+		</div>
+	</section>
+
+	<div class="aptv-container aptv-sectiune">
+		<?php $servicii = aptv_servicii(); ?>
+		<?php if ( $servicii ) : ?>
+			<section aria-labelledby="aptv-servicii">
+				<h2 id="aptv-servicii" class="aptv-titlu-banda">Ce vă putem oferi</h2>
+				<ul class="aptv-servicii">
+					<?php foreach ( $servicii as $serviciu ) : ?>
+						<li class="aptv-serviciu">
+							<span class="aptv-serviciu__icon"><?php echo aptv_icon_serviciu( $serviciu[0] ); // phpcs:ignore -- SVG fix. ?></span>
+							<h3><?php echo esc_html( $serviciu[0] ); ?></h3>
+							<?php if ( $serviciu[1] ) : ?>
+								<p><?php echo esc_html( $serviciu[1] ); ?></p>
+							<?php endif; ?>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			</section>
+		<?php endif; ?>
+
+		<section class="aptv-proiecte" aria-labelledby="aptv-proiecte">
+			<h2 id="aptv-proiecte" class="aptv-titlu-banda">Proiecte realizate</h2>
+			<?php if ( have_posts() ) : ?>
+				<div class="aptv-grila aptv-grila--3">
+					<?php
+					while ( have_posts() ) :
+						the_post();
+						aptv_card( get_post(), 'normal' );
+					endwhile;
+					?>
+				</div>
+				<?php
+				the_posts_pagination(
+					array(
+						'prev_text'          => '← Mai noi',
+						'next_text'          => 'Mai vechi →',
+						'screen_reader_text' => 'Mai multe proiecte',
+					)
+				);
+				?>
+			<?php else : ?>
+				<p class="aptv-gol">Proiectele vor fi adăugate în curând.</p>
+			<?php endif; ?>
+		</section>
+
+		<?php aptv_cerere_oferta(); ?>
 	</div>
 
 <?php else : ?>

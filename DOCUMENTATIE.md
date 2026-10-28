@@ -26,11 +26,15 @@ Totul se bazează pe **categoriile** WordPress (Articole → Categorii), pe trei
 ```
 Știri ─────────── Externe · Naționale · Locale · Științifice
 Emisiuni ──────── Educație ─── Educația Încotro, Colocviile ECRE
-                  Cultură ──── Stop cadru, Mirajul Muzicii, Portrete în mișcare
+                  Cultură ──── Stop cadru, Mirajul Muzicii, Portrete în mișcare, Scena
                   Sănătate ─── Repere în Medicină, Interviuri de sănătate
-                  Actualitate și dezbateri ── Noaptea Generalilor, Ediție Specială
+                  Actualitate și dezbateri ── Noaptea Generalilor, Ediție Specială, Tribuna liberă
 Universitate ──── Universitaria, Congresul Apollonia 2022
+Portofoliu ────── proiecte video făcute pentru alții (fără subcategorii)
 ```
+
+Conținutul vine de pe două canale YouTube: canalul principal Apollonia TV și **@apolloniatvcultural**
+(știrile, Scena, Ediție Specială, Tribuna liberă).
 
 - **Un episod = un articol** WordPress, pus în categoria emisiunii lui.
 - **Meniul și prima pagină se construiesc singure** din aceste categorii. Nu există un meniu de editat de mână.
@@ -52,6 +56,14 @@ Câștigă întotdeauna ultimul episod bifat. Nu trebuie debifat cel vechi.
 
 ### Schimbați telefonul, WhatsApp-ul, e-mailul, adresa, linkurile rețelelor sau textul din subsol
 Apollonia TV → **Setări**. Completați și apăsați **Salvează setările**.
+
+### Portofoliu: serviciile și proiectele
+- **Serviciile** (înregistrare, live, montaj...) se schimbă din Apollonia TV → **Setări** → „Portofoliu — serviciile oferite”:
+  câte un serviciu pe rând, sub forma `Nume: descriere`. Pictograma se alege singură după nume.
+- **Un proiect nou** = un articol cu linkul YouTube, pus în categoria **Portofoliu** (doar în ea).
+  Dacă videoclipul a fost deja importat în altă categorie, deschideți articolul și mutați-l la Portofoliu.
+- Proiectele din Portofoliu nu apar la „Cele mai noi” pe prima pagină.
+- Numele din meniu este numele categoriei: îl schimbați din Articole → Categorii (ex. „Colaborări”).
 
 ### Adăugați o emisiune nouă
 1. Articole → Categorii → Adaugă o categorie nouă.
@@ -77,7 +89,17 @@ Importul poate fi rulat oricând din nou: **videoclipurile deja importate sunt s
 Videoclipurile „Unlisted” se importă normal, dacă playlist-ul e public.
 Videoclipurile private și cele care nu permit încorporarea sunt sărite (apar în listă cu motivul).
 
-**Știrile științifice noi se importă singure, zilnic** (categoria „Științifice” are bifat „Importă automat zilnic”).
+**Se importă singure, zilnic** categoriile care au bifat „Importă automat zilnic”: Științifice, Știri,
+Scena, Ediție Specială și Tribuna liberă.
+
+### Știrile de pe @apolloniatvcultural (Locale / Naționale / Externe)
+Puneți știrea în playlistul **„Stiri”** al canalului @apolloniatvcultural. Site-ul o preia zilnic și o pune singur
+la Locale, Naționale sau Externe:
+- dacă în titlu sau în descrierea de pe YouTube scrie **#locale**, **#nationale** sau **#externe**, eticheta decide;
+- altfel, după titlu: Iași, Bacău, Bârlad, Suceava... → Locale; țări, capitale, lideri străini → Externe; restul → Naționale.
+
+Dacă o știre ajunge greșit, o mutați din WordPress (Articole → editare → Categorii). Lista de cuvinte este în
+`inc/import-youtube.php` (funcția `aptv_ruteaza_stire`).
 
 ---
 

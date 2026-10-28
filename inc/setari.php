@@ -4,7 +4,7 @@
  *
  * CE FACE: adaugă în admin pagina „Apollonia TV → Setări”, unde echipa poate schimba,
  * fără cod: telefonul, programul, e-mailul, adresa, linkurile rețelelor sociale,
- * descrierea din subsol și cheia YouTube API (folosită la import).
+ * descrierea din subsol, textele paginii Portofoliu și cheia YouTube API (folosită la import).
  *
  * UNDE SE FOLOSESC: oriunde în temă se scrie aptv_setare( 'telefon' ) etc.
  *
@@ -34,6 +34,8 @@ function aptv_setari_implicite() {
 		'instagram'       => 'https://www.instagram.com/apolloniatv/',
 		'tiktok'          => 'https://www.tiktok.com/@apolloniatv',
 		'despre'          => 'Platforma media educațională a Universității „Apollonia” din Iași: emisiuni, știri și reportaje, gratuit, pentru toată lumea.',
+		'portofoliu_intro' => 'Apollonia TV filmează, montează și transmite în direct evenimente pentru instituții, companii și organizații. Mai jos găsiți ce vă putem oferi și câteva dintre proiectele realizate.',
+		'servicii'        => "Înregistrarea evenimentelor: Conferințe, congrese, lansări și spectacole, filmate cu mai multe camere și sunet profesionist.\nTransmisiuni live: Evenimentul dumneavoastră în direct pe YouTube, Facebook sau pe site-ul propriu.\nMontaj video: De la filmare la materialul final: rezumate, interviuri, clipuri pentru prezentări.\nPromovare pe rețelele sociale: Clipuri scurte și verticale pentru Facebook, Instagram și TikTok.\nÎnregistrări în platou: Interviuri, dezbateri și emisiuni filmate în platoul Apollonia TV.\nPodcasturi: Găzduim și înregistrăm podcastul dumneavoastră, video și audio.\nMateriale promoționale: Spoturi și filme de prezentare pentru instituții, produse și servicii.",
 	);
 }
 
@@ -47,6 +49,24 @@ function aptv_setare( $cheie ) {
 	$salvate = get_option( 'aptv_setari', array() );
 	$toate   = wp_parse_args( is_array( $salvate ) ? $salvate : array(), aptv_setari_implicite() );
 	return isset( $toate[ $cheie ] ) ? (string) $toate[ $cheie ] : '';
+}
+
+/**
+ * Serviciile din pagina Portofoliu, din setarea „servicii” (un serviciu pe rând, „Nume: descriere”).
+ *
+ * @return array[] Listă de [ nume, descriere ].
+ */
+function aptv_servicii() {
+	$lista = array();
+	foreach ( preg_split( '/\R/u', aptv_setare( 'servicii' ) ) as $rand ) {
+		$rand = trim( $rand );
+		if ( '' === $rand ) {
+			continue;
+		}
+		$bucati  = preg_split( '/\s*:\s*/u', $rand, 2 );
+		$lista[] = array( $bucati[0], $bucati[1] ?? '' );
+	}
+	return $lista;
 }
 
 /**
@@ -113,7 +133,7 @@ add_action(
 		$implicite = aptv_setari_implicite();
 		$noi       = array();
 		$campuri_url   = array( 'youtube', 'facebook', 'instagram', 'tiktok' );
-		$campuri_lungi = array( 'despre' );
+		$campuri_lungi = array( 'despre', 'portofoliu_intro', 'servicii' );
 
 		foreach ( array_keys( $implicite ) as $cheie ) {
 			$valoare = isset( $_POST[ $cheie ] ) ? wp_unslash( $_POST[ $cheie ] ) : '';
@@ -160,6 +180,8 @@ function aptv_pagina_setari() {
 		'instagram'  => array( 'Link Instagram', 'url' ),
 		'tiktok'     => array( 'Link TikTok', 'url' ),
 		'despre'     => array( 'Subsol — scurtă descriere a Apollonia TV', 'textarea' ),
+		'portofoliu_intro' => array( 'Portofoliu — textul de prezentare de sus', 'textarea' ),
+		'servicii'   => array( 'Portofoliu — serviciile oferite (câte unul pe rând, sub forma „Nume: descriere”)', 'textarea' ),
 	);
 	$are_cheie = '' !== aptv_cheie_youtube();
 	?>
@@ -178,7 +200,7 @@ function aptv_pagina_setari() {
 						<th scope="row"><label for="aptv-<?php echo esc_attr( $cheie ); ?>"><?php echo esc_html( $info[0] ); ?></label></th>
 						<td>
 							<?php if ( 'textarea' === $info[1] ) : ?>
-								<textarea id="aptv-<?php echo esc_attr( $cheie ); ?>" name="<?php echo esc_attr( $cheie ); ?>" rows="3" class="large-text"><?php echo esc_textarea( aptv_setare( $cheie ) ); ?></textarea>
+								<textarea id="aptv-<?php echo esc_attr( $cheie ); ?>" name="<?php echo esc_attr( $cheie ); ?>" rows="<?php echo 'servicii' === $cheie ? 9 : 3; ?>" class="large-text"><?php echo esc_textarea( aptv_setare( $cheie ) ); ?></textarea>
 							<?php else : ?>
 								<input id="aptv-<?php echo esc_attr( $cheie ); ?>" type="<?php echo esc_attr( $info[1] ); ?>" name="<?php echo esc_attr( $cheie ); ?>" value="<?php echo esc_attr( aptv_setare( $cheie ) ); ?>" class="regular-text">
 							<?php endif; ?>

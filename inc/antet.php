@@ -4,7 +4,7 @@
  *
  * PE CALCULATOR, de sus în jos:
  *  1. Un rând alb: logo-ul, căutarea și butoanele de mărime a textului (A / A+ / A++).
- *  2. Bara de meniu albastră, ca bara de pe post: Acasă · Știri · Emisiuni · Universitate · Contact și ajutor.
+ *  2. Bara de meniu albastră, ca bara de pe post: Acasă · Știri · Emisiuni · Universitate · Portofoliu · Contact și ajutor.
  *     „Știri” și „Emisiuni” deschid, la clic, un panou cu temele și emisiunile.
  *
  * PE TELEFON: doar logo-ul și butonul „Meniu” (72 px înălțime, rămâne sus la derulare).
@@ -182,6 +182,7 @@ add_action(
 		$stiri        = get_term_by( 'slug', 'stiri', 'category' );
 		$emisiuni     = get_term_by( 'slug', 'emisiuni', 'category' );
 		$universitate = get_term_by( 'slug', 'universitate', 'category' );
+		$portofoliu   = get_term_by( 'slug', 'portofoliu', 'category' ); // apare chiar și fără proiecte: are lista de servicii
 
 		list( $link_stiri, $tipuri_stiri ) = $stiri ? aptv_destinatie_stiri( $stiri ) : array( '', array() );
 		$teme                              = $emisiuni ? aptv_subcategorii_cu_continut( $emisiuni ) : array();
@@ -223,6 +224,9 @@ add_action(
 					<?php endif; ?>
 					<?php if ( $universitate && aptv_numar_total( $universitate ) ) : ?>
 						<a class="aptv-meniu__link<?php echo $curent( $universitate ); // phpcs:ignore ?>" href="<?php echo esc_url( get_term_link( $universitate ) ); ?>">Universitate</a>
+					<?php endif; ?>
+					<?php if ( $portofoliu ) : ?>
+						<a class="aptv-meniu__link<?php echo $curent( $portofoliu ); // phpcs:ignore ?>" href="<?php echo esc_url( get_term_link( $portofoliu ) ); ?>"><?php echo esc_html( $portofoliu->name ); ?></a>
 					<?php endif; ?>
 					<a class="aptv-meniu__link aptv-meniu__contact" href="#contact">Contact și ajutor</a>
 				</div>
@@ -297,6 +301,9 @@ add_action(
 						<?php endif; ?>
 						<?php if ( $universitate && aptv_numar_total( $universitate ) ) : ?>
 							<li><a href="<?php echo esc_url( get_term_link( $universitate ) ); ?>">Universitate</a></li>
+						<?php endif; ?>
+						<?php if ( $portofoliu ) : ?>
+							<li><a href="<?php echo esc_url( get_term_link( $portofoliu ) ); ?>"><?php echo esc_html( $portofoliu->name ); ?></a></li>
 						<?php endif; ?>
 						<li><a href="#contact" class="aptv-meniu-mobil__ancora">Contact și ajutor</a></li>
 					</ul>

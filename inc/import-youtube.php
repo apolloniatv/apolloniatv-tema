@@ -113,7 +113,7 @@ function aptv_curata_titlu( $titlu, $nume_emisiune = '' ) {
 		if ( $emisiune && ( $n === $emisiune || $n === $emisiune . 'l' ) ) {
 			continue;
 		}
-		if ( 'emisie' === $n ) {
+		if ( 'emisie' === $n || 'apollonia tv' === $n ) {
 			continue;
 		}
 		// Date: 26.11.2017, 18 12 2017.
@@ -191,6 +191,73 @@ function aptv_videouri_existente( $ids ) {
  * }
  * @return array|WP_Error [ 'create' => int, 'sarite' => int, 'urmator' => string, 'jurnal' => string[] ]
  */
+/**
+ * Unde merge o știre: 'locale', 'nationale' sau 'externe'.
+ *
+ * 1. Dacă titlul sau descrierea de pe YouTube conține o etichetă, ea decide:
+ *    #locale / #local / #iasi → Locale;  #nationale / #national → Naționale;
+ *    #externe / #extern / #international → Externe.
+ * 2. Altfel, după cuvintele din titlu și descriere: nume din Iași și Moldova → Locale;
+ *    țări, capitale și lideri străini → Externe; orice altceva → Naționale.
+ *
+ * Dacă o știre ajunge greșit, se mută din WordPress (Articole → editare → Categorii);
+ * importurile următoare nu o mai ating.
+ *
+ * @param string $titlu
+ * @param string $descriere
+ * @return string
+ */
+function aptv_ruteaza_stire( $titlu, $descriere = '' ) {
+	$text = ' ' . strtolower( remove_accents( $titlu . ' ' . $descriere ) ) . ' ';
+	$text = preg_replace( '/[^a-z0-9#]+/', ' ', $text );
+
+	$etichete = array(
+		'locale'    => array( '#locale', '#local', '#iasi', '#stirilocale' ),
+		'nationale' => array( '#nationale', '#national', '#stirinationale' ),
+		'externe'   => array( '#externe', '#extern', '#international', '#stiriexterne' ),
+	);
+	foreach ( $etichete as $tip => $lista ) {
+		foreach ( $lista as $e ) {
+			if ( false !== strpos( $text, ' ' . $e . ' ' ) ) {
+				return $tip;
+			}
+		}
+	}
+
+	// Cuvintele se caută doar în titlu (descrierile au des texte generale, ex. despre canal).
+	$t = ' ' . preg_replace( '/[^a-z0-9]+/', ' ', strtolower( remove_accents( $titlu ) ) ) . ' ';
+	$contine = function ( $cuvinte ) use ( $t ) {
+		foreach ( $cuvinte as $c ) {
+			if ( false !== strpos( $t, ' ' . $c . ' ' ) ) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	$externe = array(
+		'republica moldova', 'chisinau', 'ucraina', 'ucrainei', 'kiev', 'rusia', 'rusiei', 'moscova', 'putin', 'zelenski', 'zelensky',
+		'serbia', 'serbiei', 'belgrad', 'vucic', 'ungaria', 'ungariei', 'orban', 'bulgaria', 'bulgariei', 'franta', 'frantei', 'paris', 'macron',
+		'germania', 'germaniei', 'berlin', 'italia', 'italiei', 'roma', 'spania', 'spaniei', 'polonia', 'poloniei', 'marea britanie', 'londra',
+		'sua', 'statele unite', 'america', 'americii', 'washington', 'trump', 'casa alba', 'china', 'chinei', 'beijing', 'japonia', 'coreea',
+		'israel', 'israelului', 'gaza', 'iran', 'iranului', 'turcia', 'turciei', 'grecia', 'greciei', 'austria', 'elvetia', 'olanda', 'belgia',
+		'bruxelles', 'canada', 'mexic', 'brazilia', 'india', 'africa', 'australia', 'papa', 'vatican', 'onu', 'nato',
+	);
+	$locale  = array(
+		'iasi', 'iasului', 'iasul', 'iesean', 'ieseni', 'ieseana', 'copou', 'pascani', 'harlau', 'tirgu frumos', 'targu frumos',
+		'bacau', 'barlad', 'barladean', 'barladeana', 'vaslui', 'husi', 'suceava', 'botosani', 'botosanean', 'botosaneana',
+		'neamt', 'piatra neamt', 'galati', 'focsani', 'moldova', 'unage', 'apollonia',
+	);
+	// „Republica Moldova” se verifică înaintea „Moldova” (regiunea noastră).
+	if ( $contine( $externe ) ) {
+		return 'externe';
+	}
+	if ( $contine( $locale ) ) {
+		return 'locale';
+	}
+	return 'nationale';
+}
+
 function aptv_import_pas( $optiuni ) {
 	$categorie = get_term( (int) $optiuni['categorie'], 'category' );
 	if ( ! $categorie || is_wp_error( $categorie ) ) {
@@ -270,16 +337,26 @@ function aptv_import_pas( $optiuni ) {
 			continue;
 		}
 
-		$titlu_site = ! empty( $optiuni['curata'] ) ? aptv_curata_titlu( $titlu, $categorie->name ) : $titlu;
+		$descriere = trim( (string) ( $video['snippet']['description'] ?? '' ) );
+
+		// Importul în secțiunea „Știri” pune fiecare știre la Locale, Naționale sau Externe.
+		$tinta = $categorie;
+		if ( 'stiri' === $categorie->slug && 0 === (int) $categorie->parent ) {
+			$tip_stire = get_term_by( 'slug', aptv_ruteaza_stire( $titlu, $descriere ), 'category' );
+			if ( $tip_stire ) {
+				$tinta = $tip_stire;
+			}
+		}
+
+		$titlu_site = ! empty( $optiuni['curata'] ) ? aptv_curata_titlu( $titlu, $tinta->name ) : $titlu;
 		$data_gmt   = aptv_data_difuzare( $titlu, $video['snippet']['publishedAt'] ?? '' );
 
 		if ( ! empty( $optiuni['simulare'] ) ) {
 			++$rezultat['create'];
-			$rezultat['jurnal'][] = 'S-ar importa: ' . $titlu_site . ' (' . get_date_from_gmt( $data_gmt, 'j.m.Y' ) . ')';
+			$rezultat['jurnal'][] = 'S-ar importa: ' . $titlu_site . ' (' . get_date_from_gmt( $data_gmt, 'j.m.Y' ) . ')' . ( $tinta !== $categorie ? ' → ' . $tinta->name : '' );
 			continue;
 		}
 
-		$descriere = trim( (string) ( $video['snippet']['description'] ?? '' ) );
 		$descriere = preg_replace( '/(^|\s)#[\p{L}\p{N}_]+/u', '', $descriere );
 
 		// Emoji (📍, 📢 ...) nu pot fi salvate direct în baza de date a serverului nostru
@@ -291,11 +368,11 @@ function aptv_import_pas( $optiuni ) {
 				'post_type'     => 'post',
 				'post_status'   => 'draft' === $optiuni['stare'] ? 'draft' : 'publish',
 				'post_title'    => $titlu_site,
-				'post_name'     => aptv_slug( $categorie->name . ' ' . $titlu_site ),
+				'post_name'     => aptv_slug( $tinta->name . ' ' . $titlu_site ),
 				'post_content'  => $descriere ? wp_encode_emoji( wp_kses_post( wpautop( make_clickable( esc_html( $descriere ) ) ) ) ) : '',
 				'post_date_gmt' => $data_gmt,
 				'post_date'     => get_date_from_gmt( $data_gmt ),
-				'post_category' => array( $categorie->term_id ),
+				'post_category' => array( $tinta->term_id ),
 				'post_author'   => get_current_user_id() ? get_current_user_id() : 1,
 				'meta_input'    => array(
 					'_aptv_video'       => $id,
@@ -313,7 +390,7 @@ function aptv_import_pas( $optiuni ) {
 			continue;
 		}
 		++$rezultat['create'];
-		$rezultat['jurnal'][] = 'Importat: ' . $titlu_site;
+		$rezultat['jurnal'][] = 'Importat: ' . $titlu_site . ( $tinta !== $categorie ? ' → ' . $tinta->name : '' );
 	}
 
 	return $rezultat;

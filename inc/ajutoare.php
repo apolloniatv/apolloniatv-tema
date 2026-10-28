@@ -210,3 +210,72 @@ function aptv_unde_va_aflati( $categorie = null, $final = '' ) {
 	}
 	echo '<nav class="aptv-firul" aria-label="Unde vă aflați">' . implode( ' <span aria-hidden="true">›</span> ', $elemente ) . '</nav>'; // phpcs:ignore -- elementele sunt escapate mai sus.
 }
+
+/**
+ * Este pagina curentă (sau articolul curent) din Portofoliu?
+ */
+function aptv_e_portofoliu() {
+	if ( is_category() ) {
+		return 'portofoliu' === aptv_tip_categorie( get_queried_object() );
+	}
+	if ( is_singular( 'post' ) ) {
+		$c = aptv_categoria_episodului();
+		return $c && 'portofoliu' === aptv_tip_categorie( $c );
+	}
+	return false;
+}
+
+/**
+ * Pictograma unui serviciu din Portofoliu, aleasă după cuvintele din nume
+ * (live, montaj, social, platou, podcast, promo...). Implicit: o cameră video.
+ */
+function aptv_icon_serviciu( $nume ) {
+	$n     = strtolower( remove_accents( $nume ) );
+	$forme = array(
+		'live'      => '<circle cx="12" cy="12" r="2.5" fill="currentColor"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/>',
+		'direct'    => '<circle cx="12" cy="12" r="2.5" fill="currentColor"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/>',
+		'montaj'    => '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>',
+		'social'    => '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+		'retele'    => '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+		'platou'    => '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/>',
+		'studio'    => '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/>',
+		'podcast'   => '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/>',
+		'promo'     => '<path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1zM17 8a5 5 0 0 1 0 8M20 5a9 9 0 0 1 0 14"/>',
+		'publicit'  => '<path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1zM17 8a5 5 0 0 1 0 8M20 5a9 9 0 0 1 0 14"/>',
+		'foto'      => '<path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/>',
+	);
+	$forma = '<rect x="2" y="6" width="14" height="12" rx="1"/><path d="m16 10 6-3v10l-6-3z"/>';
+	foreach ( $forme as $cuvant => $f ) {
+		if ( false !== strpos( $n, $cuvant ) ) {
+			$forma = $f;
+			break;
+		}
+	}
+	return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . $forma . '</svg>';
+}
+
+/**
+ * Blocul „Aveți un eveniment?” cu telefon, WhatsApp și e-mail (Portofoliu și proiectele lui).
+ *
+ * @param string $titlu Titlul blocului.
+ */
+function aptv_cerere_oferta( $titlu = 'Aveți un eveniment? Spuneți-ne despre el.' ) {
+	$email = aptv_setare( 'email' );
+	?>
+	<section class="aptv-oferta" aria-labelledby="aptv-oferta-titlu">
+		<div>
+			<h2 id="aptv-oferta-titlu"><?php echo esc_html( $titlu ); ?></h2>
+			<p>Sunați-ne (<?php echo esc_html( aptv_setare( 'program' ) ); ?>) sau scrieți-ne. Vă răspundem cu o ofertă potrivită evenimentului dumneavoastră.</p>
+		</div>
+		<div class="aptv-oferta__butoane">
+			<a class="aptv-buton aptv-buton--galben" href="<?php echo esc_attr( aptv_telefon_link() ); ?>">Sunați: <?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a>
+			<?php if ( aptv_whatsapp_link() ) : ?>
+				<a class="aptv-buton aptv-buton--alb" href="<?php echo esc_url( aptv_whatsapp_link() ); ?>" target="_blank" rel="noopener"><?php echo aptv_icon_whatsapp(); // phpcs:ignore ?> WhatsApp</a>
+			<?php endif; ?>
+			<?php if ( $email ) : ?>
+				<a class="aptv-buton aptv-buton--alb" href="<?php echo esc_attr( 'mailto:' . $email . '?subject=' . rawurlencode( 'Cerere de ofertă — servicii video' ) ); ?>">Cereți o ofertă pe e-mail</a>
+			<?php endif; ?>
+		</div>
+	</section>
+	<?php
+}

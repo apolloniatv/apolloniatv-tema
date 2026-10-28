@@ -192,6 +192,19 @@ function aptv_videouri_existente( $ids ) {
  * @return array|WP_Error [ 'create' => int, 'sarite' => int, 'urmator' => string, 'jurnal' => string[] ]
  */
 /**
+ * Numărul părții dintr-un titlu: „P2”, „partea II”, „PARTEA 3”, „(III)”. 0 dacă nu are.
+ * Părțile aceluiași episod sunt urcate des în același minut; numărul părții le ține în ordine.
+ */
+function aptv_numar_parte( $titlu ) {
+	$romane = array( 'i' => 1, 'ii' => 2, 'iii' => 3, 'iv' => 4, 'v' => 5, 'vi' => 6, 'vii' => 7, 'viii' => 8, 'ix' => 9, 'x' => 10 );
+	if ( preg_match( '/(?:\bpartea|\bp)\s*\.?\s*(\d{1,2}|[ivx]{1,4})\b/iu', $titlu, $m ) || preg_match( '/\(\s*([ivx]{1,4})\s*\)\s*$/iu', $titlu, $m ) ) {
+		$v = strtolower( $m[1] );
+		return ctype_digit( $v ) ? (int) $v : ( $romane[ $v ] ?? 0 );
+	}
+	return 0;
+}
+
+/**
  * Unde merge o știre: 'locale', 'nationale' sau 'externe'.
  *
  * 1. Dacă titlul sau descrierea de pe YouTube conține o etichetă, ea decide:
@@ -350,6 +363,12 @@ function aptv_import_pas( $optiuni ) {
 
 		$titlu_site = ! empty( $optiuni['curata'] ) ? aptv_curata_titlu( $titlu, $tinta->name ) : $titlu;
 		$data_gmt   = aptv_data_difuzare( $titlu, $video['snippet']['publishedAt'] ?? '' );
+		$parte      = aptv_numar_parte( $titlu );
+		if ( $parte ) {
+			// Același minut, plus atâtea secunde cât numărul părții: P1, P2, P3 apar în ordine.
+			$ts       = strtotime( $data_gmt . ' UTC' );
+			$data_gmt = gmdate( 'Y-m-d H:i:s', $ts - ( $ts % 60 ) + $parte );
+		}
 
 		if ( ! empty( $optiuni['simulare'] ) ) {
 			++$rezultat['create'];

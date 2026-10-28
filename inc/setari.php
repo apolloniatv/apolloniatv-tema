@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function aptv_setari_implicite() {
 	return array(
 		'telefon'         => '0232 000 000',
-		'whatsapp'        => '0700 000 000',
+		'whatsapp'        => '0770 960 762',
 		'program'         => 'luni–vineri, 9–17',
 		'email'           => 'contact@apolloniatv.ro',
 		'adresa'          => '[Adresa redacției], Iași',

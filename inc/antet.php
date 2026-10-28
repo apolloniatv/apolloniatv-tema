@@ -40,13 +40,13 @@ add_filter( 'generate_navigation_location', '__return_empty_string' );
 add_filter( 'generate_mobile_header', '__return_false' );
 
 /**
- * Aplică mărimea textului și modul de contrast alese de vizitator ÎNAINTE să se afișeze pagina
+ * Aplică mărimea textului aleasă de vizitator ÎNAINTE să se afișeze pagina
  * (altfel pagina „ar sări” la încărcare). Alegerea e ținută în browserul vizitatorului.
  */
 add_action(
 	'wp_head',
 	function () {
-		echo "<script>try{var d=document.documentElement,m=localStorage.getItem('aptv-text');if(m==='mare'||m==='foarte-mare'){d.classList.add('aptv-text-'+m);}if(localStorage.getItem('aptv-contrast')==='1'){d.classList.add('aptv-contrast');}}catch(e){}</script>\n";
+		echo "<script>try{var d=document.documentElement,m=localStorage.getItem('aptv-text');if(m==='mare'||m==='foarte-mare'){d.classList.add('aptv-text-'+m);}}catch(e){}</script>\n";
 	},
 	1
 );
@@ -143,10 +143,9 @@ function aptv_destinatie_stiri( $stiri ) {
 /**
  * Butoanele de accesibilitate (antet și meniul de pe telefon):
  *  - Mărimea textului: „A−” micșorează, „A+” mărește (3 trepte: normal, mare, foarte mare).
- *  - Contrast: comută între culorile pastel (implicit) și culorile puternice, cu contrast maxim.
- * Ambele alegeri sunt ținute minte în browserul vizitatorului (assets/js/tema.js).
+ * Alegerea e ținută minte în browserul vizitatorului (assets/js/tema.js).
  *
- * @param bool $cu_etichete true = scrie și cuvintele „Text” și „Contrast” (meniul de pe telefon).
+ * @param bool $cu_etichete true = scrie și „Mărimea textului” (meniul de pe telefon).
  */
 function aptv_butoane_marime( $cu_etichete = false ) {
 	?>
@@ -157,10 +156,6 @@ function aptv_butoane_marime( $cu_etichete = false ) {
 			<button type="button" data-pas="1" aria-label="Mărește textul" title="Mărește textul"><span aria-hidden="true">A<small>+</small></span></button>
 			<span class="screen-reader-text aptv-marime__stare" aria-live="polite"></span>
 		</div>
-		<button type="button" class="aptv-contrast-buton" aria-pressed="false" title="Culori cu contrast puternic">
-			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
-			<span>Contrast</span>
-		</button>
 	</div>
 	<?php
 }

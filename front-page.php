@@ -49,7 +49,6 @@ $scurte = $stiintifice ? aptv_cele_mai_noi( $stiintifice->term_id, 6 ) : array()
 		$dur_rec = aptv_durata( $recomandat );
 		?>
 		<section class="aptv-container aptv-recomandat" aria-labelledby="aptv-rec-titlu">
-			<p class="aptv-recomandat__bun-venit"><?php echo esc_html( aptv_setare( 'bun_venit' ) ); ?></p>
 			<div class="aptv-recomandat__in">
 				<a class="aptv-recomandat__media" href="<?php echo esc_url( get_permalink( $recomandat ) ); ?>" tabindex="-1" aria-hidden="true">
 					<?php echo aptv_imagine( $recomandat, 'aptv-card__img', true ); // phpcs:ignore ?>

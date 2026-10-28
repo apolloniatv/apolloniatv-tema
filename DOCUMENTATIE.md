@@ -35,7 +35,6 @@ Universitate ──── Universitaria, Congresul Apollonia 2022
 - **Un episod = un articol** WordPress, pus în categoria emisiunii lui.
 - **Meniul și prima pagină se construiesc singure** din aceste categorii. Nu există un meniu de editat de mână.
 - **Meniul arată doar ce are conținut.** O emisiune sau un tip de știri fără niciun episod publicat nu apare în meniu și pe prima pagină; apare singur după primul episod.
-- **Culori pastel, cu buton de contrast.** Site-ul folosește implicit nuanțele deschise din brandbook. Butonul „Contrast” din antet (și din meniul de pe telefon) trece la culorile puternice; alegerea vizitatorului e ținută minte în browserul lui, la fel ca mărimea textului (butoanele A− / A+).
 - **Titlurile cu MAJUSCULE** sunt afișate pe site în scriere normală; în admin rămân cum au fost scrise. Un nume propriu care apare greșit (cu literă mică) se adaugă în lista din `inc/titluri.php`.
 - **Data articolului = data difuzării.** Episoadele unei emisiuni apar în ordinea datei (primul episod sus).
 
@@ -51,7 +50,7 @@ Universitate ──── Universitaria, Congresul Apollonia 2022
 Câștigă întotdeauna ultimul episod bifat. Nu trebuie debifat cel vechi.
 În lista de articole, coloana „★ Prima pagină” arată ce episoade sunt bifate.
 
-### Schimbați telefonul, WhatsApp-ul, e-mailul, adresa, linkurile rețelelor sau textul de bun venit
+### Schimbați telefonul, WhatsApp-ul, e-mailul, adresa, linkurile rețelelor sau textul din subsol
 Apollonia TV → **Setări**. Completați și apăsați **Salvează setările**.
 
 ### Adăugați o emisiune nouă

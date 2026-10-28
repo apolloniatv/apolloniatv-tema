@@ -31,7 +31,7 @@
 	--aptv-albastru-inchis: #14527F; /* bara de meniu, butoane, linkuri */
 	--aptv-albastru-hover: #0E3F63;
 	--aptv-albastru: #26A3FC;        /* albastrul din logo — doar suprafețe, nu text pe alb */
-	--aptv-rosu: #FC4F4C;            /* roșul din logo (culorile puternice: modul Contrast) */
+	--aptv-rosu: #FC4F4C;            /* roșul din logo */
 	--aptv-galben: #FFFF40;          /* galbenul din logo: conturul de focus la tastatură */
 	--aptv-gri: #444444;             /* texte secundare (9,7:1 pe alb) */
 	--aptv-linie: #BBBBBB;           /* linii de despărțire */
@@ -40,32 +40,17 @@
 	--aptv-latime: 1240px;           /* lățimea maximă a conținutului */
 	--aptv-text-mic: max(16px, 0.8rem); /* cel mai mic text de pe site */
 
-	/* MODUL PASTEL (implicit): nuanțele deschise din brandbook („Culori secundare”). */
-	--aptv-accent: #FD9594;          /* banda titlurilor, eticheta RECOMANDAT */
-	--aptv-accent-text: #000000;
-	--aptv-evidentiere: #FEFE8C;     /* eticheta NOU, butonul de meniu curent */
-	--aptv-ajutor-fundal: #FFFFD9;   /* banda „Nu găsiți ce căutați?” */
-	--aptv-chenar: #666666;          /* chenarele butoanelor și casetelor (5,7:1 pe alb) */
-	--aptv-chenar-fin: #BBBBBB;
-	--aptv-univ-fundal: #14527F;
-}
-
-/* MODUL CONTRAST (butonul „Contrast”): culorile puternice ale brandului, chenare negre. */
-html.aptv-contrast {
-	--aptv-accent: #FC4F4C;
+	--aptv-accent: #FC4F4C;          /* banda roșie a titlurilor, eticheta RECOMANDAT */
 	--aptv-accent-text: #FFFFFF;
-	--aptv-evidentiere: #FFFF40;
-	--aptv-ajutor-fundal: #FFFF40;
-	--aptv-chenar: #000000;
-	--aptv-chenar-fin: #000000;
+	--aptv-evidentiere: #FFFF40;     /* eticheta NOU, butonul de meniu curent */
+	--aptv-ajutor-fundal: #FFFF40;   /* banda „Nu găsiți ce căutați?” */
+	--aptv-chenar: #000000;          /* chenarele butoanelor și casetelor */
+	--aptv-chenar-fin: #BBBBBB;
 	--aptv-univ-fundal: #000000;
-	--aptv-gri: #222222;
-	--aptv-linie: #666666;
 }
 
-/* Elementele în culoarea temei (Educație, Cultură...): pastel sau puternic, după mod. */
-.aptv-c { background: var(--c-pastel); color: var(--c-pastel-text); }
-html.aptv-contrast .aptv-c { background: var(--c-tare); color: var(--c-tare-text); }
+/* Elementele în culoarea temei (Educație, Cultură...): culoarea vine din categorie (câmpul „Culoare”). */
+.aptv-c { background: var(--c-tare); color: var(--c-tare-text); }
 
 /* Mărimea textului: butoanele A / A+ / A++ schimbă doar această valoare. */
 html { font-size: 20px; }
@@ -192,7 +177,6 @@ select:focus-visible {
 	border: 2px solid var(--aptv-albastru-inchis); border-radius: 0; background: var(--aptv-albastru-inchis); color: #FFFFFF; cursor: pointer;
 }
 .aptv-cautare button:hover { background: var(--aptv-albastru-hover); border-color: var(--aptv-albastru-hover); }
-html.aptv-contrast .aptv-cautare button { background: var(--aptv-negru); border-color: var(--aptv-negru); }
 
 .aptv-accesibil { display: flex; align-items: center; gap: 0.5rem; flex: none; }
 .aptv-marime { display: inline-flex; align-items: stretch; border: 1px solid var(--aptv-chenar-fin); background: #FFFFFF; }
@@ -202,22 +186,14 @@ html.aptv-contrast .aptv-cautare button { background: var(--aptv-negru); border-
 }
 .aptv-marime button + button { border-left: 1px solid var(--aptv-chenar-fin); }
 .aptv-marime button small { font-size: 0.75em; margin-left: 1px; }
-.aptv-marime button:hover, .aptv-contrast-buton:hover { background: var(--aptv-fundal); }
+.aptv-marime button:hover { background: var(--aptv-fundal); }
 .aptv-marime button[aria-disabled="true"] { color: #8A8A8A; cursor: default; background: transparent; }
-.aptv-contrast-buton {
-	display: inline-flex; align-items: center; gap: 0.45em; min-height: 48px; padding: 0 0.9em;
-	border: 1px solid var(--aptv-chenar-fin); border-radius: 0; background: #FFFFFF; cursor: pointer;
-	font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 700; color: var(--aptv-negru);
-}
-.aptv-contrast-buton svg { width: 20px; height: 20px; flex: none; }
-.aptv-contrast-buton[aria-pressed="true"] { background: var(--aptv-negru); border-color: var(--aptv-negru); color: #FFFFFF; }
 .aptv-accesibil--mare { flex-wrap: wrap; gap: 0.8rem 1rem; }
 .aptv-accesibil--mare .aptv-marime { align-items: center; border: 0; gap: 0; }
 .aptv-accesibil__eticheta { font-weight: 700; margin-right: 0.7rem; }
 .aptv-accesibil--mare .aptv-marime button { min-width: 56px; min-height: 52px; border: 1px solid var(--aptv-chenar); }
 .aptv-accesibil--mare .aptv-marime button + button { border-left: 0; }
-.aptv-accesibil--mare .aptv-contrast-buton { min-height: 52px; border-color: var(--aptv-chenar); font-size: 18px; }
-
+.aptv-accesibil--mare 
 .aptv-meniu-buton { display: none; }
 
 /* Bara de meniu albastră, ca bara de pe post. */
@@ -313,8 +289,7 @@ html.aptv-contrast .aptv-cautare button { background: var(--aptv-negru); border-
 .aptv-card--lista .aptv-redare span:not(.screen-reader-text), .aptv-card--lista-scurt .aptv-redare span:not(.screen-reader-text) { display: none; }
 
 /* 7. Prima pagină -------------------------------------------------------- */
-.aptv-recomandat { padding-top: 1.8rem; }
-.aptv-recomandat__bun-venit { margin: 0 0 1.1rem; font-size: 1.05rem; color: var(--aptv-gri); }
+.aptv-recomandat { padding-top: 2rem; }
 .aptv-recomandat__in { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.4rem 1.8rem; align-items: start; }
 .aptv-recomandat__media { min-width: 0; position: relative; display: block; aspect-ratio: 16 / 9; background: var(--aptv-imagine); overflow: hidden; }
 .aptv-recomandat__text { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
@@ -436,7 +411,7 @@ html.aptv-contrast .aptv-cautare button { background: var(--aptv-negru); border-
 
 /* 10. Subsol ------------------------------------------------------------- */
 .aptv-ajutor { padding-block: 2.6rem 2.4rem; }
-.aptv-ajutor__in { background: var(--aptv-ajutor-fundal); border-left: 8px solid var(--aptv-evidentiere); color: var(--aptv-negru); padding: 1.6rem 1.8rem; display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
+.aptv-ajutor__in { background: var(--aptv-ajutor-fundal); color: var(--aptv-negru); padding: 1.6rem 1.8rem; display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
 .aptv-ajutor h2 { font-size: 1.5rem; margin: 0 0 0.2em; }
 .aptv-ajutor p { margin: 0; }
 .aptv-ajutor__butoane { display: flex; flex-wrap: wrap; gap: 0.7rem; }
@@ -472,8 +447,7 @@ html.aptv-contrast .aptv-cautare button { background: var(--aptv-negru); border-
 	.aptv-meniu-buton svg { width: 20px; height: 20px; }
 
 	.aptv-recomandat { padding-top: 1rem; }
-	.aptv-recomandat__bun-venit { display: none; }
-	.aptv-recomandat__text h1 { font-size: 1.45rem; }
+		.aptv-recomandat__text h1 { font-size: 1.45rem; }
 	.aptv-recomandat__text .aptv-buton { width: 100%; }
 	.aptv-main h1 { font-size: 1.6rem; }
 	.aptv-banda h1 { font-size: 2rem; }

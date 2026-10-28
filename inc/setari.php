@@ -4,7 +4,7 @@
  *
  * CE FACE: adaugă în admin pagina „Apollonia TV → Setări”, unde echipa poate schimba,
  * fără cod: telefonul, programul, e-mailul, adresa, linkurile rețelelor sociale,
- * textele de bun venit de pe prima pagină și cheia YouTube API (folosită la import).
+ * descrierea din subsol și cheia YouTube API (folosită la import).
  *
  * UNDE SE FOLOSESC: oriunde în temă se scrie aptv_setare( 'telefon' ) etc.
  *
@@ -33,7 +33,6 @@ function aptv_setari_implicite() {
 		'facebook'        => 'https://www.facebook.com/ApolloniaTV',
 		'instagram'       => 'https://www.instagram.com/apolloniatv/',
 		'tiktok'          => 'https://www.tiktok.com/@apolloniatv',
-		'bun_venit'       => 'Bine ați venit! Alegeți o temă de mai jos sau porniți materialul recomandat.',
 		'despre'          => 'Platforma media educațională a Universității „Apollonia” din Iași: emisiuni, știri și reportaje, gratuit, pentru toată lumea.',
 	);
 }
@@ -114,7 +113,7 @@ add_action(
 		$implicite = aptv_setari_implicite();
 		$noi       = array();
 		$campuri_url   = array( 'youtube', 'facebook', 'instagram', 'tiktok' );
-		$campuri_lungi = array( 'bun_venit', 'despre' );
+		$campuri_lungi = array( 'despre' );
 
 		foreach ( array_keys( $implicite ) as $cheie ) {
 			$valoare = isset( $_POST[ $cheie ] ) ? wp_unslash( $_POST[ $cheie ] ) : '';
@@ -160,7 +159,6 @@ function aptv_pagina_setari() {
 		'facebook'   => array( 'Link Facebook', 'url' ),
 		'instagram'  => array( 'Link Instagram', 'url' ),
 		'tiktok'     => array( 'Link TikTok', 'url' ),
-		'bun_venit'  => array( 'Prima pagină — rândul de bun venit (deasupra materialului recomandat)', 'textarea' ),
 		'despre'     => array( 'Subsol — scurtă descriere a Apollonia TV', 'textarea' ),
 	);
 	$are_cheie = '' !== aptv_cheie_youtube();

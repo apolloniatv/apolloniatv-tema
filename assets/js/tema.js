@@ -67,7 +67,7 @@
 		}
 	} );
 
-	/* 2. Mărimea textului și contrastul ---------------------------------- */
+	/* 2. Mărimea textului ------------------------------------------------ */
 	var radacina = document.documentElement;
 	var TREPTE = [ 'normal', 'mare', 'foarte-mare' ];
 	var NUME = { 'normal': 'Text normal', 'mare': 'Text mare', 'foarte-mare': 'Text foarte mare' };
@@ -121,22 +121,6 @@
 		} );
 	} );
 	arataMarime( false );
-
-	// Contrast: culorile pastel (implicit) ⇄ culorile puternice.
-	function arataContrast() {
-		var activ = radacina.classList.contains( 'aptv-contrast' );
-		document.querySelectorAll( '.aptv-contrast-buton' ).forEach( function ( b ) {
-			b.setAttribute( 'aria-pressed', activ ? 'true' : 'false' );
-		} );
-	}
-	document.querySelectorAll( '.aptv-contrast-buton' ).forEach( function ( b ) {
-		b.addEventListener( 'click', function () {
-			var activ = radacina.classList.toggle( 'aptv-contrast' );
-			scrie( 'aptv-contrast', activ ? '1' : '0' );
-			arataContrast();
-		} );
-	} );
-	arataContrast();
 
 	/* 3. Playerul --------------------------------------------------------- */
 	document.addEventListener( 'click', function ( e ) {

@@ -88,9 +88,8 @@ $scurte = $stiintifice ? aptv_cele_mai_noi( $stiintifice->term_id, 6 ) : array()
 			<p class="aptv-sectiune__intro">Nu știți numele emisiunii? Alegeți tema, apoi emisiunea.</p>
 			<div class="aptv-grila aptv-grila--teme">
 				<?php foreach ( $teme as $tema ) : ?>
-					<?php list( $fundal, $text ) = aptv_culoare( $tema ); ?>
 					<div class="aptv-tema">
-						<a class="aptv-tema__cap" href="<?php echo esc_url( get_term_link( $tema ) ); ?>" style="background:<?php echo esc_attr( $fundal ); ?>;color:<?php echo esc_attr( $text ); ?>"><?php echo esc_html( $tema->name ); ?></a>
+						<a class="aptv-tema__cap aptv-c" href="<?php echo esc_url( get_term_link( $tema ) ); ?>" style="<?php echo esc_attr( aptv_stil_culoare( $tema ) ); ?>"><?php echo esc_html( $tema->name ); ?></a>
 						<?php foreach ( aptv_subcategorii_cu_continut( $tema ) as $em ) : ?>
 							<a class="aptv-tema__emisiune" href="<?php echo esc_url( get_term_link( $em ) ); ?>">
 								<span><?php echo esc_html( $em->name ); ?></span>

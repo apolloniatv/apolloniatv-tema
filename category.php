@@ -27,11 +27,10 @@ $sectiune  = aptv_sectiune( $categorie );
  * Cardul unei emisiuni (folosit doar pe această pagină).
  */
 $card_emisiune = function ( $emisiune ) {
-	list( $fundal, $text ) = aptv_culoare( $emisiune );
 	$parinte               = $emisiune->parent ? get_term( $emisiune->parent, 'category' ) : null;
 	?>
 	<a class="aptv-emisiune" href="<?php echo esc_url( get_term_link( $emisiune ) ); ?>">
-		<span class="aptv-emisiune__afis" style="background:<?php echo esc_attr( $fundal ); ?>;color:<?php echo esc_attr( $text ); ?>">
+		<span class="aptv-emisiune__afis aptv-c" style="<?php echo esc_attr( aptv_stil_culoare( $emisiune ) ); ?>">
 			<?php if ( $parinte ) : ?>
 				<span class="aptv-emisiune__tema"><?php echo esc_html( mb_strtoupper( $parinte->name ) ); ?></span>
 			<?php endif; ?>
@@ -67,7 +66,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 <?php if ( 'emisiune' === $tip ) : ?>
 	<?php
 	/* ---------------- Pagina unei emisiuni ---------------- */
-	list( $fundal, $text ) = aptv_culoare( $categorie );
+	$stil_culoare = aptv_stil_culoare( $categorie );
 	$primul                = get_posts( array( 'cat' => $categorie->term_id, 'posts_per_page' => 1, 'orderby' => 'date', 'order' => 'ASC', 'no_found_rows' => true ) );
 	$ultimul               = get_posts( array( 'cat' => $categorie->term_id, 'posts_per_page' => 1, 'orderby' => 'date', 'order' => 'DESC', 'no_found_rows' => true ) );
 	$parinte               = $categorie->parent ? get_term( $categorie->parent, 'category' ) : null;
@@ -76,7 +75,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 	$pagina                = max( 1, (int) get_query_var( 'paged' ) );
 	$adresa                = get_term_link( $categorie );
 	?>
-	<section class="aptv-banda" style="background:<?php echo esc_attr( $fundal ); ?>;color:<?php echo esc_attr( $text ); ?>">
+	<section class="aptv-banda aptv-c" style="<?php echo esc_attr( $stil_culoare ); ?>">
 		<div class="aptv-container">
 			<?php aptv_unde_va_aflati( $categorie ); ?>
 			<div class="aptv-banda__in">
@@ -124,7 +123,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 					?>
 					<li>
 						<a class="aptv-episod" href="<?php the_permalink(); ?>">
-							<span class="aptv-episod__media" style="background:<?php echo esc_attr( $fundal ); ?>">
+							<span class="aptv-episod__media">
 								<?php echo aptv_imagine( null, 'aptv-card__img' ); // phpcs:ignore ?>
 								<span class="aptv-redare"><?php echo aptv_icon_play(); // phpcs:ignore ?><?php echo $durata ? '<span>' . esc_html( $durata ) . '</span>' : ''; ?></span>
 							</span>

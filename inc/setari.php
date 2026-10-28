@@ -25,6 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function aptv_setari_implicite() {
 	return array(
 		'telefon'         => '0232 000 000',
+		'whatsapp'        => '0700 000 000',
 		'program'         => 'luni–vineri, 9–17',
 		'email'           => 'contact@apolloniatv.ro',
 		'adresa'          => '[Adresa redacției], Iași',
@@ -54,6 +55,30 @@ function aptv_setare( $cheie ) {
  */
 function aptv_telefon_link() {
 	return 'tel:' . preg_replace( '/[^0-9+]/', '', aptv_setare( 'telefon' ) );
+}
+
+/**
+ * Linkul care deschide o conversație WhatsApp cu numărul din setări (ex. 0700 000 000 → https://wa.me/40700000000).
+ * Șir gol dacă nu e setat niciun număr.
+ */
+function aptv_whatsapp_link() {
+	$cifre = preg_replace( '/\D/', '', aptv_setare( 'whatsapp' ) );
+	if ( '' === $cifre ) {
+		return '';
+	}
+	if ( 0 === strpos( $cifre, '00' ) ) {
+		$cifre = substr( $cifre, 2 );        // 0040... → 40...
+	} elseif ( 0 === strpos( $cifre, '0' ) ) {
+		$cifre = '4' . $cifre;               // 07... (număr românesc) → 407...
+	}
+	return 'https://wa.me/' . $cifre;
+}
+
+/**
+ * Pictograma WhatsApp simplificată (un balon de conversație cu receptor).
+ */
+function aptv_icon_whatsapp() {
+	return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20l1.3-3.9A8.5 8.5 0 1 1 8 19.1z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-.9-.9 1a4.5 4.5 0 0 1-3-3l1-.9-.9-2z" fill="currentColor" stroke="none"/></svg>';
 }
 
 /**
@@ -128,6 +153,7 @@ function aptv_pagina_setari() {
 	$etichete = array(
 		'telefon'    => array( 'Telefon (apare în bara de sus și în subsol)', 'text' ),
 		'program'    => array( 'Programul la telefon', 'text' ),
+		'whatsapp'   => array( 'Număr WhatsApp (lăsați gol ca să nu apară pe site)', 'text' ),
 		'email'      => array( 'E-mail de contact', 'email' ),
 		'adresa'     => array( 'Adresa redacției', 'text' ),
 		'youtube'    => array( 'Link YouTube', 'url' ),

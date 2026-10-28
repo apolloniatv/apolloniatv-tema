@@ -31,15 +31,41 @@
 	--aptv-albastru-inchis: #14527F; /* bara de meniu, butoane, linkuri */
 	--aptv-albastru-hover: #0E3F63;
 	--aptv-albastru: #26A3FC;        /* albastrul din logo — doar suprafețe, nu text pe alb */
-	--aptv-rosu: #FC4F4C;            /* roșul din logo: banda titlurilor, eticheta RECOMANDAT */
-	--aptv-galben: #FFFF40;          /* evidențieri, banda de ajutor, eticheta NOU */
+	--aptv-rosu: #FC4F4C;            /* roșul din logo (culorile puternice: modul Contrast) */
+	--aptv-galben: #FFFF40;          /* galbenul din logo: conturul de focus la tastatură */
 	--aptv-gri: #444444;             /* texte secundare (9,7:1 pe alb) */
 	--aptv-linie: #BBBBBB;           /* linii de despărțire */
 	--aptv-fundal: #F2F2F2;          /* fundaluri de secțiune */
 	--aptv-imagine: #23313F;         /* fundal până se încarcă imaginea */
 	--aptv-latime: 1240px;           /* lățimea maximă a conținutului */
 	--aptv-text-mic: max(16px, 0.8rem); /* cel mai mic text de pe site */
+
+	/* MODUL PASTEL (implicit): nuanțele deschise din brandbook („Culori secundare”). */
+	--aptv-accent: #FD9594;          /* banda titlurilor, eticheta RECOMANDAT */
+	--aptv-accent-text: #000000;
+	--aptv-evidentiere: #FEFE8C;     /* eticheta NOU, butonul de meniu curent */
+	--aptv-ajutor-fundal: #FFFFD9;   /* banda „Nu găsiți ce căutați?” */
+	--aptv-chenar: #666666;          /* chenarele butoanelor și casetelor (5,7:1 pe alb) */
+	--aptv-chenar-fin: #BBBBBB;
+	--aptv-univ-fundal: #14527F;
 }
+
+/* MODUL CONTRAST (butonul „Contrast”): culorile puternice ale brandului, chenare negre. */
+html.aptv-contrast {
+	--aptv-accent: #FC4F4C;
+	--aptv-accent-text: #FFFFFF;
+	--aptv-evidentiere: #FFFF40;
+	--aptv-ajutor-fundal: #FFFF40;
+	--aptv-chenar: #000000;
+	--aptv-chenar-fin: #000000;
+	--aptv-univ-fundal: #000000;
+	--aptv-gri: #222222;
+	--aptv-linie: #666666;
+}
+
+/* Elementele în culoarea temei (Educație, Cultură...): pastel sau puternic, după mod. */
+.aptv-c { background: var(--c-pastel); color: var(--c-pastel-text); }
+html.aptv-contrast .aptv-c { background: var(--c-tare); color: var(--c-tare-text); }
 
 /* Mărimea textului: butoanele A / A+ / A++ schimbă doar această valoare. */
 html { font-size: 20px; }
@@ -87,7 +113,7 @@ select:focus-visible {
 .aptv-gol { padding: 1.2rem 1.4rem; background: var(--aptv-fundal); color: var(--aptv-negru); }
 
 /* Titlu cu banda roșie verticală, ca în burtierele de pe post. */
-.aptv-titlu-banda { border-left: 8px solid var(--aptv-rosu); padding-left: 0.7rem; }
+.aptv-titlu-banda { border-left: 8px solid var(--aptv-accent); padding-left: 0.7rem; }
 
 .aptv-buton {
 	display: inline-flex; align-items: center; justify-content: center; gap: 0.5em;
@@ -97,14 +123,14 @@ select:focus-visible {
 	font-size: 1.05rem; font-weight: 700; line-height: 1.25; text-decoration: none; text-align: center;
 }
 .aptv-buton:hover { background: var(--aptv-albastru-hover); border-color: var(--aptv-albastru-hover); color: #FFFFFF; }
-.aptv-buton svg { width: 1.1em; height: 1.1em; flex: none; }
-.aptv-buton--contur { background: #FFFFFF; color: var(--aptv-negru); border-color: var(--aptv-negru); }
+.aptv-buton svg { width: 1.2em; height: 1.2em; flex: none; }
+.aptv-buton--contur { background: #FFFFFF; color: var(--aptv-negru); border-color: var(--aptv-chenar); }
 .aptv-buton--contur:hover { background: var(--aptv-fundal); color: var(--aptv-negru); border-color: var(--aptv-negru); }
 .aptv-buton--inchis { background: var(--aptv-negru); border-color: var(--aptv-negru); }
 .aptv-buton--inchis:hover { background: #333333; border-color: #333333; }
 .aptv-buton--alb { background: #FFFFFF; border-color: #FFFFFF; color: var(--aptv-negru); }
 .aptv-buton--alb:hover { background: var(--aptv-fundal); color: var(--aptv-negru); }
-.aptv-buton--galben { background: var(--aptv-galben); border-color: var(--aptv-galben); color: var(--aptv-negru); }
+.aptv-buton--galben { background: var(--aptv-evidentiere); border-color: var(--aptv-evidentiere); color: var(--aptv-negru); }
 .aptv-buton--galben:hover { background: #F0F000; border-color: #F0F000; color: var(--aptv-negru); }
 .aptv-buton--mare { font-size: 1.2rem; min-height: 60px; padding: 0.6em 1.5em; }
 .aptv-buton--mic { font-size: var(--aptv-text-mic); min-height: 44px; padding: 0.4em 1em; }
@@ -116,8 +142,8 @@ select:focus-visible {
 	display: inline-block; font-size: var(--aptv-text-mic); font-weight: 700; letter-spacing: 0.04em;
 	text-transform: uppercase; line-height: 1.35; padding: 0.1em 0.5em;
 }
-.aptv-eticheta--nou { background: var(--aptv-galben); color: var(--aptv-negru); }
-.aptv-eticheta--recomandat { background: var(--aptv-rosu); color: #FFFFFF; font-size: 20px; padding: 0.1em 0.55em; } /* 20px bold = text mare: contrastul 3,3:1 e suficient */
+.aptv-eticheta--nou { background: var(--aptv-evidentiere); color: var(--aptv-negru); }
+.aptv-eticheta--recomandat { background: var(--aptv-accent); color: var(--aptv-accent-text); font-size: 20px; padding: 0.1em 0.55em; } /* 20px bold = text mare: alb pe roșu (3,3:1) e suficient */
 .aptv-eticheta--arhiva { background: var(--aptv-gri); color: #FFFFFF; }
 .aptv-eticheta--urmeaza { background: var(--aptv-albastru-inchis); color: #FFFFFF; }
 .aptv-eticheta--alb { background: #FFFFFF; color: var(--aptv-negru); }
@@ -133,7 +159,7 @@ select:focus-visible {
 .aptv-file { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.4rem; }
 .aptv-file a {
 	display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box;
-	padding: 0.4em 1.1em; border-radius: 0; border: 2px solid var(--aptv-negru);
+	padding: 0.4em 1.1em; border-radius: 0; border: 2px solid var(--aptv-chenar);
 	background: #FFFFFF; color: var(--aptv-negru); font-weight: 700; text-decoration: none;
 }
 .aptv-file a:hover { background: var(--aptv-fundal); color: var(--aptv-negru); }
@@ -158,23 +184,39 @@ select:focus-visible {
 .aptv-cautare input[type="search"] {
 	flex: 1 1 auto; min-width: 0; min-height: 48px; box-sizing: border-box;
 	font: inherit; font-size: 1rem; padding: 0.3em 0.7em; color: var(--aptv-negru);
-	border: 2px solid var(--aptv-negru); border-right: 0; border-radius: 0; background: #FFFFFF;
+	border: 2px solid var(--aptv-chenar); border-right: 0; border-radius: 0; background: #FFFFFF;
 }
 .aptv-cautare input[type="search"]::placeholder { color: #595959; }
 .aptv-cautare button {
 	min-height: 48px; padding: 0 1.1em; font: inherit; font-weight: 700;
-	border: 2px solid var(--aptv-negru); border-radius: 0; background: var(--aptv-negru); color: #FFFFFF; cursor: pointer;
+	border: 2px solid var(--aptv-albastru-inchis); border-radius: 0; background: var(--aptv-albastru-inchis); color: #FFFFFF; cursor: pointer;
 }
-.aptv-cautare button:hover { background: #333333; }
+.aptv-cautare button:hover { background: var(--aptv-albastru-hover); border-color: var(--aptv-albastru-hover); }
+html.aptv-contrast .aptv-cautare button { background: var(--aptv-negru); border-color: var(--aptv-negru); }
 
-.aptv-marime { display: flex; align-items: center; gap: 0.3rem; flex: none; }
-.aptv-marime__eticheta { font-size: var(--aptv-text-mic); font-weight: 700; color: var(--aptv-gri); margin-right: 0.3rem; }
+.aptv-accesibil { display: flex; align-items: center; gap: 0.5rem; flex: none; }
+.aptv-marime { display: inline-flex; align-items: stretch; border: 1px solid var(--aptv-chenar-fin); background: #FFFFFF; }
 .aptv-marime button {
-	min-width: 48px; min-height: 48px; padding: 0 0.4em;
-	font: inherit; font-size: 18px; font-weight: 700; color: var(--aptv-negru);
-	background: #FFFFFF; border: 2px solid var(--aptv-negru); border-radius: 0; cursor: pointer;
+	min-width: 46px; min-height: 46px; padding: 0 0.5em; border: 0; border-radius: 0; background: transparent;
+	font-family: Arial, Helvetica, sans-serif; font-size: 19px; font-weight: 700; line-height: 1; color: var(--aptv-negru); cursor: pointer;
 }
-.aptv-marime button[aria-pressed="true"] { background: var(--aptv-negru); color: #FFFFFF; }
+.aptv-marime button + button { border-left: 1px solid var(--aptv-chenar-fin); }
+.aptv-marime button small { font-size: 0.75em; margin-left: 1px; }
+.aptv-marime button:hover, .aptv-contrast-buton:hover { background: var(--aptv-fundal); }
+.aptv-marime button[aria-disabled="true"] { color: #8A8A8A; cursor: default; background: transparent; }
+.aptv-contrast-buton {
+	display: inline-flex; align-items: center; gap: 0.45em; min-height: 48px; padding: 0 0.9em;
+	border: 1px solid var(--aptv-chenar-fin); border-radius: 0; background: #FFFFFF; cursor: pointer;
+	font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 700; color: var(--aptv-negru);
+}
+.aptv-contrast-buton svg { width: 20px; height: 20px; flex: none; }
+.aptv-contrast-buton[aria-pressed="true"] { background: var(--aptv-negru); border-color: var(--aptv-negru); color: #FFFFFF; }
+.aptv-accesibil--mare { flex-wrap: wrap; gap: 0.8rem 1rem; }
+.aptv-accesibil--mare .aptv-marime { align-items: center; border: 0; gap: 0; }
+.aptv-accesibil__eticheta { font-weight: 700; margin-right: 0.7rem; }
+.aptv-accesibil--mare .aptv-marime button { min-width: 56px; min-height: 52px; border: 1px solid var(--aptv-chenar); }
+.aptv-accesibil--mare .aptv-marime button + button { border-left: 0; }
+.aptv-accesibil--mare .aptv-contrast-buton { min-height: 52px; border-color: var(--aptv-chenar); font-size: 18px; }
 
 .aptv-meniu-buton { display: none; }
 
@@ -186,7 +228,7 @@ select:focus-visible {
 	padding: 0 1.1em; font-size: 1.05rem; font-weight: 700; color: #FFFFFF; text-decoration: none;
 }
 .aptv-meniu__link:hover { background: var(--aptv-albastru-hover); color: #FFFFFF; }
-.aptv-meniu__link.is-curent { background: var(--aptv-galben); color: var(--aptv-negru); }
+.aptv-meniu__link.is-curent { background: var(--aptv-evidentiere); color: var(--aptv-negru); }
 .aptv-meniu__link[aria-expanded="true"] { background: #FFFFFF; color: var(--aptv-albastru-inchis); }
 .aptv-meniu__contact { margin-left: auto; }
 
@@ -203,7 +245,7 @@ select:focus-visible {
 .aptv-panou__butoane { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .aptv-panou__butoane a {
 	display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.2em;
-	background: #FFFFFF; border: 2px solid var(--aptv-negru); font-weight: 700; color: var(--aptv-negru); text-decoration: none;
+	background: #FFFFFF; border: 2px solid var(--aptv-chenar); font-weight: 700; color: var(--aptv-negru); text-decoration: none;
 }
 
 /* Meniul de pe telefon: un ecran întreg. */
@@ -218,13 +260,13 @@ select:focus-visible {
 .aptv-meniu-mobil__inchide {
 	display: inline-flex; align-items: center; gap: 0.4em; min-height: 48px; padding: 0 1em;
 	font: inherit; font-weight: 700; color: var(--aptv-negru); background: #FFFFFF;
-	border: 2px solid var(--aptv-negru); border-radius: 0; cursor: pointer;
+	border: 2px solid var(--aptv-chenar); border-radius: 0; cursor: pointer;
 }
 .aptv-meniu-mobil__inchide svg { width: 18px; height: 18px; }
 .aptv-meniu-mobil__corp { padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 1.4rem; }
 .aptv-meniu-mobil__corp .aptv-cautare { max-width: none; flex: none; }
 .aptv-meniu-mobil__lista, .aptv-meniu-mobil__lista ul { list-style: none; margin: 0; padding: 0; }
-.aptv-meniu-mobil__lista { border-top: 2px solid var(--aptv-negru); }
+.aptv-meniu-mobil__lista { border-top: 2px solid var(--aptv-chenar); }
 .aptv-meniu-mobil__lista > li > a {
 	display: flex; align-items: center; min-height: 60px; border-bottom: 1px solid var(--aptv-linie);
 	font-size: 1.15rem; font-weight: 700; color: var(--aptv-negru); text-decoration: none;
@@ -233,8 +275,8 @@ select:focus-visible {
 	display: flex; align-items: center; min-height: 52px; padding-left: 1.2rem; border-bottom: 1px solid var(--aptv-linie);
 	font-weight: 700; color: var(--aptv-albastru-inchis); text-decoration: none;
 }
-.aptv-meniu-mobil .aptv-marime__eticheta { color: var(--aptv-negru); font-size: 1rem; }
-.aptv-meniu-mobil__tel { width: 100%; }
+.aptv-meniu-mobil__ajutor { display: flex; flex-direction: column; gap: 0.6rem; }
+.aptv-meniu-mobil__ajutor p { margin: 0; font-weight: 700; }
 
 /* 6. Carduri de episod --------------------------------------------------- */
 .aptv-card { display: flex; flex-direction: column; gap: 0.6rem; color: var(--aptv-negru); text-decoration: none; }
@@ -281,7 +323,7 @@ select:focus-visible {
 .aptv-recomandat__text h1 a:hover { text-decoration: underline; }
 .aptv-recomandat__meta { margin: 0; color: var(--aptv-gri); }
 
-.aptv-tema { border: 2px solid var(--aptv-negru); display: flex; flex-direction: column; }
+.aptv-tema { border: 2px solid var(--aptv-chenar); display: flex; flex-direction: column; }
 .aptv-tema__cap { display: block; padding: 0.55em 0.8em; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
 .aptv-tema__cap:hover { text-decoration: underline; }
 .aptv-tema__emisiune {
@@ -292,7 +334,7 @@ select:focus-visible {
 .aptv-tema__emisiune:hover { background: var(--aptv-fundal); color: var(--aptv-negru); }
 .aptv-tema__nr { font-weight: 400; font-size: var(--aptv-text-mic); color: var(--aptv-gri); white-space: nowrap; }
 
-.aptv-univ { background: var(--aptv-negru); color: #FFFFFF; display: flex; flex-wrap: wrap; }
+.aptv-univ { background: var(--aptv-univ-fundal); color: #FFFFFF; display: flex; flex-wrap: wrap; }
 .aptv-univ__text { flex: 1 1 22rem; min-width: 0; padding: 1.6rem 1.6rem 1.4rem; }
 .aptv-univ h2 { color: #FFFFFF; margin: 0.6em 0 0.35em; }
 .aptv-univ p { color: #DDDDDD; margin: 0; }
@@ -333,7 +375,7 @@ select:focus-visible {
 .aptv-grup h2 a { color: inherit; text-decoration: none; }
 .aptv-grup h2 a:hover { text-decoration: underline; }
 
-.aptv-emisiune { display: flex; flex-direction: column; border: 2px solid var(--aptv-negru); color: var(--aptv-negru); text-decoration: none; }
+.aptv-emisiune { display: flex; flex-direction: column; border: 2px solid var(--aptv-chenar); color: var(--aptv-negru); text-decoration: none; }
 .aptv-emisiune:hover { color: var(--aptv-negru); }
 .aptv-emisiune:hover .aptv-emisiune__nume { text-decoration: underline; }
 .aptv-emisiune__afis { min-height: 8rem; padding: 1rem 1.1rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.6rem; }
@@ -346,7 +388,7 @@ select:focus-visible {
 .navigation.pagination .nav-links { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 .navigation.pagination .page-numbers {
 	display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 48px;
-	padding: 0.2em 0.8em; box-sizing: border-box; border: 2px solid var(--aptv-negru); border-radius: 0;
+	padding: 0.2em 0.8em; box-sizing: border-box; border: 2px solid var(--aptv-chenar); border-radius: 0;
 	font-weight: 700; color: var(--aptv-negru); text-decoration: none;
 }
 .navigation.pagination .page-numbers.current { background: var(--aptv-albastru-inchis); border-color: var(--aptv-albastru-inchis); color: #FFFFFF; }
@@ -363,7 +405,7 @@ select:focus-visible {
 .aptv-episod-pagina__descriere { color: #222222; max-width: 40rem; }
 .aptv-episod-pagina__nav { margin-top: 1rem; }
 
-.aptv-urmeaza { margin-top: 1.8rem; border: 2px solid var(--aptv-negru); }
+.aptv-urmeaza { margin-top: 1.8rem; border: 2px solid var(--aptv-chenar); }
 .aptv-urmeaza__link {
 	display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.8rem 1.4rem;
 	padding: 0.8rem 1rem 1rem; color: var(--aptv-negru); text-decoration: none;
@@ -394,7 +436,7 @@ select:focus-visible {
 
 /* 10. Subsol ------------------------------------------------------------- */
 .aptv-ajutor { padding-block: 2.6rem 2.4rem; }
-.aptv-ajutor__in { background: var(--aptv-galben); color: var(--aptv-negru); padding: 1.6rem 1.8rem; display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
+.aptv-ajutor__in { background: var(--aptv-ajutor-fundal); border-left: 8px solid var(--aptv-evidentiere); color: var(--aptv-negru); padding: 1.6rem 1.8rem; display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
 .aptv-ajutor h2 { font-size: 1.5rem; margin: 0 0 0.2em; }
 .aptv-ajutor p { margin: 0; }
 .aptv-ajutor__butoane { display: flex; flex-wrap: wrap; gap: 0.7rem; }

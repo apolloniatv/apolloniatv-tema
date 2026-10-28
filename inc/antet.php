@@ -40,13 +40,13 @@ add_filter( 'generate_navigation_location', '__return_empty_string' );
 add_filter( 'generate_mobile_header', '__return_false' );
 
 /**
- * Aplică mărimea textului aleasă de vizitator ÎNAINTE să se afișeze pagina
+ * Aplică mărimea textului și modul de contrast alese de vizitator ÎNAINTE să se afișeze pagina
  * (altfel pagina „ar sări” la încărcare). Alegerea e ținută în browserul vizitatorului.
  */
 add_action(
 	'wp_head',
 	function () {
-		echo "<script>try{var m=localStorage.getItem('aptv-text');if(m==='mare'||m==='foarte-mare'){document.documentElement.classList.add('aptv-text-'+m);}}catch(e){}</script>\n";
+		echo "<script>try{var d=document.documentElement,m=localStorage.getItem('aptv-text');if(m==='mare'||m==='foarte-mare'){d.classList.add('aptv-text-'+m);}if(localStorage.getItem('aptv-contrast')==='1'){d.classList.add('aptv-contrast');}}catch(e){}</script>\n";
 	},
 	1
 );
@@ -141,15 +141,26 @@ function aptv_destinatie_stiri( $stiri ) {
 }
 
 /**
- * Butoanele de mărime a textului (folosite în antet și în meniul de pe telefon).
+ * Butoanele de accesibilitate (antet și meniul de pe telefon):
+ *  - Mărimea textului: „A−” micșorează, „A+” mărește (3 trepte: normal, mare, foarte mare).
+ *  - Contrast: comută între culorile pastel (implicit) și culorile puternice, cu contrast maxim.
+ * Ambele alegeri sunt ținute minte în browserul vizitatorului (assets/js/tema.js).
+ *
+ * @param bool $cu_etichete true = scrie și cuvintele „Text” și „Contrast” (meniul de pe telefon).
  */
-function aptv_butoane_marime( $eticheta_vizibila = 'TEXT' ) {
+function aptv_butoane_marime( $cu_etichete = false ) {
 	?>
-	<div class="aptv-marime" role="group" aria-label="Mărimea textului">
-		<span class="aptv-marime__eticheta" aria-hidden="true"><?php echo esc_html( $eticheta_vizibila ); ?></span>
-		<button type="button" data-marime="normal" aria-label="Text normal">A</button>
-		<button type="button" data-marime="mare" aria-label="Text mare">A+</button>
-		<button type="button" data-marime="foarte-mare" aria-label="Text foarte mare">A++</button>
+	<div class="aptv-accesibil<?php echo $cu_etichete ? ' aptv-accesibil--mare' : ''; ?>">
+		<div class="aptv-marime" role="group" aria-label="Mărimea textului">
+			<?php if ( $cu_etichete ) : ?><span class="aptv-accesibil__eticheta">Mărimea textului</span><?php endif; ?>
+			<button type="button" data-pas="-1" aria-label="Micșorează textul" title="Micșorează textul"><span aria-hidden="true">A<small>−</small></span></button>
+			<button type="button" data-pas="1" aria-label="Mărește textul" title="Mărește textul"><span aria-hidden="true">A<small>+</small></span></button>
+			<span class="screen-reader-text aptv-marime__stare" aria-live="polite"></span>
+		</div>
+		<button type="button" class="aptv-contrast-buton" aria-pressed="false" title="Culori cu contrast puternic">
+			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+			<span>Contrast</span>
+		</button>
 	</div>
 	<?php
 }
@@ -228,9 +239,8 @@ add_action(
 						<p class="aptv-panou__indemn">Alegeți o temă, apoi emisiunea dorită:</p>
 						<div class="aptv-panou__grila">
 							<?php foreach ( $teme as $tema ) : ?>
-								<?php list( $fundal, $text ) = aptv_culoare( $tema ); ?>
 								<div class="aptv-panou__tema">
-									<a class="aptv-panou__titlu" href="<?php echo esc_url( get_term_link( $tema ) ); ?>" style="background:<?php echo esc_attr( $fundal ); ?>;color:<?php echo esc_attr( $text ); ?>"><?php echo esc_html( $tema->name ); ?></a>
+									<a class="aptv-panou__titlu aptv-c" href="<?php echo esc_url( get_term_link( $tema ) ); ?>" style="<?php echo esc_attr( aptv_stil_culoare( $tema ) ); ?>"><?php echo esc_html( $tema->name ); ?></a>
 									<ul>
 										<?php foreach ( aptv_subcategorii_cu_continut( $tema ) as $emisiune ) : ?>
 											<li><a href="<?php echo esc_url( get_term_link( $emisiune ) ); ?>"><?php echo esc_html( $emisiune->name ); ?></a></li>
@@ -296,8 +306,14 @@ add_action(
 						<li><a href="#contact" class="aptv-meniu-mobil__ancora">Contact și ajutor</a></li>
 					</ul>
 				</nav>
-				<?php aptv_butoane_marime( 'Mărimea textului' ); ?>
-				<a class="aptv-buton aptv-buton--galben aptv-buton--mare aptv-meniu-mobil__tel" href="<?php echo esc_attr( aptv_telefon_link() ); ?>">Aveți nevoie de ajutor? Sunați: <?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a>
+				<?php aptv_butoane_marime( true ); ?>
+				<div class="aptv-meniu-mobil__ajutor">
+					<p>Aveți nevoie de ajutor?</p>
+					<a class="aptv-buton aptv-buton--galben aptv-buton--mare" href="<?php echo esc_attr( aptv_telefon_link() ); ?>">Sunați: <?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a>
+					<?php if ( aptv_whatsapp_link() ) : ?>
+						<a class="aptv-buton aptv-buton--contur aptv-buton--mare" href="<?php echo esc_url( aptv_whatsapp_link() ); ?>" target="_blank" rel="noopener"><?php echo aptv_icon_whatsapp(); // phpcs:ignore ?> Scrieți-ne pe WhatsApp</a>
+					<?php endif; ?>
+				</div>
 			</div>
 		</div>
 		<?php

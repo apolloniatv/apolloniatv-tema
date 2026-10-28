@@ -248,6 +248,48 @@ function aptv_culoare( $categorie ) {
 	return array( $fundal, $text );
 }
 
+/**
+ * Varianta pastel a unei culori: nuanțele mai deschise din brandbook (pagina „Culori secundare”).
+ * Site-ul folosește implicit culorile pastel; butonul „Contrast” revine la cele puternice.
+ */
+function aptv_pastel( $hex ) {
+	$brand = array(
+		'#26A3FC' => '#7DC8FD', // albastru logo → albastru deschis
+		'#FC4F4C' => '#FD9594', // roșu logo → roșu deschis
+		'#FFFF40' => '#FEFE8C', // galben → galben deschis
+		'#14527F' => '#14527F', // albastrul închis e deja calm: rămâne
+		'#000000' => '#CCCCCC',
+		'#444444' => '#D9D9D9',
+	);
+	$hex = strtoupper( $hex );
+	if ( isset( $brand[ $hex ] ) ) {
+		return $brand[ $hex ];
+	}
+	// Altă culoare (aleasă din admin): o amestecăm cu alb.
+	$h   = ltrim( $hex, '#' );
+	$rgb = array( hexdec( substr( $h, 0, 2 ) ), hexdec( substr( $h, 2, 2 ) ), hexdec( substr( $h, 4, 2 ) ) );
+	$lum = ( 0.299 * $rgb[0] + 0.587 * $rgb[1] + 0.114 * $rgb[2] ) / 255;
+	$alb = $lum < 0.25 ? 0.75 : 0.45;
+	return sprintf( '#%02X%02X%02X', ...array_map( fn( $c ) => (int) round( $c + ( 255 - $c ) * $alb ), $rgb ) );
+}
+
+/** Text lizibil pe un fundal: alb pe culori închise, negru pe cele deschise. */
+function aptv_text_pe( $hex ) {
+	$h   = ltrim( $hex, '#' );
+	$lum = ( 0.299 * hexdec( substr( $h, 0, 2 ) ) + 0.587 * hexdec( substr( $h, 2, 2 ) ) + 0.114 * hexdec( substr( $h, 4, 2 ) ) ) / 255;
+	return $lum < 0.5 ? '#FFFFFF' : '#000000';
+}
+
+/**
+ * Stilul unui element colorat în culoarea temei, în ambele moduri (pastel și contrast).
+ * Se pune pe elemente cu clasa „aptv-c”; tema.css alege varianta după modul activ.
+ */
+function aptv_stil_culoare( $categorie ) {
+	list( $tare, $text_tare ) = aptv_culoare( $categorie );
+	$pastel                   = aptv_pastel( $tare );
+	return sprintf( '--c-tare:%s;--c-tare-text:%s;--c-pastel:%s;--c-pastel-text:%s', $tare, $text_tare, $pastel, aptv_text_pe( $pastel ) );
+}
+
 /* -------------------------------------------------------------------------
  * Câmpurile „Playlist YouTube” și „Culoare” din ecranul de editare a categoriei.
  * ---------------------------------------------------------------------- */

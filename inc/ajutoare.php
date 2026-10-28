@@ -140,11 +140,9 @@ function aptv_eticheta( $categorie, $text = '' ) {
 	if ( ! $categorie ) {
 		return '';
 	}
-	list( $fundal, $culoare_text ) = aptv_culoare( $categorie );
 	return sprintf(
-		'<span class="aptv-eticheta" style="background:%s;color:%s">%s</span>',
-		esc_attr( $fundal ),
-		esc_attr( $culoare_text ),
+		'<span class="aptv-eticheta aptv-c" style="%s">%s</span>',
+		esc_attr( aptv_stil_culoare( $categorie ) ),
 		esc_html( $text ? $text : $categorie->name )
 	);
 }

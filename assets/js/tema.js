@@ -67,35 +67,76 @@
 		}
 	} );
 
-	/* 2. Mărimea textului ------------------------------------------------ */
+	/* 2. Mărimea textului și contrastul ---------------------------------- */
 	var radacina = document.documentElement;
-	var butoaneMarime = document.querySelectorAll( '.aptv-marime button' );
+	var TREPTE = [ 'normal', 'mare', 'foarte-mare' ];
+	var NUME = { 'normal': 'Text normal', 'mare': 'Text mare', 'foarte-mare': 'Text foarte mare' };
 
-	function aplicaMarime( marime ) {
-		radacina.classList.remove( 'aptv-text-mare', 'aptv-text-foarte-mare' );
-		if ( marime === 'mare' || marime === 'foarte-mare' ) {
-			radacina.classList.add( 'aptv-text-' + marime );
-		}
-		butoaneMarime.forEach( function ( b ) {
-			b.setAttribute( 'aria-pressed', b.dataset.marime === marime ? 'true' : 'false' );
-		} );
+	function citeste( cheie, implicit ) {
 		try {
-			localStorage.setItem( 'aptv-text', marime );
+			return localStorage.getItem( cheie ) || implicit;
 		} catch ( err ) {
-			/* browserul nu permite salvarea — mărimea se aplică doar pe pagina curentă */
+			return implicit; // browserul nu permite salvarea — alegerea se aplică doar pe pagina curentă
 		}
 	}
+	function scrie( cheie, valoare ) {
+		try {
+			localStorage.setItem( cheie, valoare );
+		} catch ( err ) {}
+	}
 
-	var marimeSalvata = 'normal';
-	try {
-		marimeSalvata = localStorage.getItem( 'aptv-text' ) || 'normal';
-	} catch ( err ) {}
-	butoaneMarime.forEach( function ( b ) {
-		b.setAttribute( 'aria-pressed', b.dataset.marime === marimeSalvata ? 'true' : 'false' );
+	var treapta = Math.max( 0, TREPTE.indexOf( citeste( 'aptv-text', 'normal' ) ) );
+
+	function arataMarime( anunta ) {
+		var marime = TREPTE[ treapta ];
+		radacina.classList.remove( 'aptv-text-mare', 'aptv-text-foarte-mare' );
+		if ( marime !== 'normal' ) {
+			radacina.classList.add( 'aptv-text-' + marime );
+		}
+		document.querySelectorAll( '.aptv-marime' ).forEach( function ( grup ) {
+			var minus = grup.querySelector( '[data-pas="-1"]' );
+			var plus = grup.querySelector( '[data-pas="1"]' );
+			if ( minus ) {
+				minus.setAttribute( 'aria-disabled', treapta === 0 ? 'true' : 'false' );
+			}
+			if ( plus ) {
+				plus.setAttribute( 'aria-disabled', treapta === TREPTE.length - 1 ? 'true' : 'false' );
+			}
+			var stare = grup.querySelector( '.aptv-marime__stare' );
+			if ( stare && anunta ) {
+				stare.textContent = NUME[ marime ];
+			}
+		} );
+	}
+
+	document.querySelectorAll( '.aptv-marime button[data-pas]' ).forEach( function ( b ) {
 		b.addEventListener( 'click', function () {
-			aplicaMarime( b.dataset.marime );
+			var noua = treapta + parseInt( b.dataset.pas, 10 );
+			if ( noua < 0 || noua >= TREPTE.length ) {
+				return;
+			}
+			treapta = noua;
+			scrie( 'aptv-text', TREPTE[ treapta ] );
+			arataMarime( true );
 		} );
 	} );
+	arataMarime( false );
+
+	// Contrast: culorile pastel (implicit) ⇄ culorile puternice.
+	function arataContrast() {
+		var activ = radacina.classList.contains( 'aptv-contrast' );
+		document.querySelectorAll( '.aptv-contrast-buton' ).forEach( function ( b ) {
+			b.setAttribute( 'aria-pressed', activ ? 'true' : 'false' );
+		} );
+	}
+	document.querySelectorAll( '.aptv-contrast-buton' ).forEach( function ( b ) {
+		b.addEventListener( 'click', function () {
+			var activ = radacina.classList.toggle( 'aptv-contrast' );
+			scrie( 'aptv-contrast', activ ? '1' : '0' );
+			arataContrast();
+		} );
+	} );
+	arataContrast();
 
 	/* 3. Playerul --------------------------------------------------------- */
 	document.addEventListener( 'click', function ( e ) {

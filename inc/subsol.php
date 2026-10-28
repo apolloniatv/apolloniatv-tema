@@ -67,6 +67,9 @@ add_action(
 				</div>
 				<div class="aptv-ajutor__butoane">
 					<a class="aptv-buton aptv-buton--inchis" href="<?php echo esc_attr( aptv_telefon_link() ); ?>">Sunați: <?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a>
+					<?php if ( aptv_whatsapp_link() ) : ?>
+						<a class="aptv-buton aptv-buton--alb" href="<?php echo esc_url( aptv_whatsapp_link() ); ?>" target="_blank" rel="noopener"><?php echo aptv_icon_whatsapp(); // phpcs:ignore ?> Scrieți-ne pe WhatsApp</a>
+					<?php endif; ?>
 					<?php if ( $email ) : ?>
 						<a class="aptv-buton aptv-buton--alb" href="<?php echo esc_attr( 'mailto:' . $email ); ?>">Scrieți-ne un e-mail</a>
 					<?php endif; ?>
@@ -95,6 +98,9 @@ add_action(
 					<h2 class="aptv-subsol__titlu">Contact</h2>
 					<p>
 						Telefon: <a href="<?php echo esc_attr( aptv_telefon_link() ); ?>"><?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a><br>
+						<?php if ( aptv_whatsapp_link() ) : ?>
+							WhatsApp: <a href="<?php echo esc_url( aptv_whatsapp_link() ); ?>" target="_blank" rel="noopener"><?php echo esc_html( aptv_setare( 'whatsapp' ) ); ?></a><br>
+						<?php endif; ?>
 						<?php if ( $email ) : ?>
 							E-mail: <a href="<?php echo esc_attr( 'mailto:' . $email ); ?>"><?php echo esc_html( $email ); ?></a><br>
 						<?php endif; ?>

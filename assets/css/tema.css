@@ -193,7 +193,6 @@ select:focus-visible {
 .aptv-accesibil__eticheta { font-weight: 700; margin-right: 0.7rem; }
 .aptv-accesibil--mare .aptv-marime button { min-width: 56px; min-height: 52px; border: 1px solid var(--aptv-chenar); }
 .aptv-accesibil--mare .aptv-marime button + button { border-left: 0; }
-.aptv-accesibil--mare 
 .aptv-meniu-buton { display: none; }
 
 /* Bara de meniu albastră, ca bara de pe post. */

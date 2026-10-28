@@ -63,7 +63,7 @@ add_action(
 			<div class="aptv-ajutor__in">
 				<div>
 					<h2 id="aptv-ajutor-titlu">Nu găsiți ce căutați?</h2>
-					<p>Sunați-ne și vă ajutăm să ajungeți la emisiunea dorită.</p>
+					<p>Sunați-ne (<?php echo esc_html( aptv_setare( 'program' ) ); ?>) și vă ajutăm să ajungeți la emisiunea dorită.</p>
 				</div>
 				<div class="aptv-ajutor__butoane">
 					<a class="aptv-buton aptv-buton--inchis" href="<?php echo esc_attr( aptv_telefon_link() ); ?>">Sunați: <?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a>

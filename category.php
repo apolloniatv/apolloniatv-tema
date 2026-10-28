@@ -42,7 +42,7 @@ $card_emisiune = function ( $emisiune ) {
 				<span><?php echo esc_html( $emisiune->description ); ?></span>
 			<?php endif; ?>
 			<span class="aptv-mic"><?php echo esc_html( aptv_plural( (int) $emisiune->count, 'episod', 'episoade' ) ); ?></span>
-			<span class="aptv-buton aptv-buton--mic">Vezi episoadele →</span>
+			<span class="aptv-buton aptv-buton--mic">Vezi episoadele ›</span>
 		</span>
 	</a>
 	<?php
@@ -55,7 +55,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 	?>
 	<nav class="aptv-file" aria-label="Alegeți">
 		<a href="<?php echo esc_url( get_term_link( $parinte ) ); ?>"<?php echo $curent->term_id === $parinte->term_id ? ' class="is-curent" aria-current="page"' : ''; ?>><?php echo esc_html( $eticheta_toate ); ?></a>
-		<?php foreach ( aptv_subcategorii( $parinte ) as $copil ) : ?>
+		<?php foreach ( aptv_subcategorii_cu_continut( $parinte ) as $copil ) : ?>
 			<a href="<?php echo esc_url( get_term_link( $copil ) ); ?>"<?php echo $curent->term_id === $copil->term_id ? ' class="is-curent" aria-current="page"' : ''; ?>><?php echo esc_html( $copil->name ); ?></a>
 		<?php endforeach; ?>
 	</nav>
@@ -103,7 +103,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 
 	<div class="aptv-container aptv-sectiune">
 		<div class="aptv-sectiune__cap">
-			<h2>Toate episoadele</h2>
+			<h2 class="aptv-titlu-banda">Toate episoadele</h2>
 			<nav class="aptv-file" aria-label="Ordinea episoadelor">
 				<a href="<?php echo esc_url( $adresa ); ?>"<?php echo $noi_primele ? '' : ' class="is-curent" aria-current="true"'; ?>>Cele mai vechi primele</a>
 				<a href="<?php echo esc_url( add_query_arg( 'ordine', 'noi', $adresa ) ); ?>"<?php echo $noi_primele ? ' class="is-curent" aria-current="true"' : ''; ?>>Cele mai noi primele</a>
@@ -126,8 +126,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 						<a class="aptv-episod" href="<?php the_permalink(); ?>">
 							<span class="aptv-episod__media" style="background:<?php echo esc_attr( $fundal ); ?>">
 								<?php echo aptv_imagine( null, 'aptv-card__img' ); // phpcs:ignore ?>
-								<span class="aptv-card__play"><?php echo aptv_icon_play(); // phpcs:ignore ?></span>
-								<?php if ( $durata ) : ?><span class="aptv-card__durata"><?php echo esc_html( $durata ); ?></span><?php endif; ?>
+								<span class="aptv-redare"><?php echo aptv_icon_play(); // phpcs:ignore ?><?php echo $durata ? '<span>' . esc_html( $durata ) . '</span>' : ''; ?></span>
 							</span>
 							<span class="aptv-episod__text">
 								<span class="aptv-card__eticheta">Episodul <?php echo (int) $nr; ?> · <?php echo esc_html( get_the_date( 'j F Y' ) ); ?></span>
@@ -153,7 +152,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 
 		<?php
 		$frati = $parinte ? array_filter(
-			aptv_subcategorii( $parinte ),
+			aptv_subcategorii_cu_continut( $parinte ),
 			function ( $t ) use ( $categorie ) {
 				return $t->term_id !== $categorie->term_id;
 			}
@@ -166,7 +165,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 					<?php foreach ( $frati as $f ) : ?>
 						<a href="<?php echo esc_url( get_term_link( $f ) ); ?>"><?php echo esc_html( $f->name ); ?></a>
 					<?php endforeach; ?>
-					<a class="aptv-file__toate" href="<?php echo esc_url( get_term_link( $parinte ) ); ?>">Toate →</a>
+					<a class="aptv-file__toate" href="<?php echo esc_url( get_term_link( $parinte ) ); ?>">Toate ›</a>
 				</div>
 			</section>
 		<?php endif; ?>
@@ -176,7 +175,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 	<?php /* ---------------- Știri (toate sau un tip anume) ---------------- */ ?>
 	<div class="aptv-container aptv-sectiune">
 		<?php aptv_unde_va_aflati( $categorie ); ?>
-		<h1 class="aptv-titlu-pagina">Știri</h1>
+		<h1 class="aptv-titlu-pagina aptv-titlu-banda">Știri</h1>
 		<p class="aptv-sectiune__intro">Alegeți tipul de știri. Apăsați pe o știre ca să o urmăriți.</p>
 		<?php $butoane( $sectiune, $categorie, 'Toate știrile' ); ?>
 		<?php if ( 'stiri' === $tip && $categorie->description ) : ?>
@@ -212,7 +211,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 	?>
 	<div class="aptv-container aptv-sectiune">
 		<?php aptv_unde_va_aflati( $categorie ); ?>
-		<h1 class="aptv-titlu-pagina"><?php echo esc_html( $e_emisiuni ? 'Emisiuni' : $categorie->name ); ?></h1>
+		<h1 class="aptv-titlu-pagina aptv-titlu-banda"><?php echo esc_html( $e_emisiuni ? 'Emisiuni' : $categorie->name ); ?></h1>
 		<p class="aptv-sectiune__intro">
 			<?php echo $e_emisiuni ? 'Alegeți o temă. Apoi apăsați pe numele emisiunii ca să vedeți toate episoadele.' : esc_html( $categorie->description ); ?>
 		</p>
@@ -223,9 +222,9 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 
 		<?php
 		// Pe „Emisiuni”: toate temele, fiecare cu emisiunile ei. Altfel: emisiunile categoriei curente.
-		$grupuri = ( 'sectiune' === $tip && $e_emisiuni ) ? aptv_subcategorii( $categorie ) : array( $categorie );
+		$grupuri = ( 'sectiune' === $tip && $e_emisiuni ) ? aptv_subcategorii_cu_continut( $categorie ) : array( $categorie );
 		foreach ( $grupuri as $grup ) :
-			$emisiuni_grup = aptv_subcategorii( $grup );
+			$emisiuni_grup = aptv_subcategorii_cu_continut( $grup );
 			if ( ! $emisiuni_grup ) {
 				continue;
 			}

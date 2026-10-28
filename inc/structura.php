@@ -233,7 +233,10 @@ function aptv_culoare( $categorie ) {
 		$categorie = get_term( $categorie->parent, 'category' );
 	}
 	if ( ! $fundal ) {
-		$fundal = '#14527F';
+		// Fără culoare setată: Știri = negru, Universitate = gri închis, restul = albastru închis.
+		$sectiune = $categorie && ! is_wp_error( $categorie ) ? aptv_sectiune( $categorie ) : null;
+		$slug     = $sectiune ? $sectiune->slug : '';
+		$fundal   = 'stiri' === $slug ? '#000000' : ( 'universitate' === $slug ? '#444444' : '#14527F' );
 	}
 	// Text alb pe culori închise, bleumarin pe culori deschise.
 	$hex  = ltrim( $fundal, '#' );

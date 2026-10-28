@@ -75,18 +75,30 @@ function aptv_plural( $n, $singular, $plural ) {
 
 /**
  * Imaginea episodului: imaginea reprezentativă, dacă există; altfel imaginea de pe YouTube.
+ *
+ * @param bool $mare true = imaginea de sus a primei pagini: se încarcă imediat (nu „la derulare”)
+ *                   și la rezoluție mare (1280 px), cu revenire automată la cea obișnuită
+ *                   dacă videoclipul nu are una mare (vezi assets/js/tema.js, „Imagini mari”).
  */
-function aptv_imagine( $post = null, $clasa = '' ) {
+function aptv_imagine( $post = null, $clasa = '', $mare = false ) {
 	$post = get_post( $post );
 	if ( ! $post ) {
 		return '';
 	}
 	if ( has_post_thumbnail( $post ) ) {
-		return get_the_post_thumbnail( $post, 'aptv-card', array( 'class' => $clasa, 'alt' => '' ) );
+		return get_the_post_thumbnail( $post, $mare ? 'large' : 'aptv-card', array( 'class' => $clasa, 'alt' => '', 'loading' => $mare ? 'eager' : 'lazy' ) );
 	}
 	$id = aptv_video_id( $post );
 	if ( ! $id ) {
 		return '';
+	}
+	if ( $mare ) {
+		return sprintf(
+			'<img src="%s" data-aptv-rezerva="%s" alt="" class="%s" fetchpriority="high" decoding="async" width="1280" height="720">',
+			esc_url( 'https://i.ytimg.com/vi/' . $id . '/maxresdefault.jpg' ),
+			esc_url( 'https://i.ytimg.com/vi/' . $id . '/hqdefault.jpg' ),
+			esc_attr( $clasa )
+		);
 	}
 	return sprintf(
 		'<img src="%s" alt="" class="%s" loading="lazy" decoding="async" width="480" height="360">',
@@ -98,13 +110,49 @@ function aptv_imagine( $post = null, $clasa = '' ) {
 /**
  * Pictograma „Play” (triunghi), folosită pe carduri și butoane.
  */
-function aptv_icon_play( $culoare = '#0E2235' ) {
-	return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" fill="' . esc_attr( $culoare ) . '"/></svg>';
+function aptv_icon_play( $culoare = '#FFFFFF' ) {
+	return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4v16l13-8z" fill="' . esc_attr( $culoare ) . '"/></svg>';
 }
 
 /**
- * Cardul unui episod (imagine, durată, emisiune, titlu, dată).
- * Folosit pe prima pagină, în liste de știri și la „Urmează”.
+ * Data de la care Apollonia TV emite doar online (ieșirea de pe cablu).
+ * Episoadele mai vechi primesc eticheta „ARHIVĂ” pe pagina lor.
+ */
+const APTV_DATA_ONLINE = '2025-11-10';
+
+/** Episodul e din arhiva de pe cablu? */
+function aptv_e_arhiva( $post = null ) {
+	return get_the_date( 'Y-m-d', $post ) < APTV_DATA_ONLINE;
+}
+
+/** Episodul a fost publicat în ultimele 7 zile? (primește eticheta „NOU”) */
+function aptv_e_nou( $post = null ) {
+	return ( time() - (int) get_post_time( 'U', true, $post ) ) < 7 * DAY_IN_SECONDS;
+}
+
+/**
+ * Eticheta plină, în culoarea temei, cu numele emisiunii (ca etichetele de pe post).
+ *
+ * @param WP_Term|null $categorie
+ * @param string       $text Text în loc de numele categoriei (opțional).
+ */
+function aptv_eticheta( $categorie, $text = '' ) {
+	if ( ! $categorie ) {
+		return '';
+	}
+	list( $fundal, $culoare_text ) = aptv_culoare( $categorie );
+	return sprintf(
+		'<span class="aptv-eticheta" style="background:%s;color:%s">%s</span>',
+		esc_attr( $fundal ),
+		esc_attr( $culoare_text ),
+		esc_html( $text ? $text : $categorie->name )
+	);
+}
+
+/**
+ * Cardul unui episod: imaginea (cu butonul de redare și durata în colțul de jos),
+ * eticheta emisiunii (+ „NOU”), titlul (maximum 3 rânduri) și data.
+ * Butonul de redare stă în colț, ca să nu acopere textul scris pe imaginile de pe YouTube.
  *
  * @param WP_Post|int $post
  * @param string      $varianta 'normal' | 'scurt' (clip vertical) | 'lista' (rând orizontal)
@@ -116,21 +164,24 @@ function aptv_card( $post, $varianta = 'normal' ) {
 	}
 	$categorie = aptv_categoria_episodului( $post );
 	$durata    = aptv_durata( $post );
+	$e_scurt   = 'scurt' === $varianta;
 	?>
 	<a class="aptv-card aptv-card--<?php echo esc_attr( $varianta ); ?>" href="<?php echo esc_url( get_permalink( $post ) ); ?>">
 		<span class="aptv-card__media">
 			<?php echo aptv_imagine( $post, 'aptv-card__img' ); // phpcs:ignore WordPress.Security.EscapeOutput -- HTML generat de WordPress / escapat mai sus. ?>
-			<span class="aptv-card__play"><?php echo aptv_icon_play(); // phpcs:ignore ?></span>
-			<?php if ( $durata && 'scurt' !== $varianta ) : ?>
-				<span class="aptv-card__durata"><?php echo esc_html( $durata ); ?></span>
-			<?php endif; ?>
+			<span class="aptv-redare"><?php echo aptv_icon_play(); // phpcs:ignore ?><?php echo ( $durata && ! $e_scurt ) ? '<span>' . esc_html( $durata ) . '</span>' : ''; ?><span class="screen-reader-text">Pornește</span></span>
 		</span>
 		<span class="aptv-card__text">
-			<?php if ( $categorie && 'scurt' !== $varianta ) : ?>
-				<span class="aptv-card__eticheta"><?php echo esc_html( $categorie->name ); ?></span>
+			<?php if ( ! $e_scurt && 'lista' !== $varianta ) : ?>
+				<span class="aptv-etichete">
+					<?php echo aptv_eticheta( $categorie ); // phpcs:ignore -- escapat în funcție. ?>
+					<?php if ( aptv_e_nou( $post ) ) : ?><span class="aptv-eticheta aptv-eticheta--nou">NOU</span><?php endif; ?>
+				</span>
+			<?php elseif ( 'lista' === $varianta && $categorie ) : ?>
+				<span class="aptv-card__supra"><?php echo esc_html( $categorie->name ); ?></span>
 			<?php endif; ?>
 			<span class="aptv-card__titlu"><?php echo esc_html( get_the_title( $post ) ); ?></span>
-			<?php if ( 'scurt' !== $varianta ) : ?>
+			<?php if ( ! $e_scurt ) : ?>
 				<span class="aptv-card__data"><?php echo esc_html( get_the_date( 'j F Y', $post ) ); ?></span>
 			<?php endif; ?>
 		</span>

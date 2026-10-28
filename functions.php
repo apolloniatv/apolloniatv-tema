@@ -15,11 +15,12 @@
  *   ordine-episoade.php  – episoadele unei emisiuni apar în ordine cronologică
  *   ajutoare.php         – funcții mici folosite de mai multe pagini (durată, imagine, culoare temă)
  *   video.php            – playerul YouTube se încarcă abia la clic (site mai rapid)
- *   antet.php            – bara de ajutor, butoanele A / A+ / A++ și meniul cu teme și emisiuni
+ *   antet.php            – logo, căutare, butoanele A / A+ / A++, meniul (și meniul de pe telefon)
  *   subsol.php           – subsolul site-ului
  *   episod.php           – găsește episodul anterior / următor și cele mai noi materiale
  *   import-youtube.php   – aduce episoadele din playlist-urile YouTube
  *   actualizari.php      – versiunile noi ale temei de pe GitHub apar în Panou → Actualizări
+ *   titluri.php          – titlurile scrise cu MAJUSCULE apar pe site în scriere normală
  *
  * @package apolloniatv
  */
@@ -45,6 +46,7 @@ require APTV_DIR . '/inc/subsol.php';
 require APTV_DIR . '/inc/episod.php';
 require APTV_DIR . '/inc/import-youtube.php';
 require APTV_DIR . '/inc/actualizari.php';
+require APTV_DIR . '/inc/titluri.php';
 
 /**
  * Încarcă stilurile și scripturile temei.

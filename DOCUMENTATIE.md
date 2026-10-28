@@ -34,6 +34,8 @@ Universitate ──── Universitaria, Congresul Apollonia 2022
 
 - **Un episod = un articol** WordPress, pus în categoria emisiunii lui.
 - **Meniul și prima pagină se construiesc singure** din aceste categorii. Nu există un meniu de editat de mână.
+- **Meniul arată doar ce are conținut.** O emisiune sau un tip de știri fără niciun episod publicat nu apare în meniu și pe prima pagină; apare singur după primul episod.
+- **Titlurile cu MAJUSCULE** sunt afișate pe site în scriere normală; în admin rămân cum au fost scrise. Un nume propriu care apare greșit (cu literă mică) se adaugă în lista din `inc/titluri.php`.
 - **Data articolului = data difuzării.** Episoadele unei emisiuni apar în ordinea datei (primul episod sus).
 
 ---
@@ -134,7 +136,8 @@ inc/recomandat.php      bifa „Recomandat pe prima pagină”
 inc/ordine-episoade.php ordinea cronologică a episoadelor
 inc/ajutoare.php        funcții mici (durata, imaginea, cardul unui episod, „Unde vă aflați”)
 inc/video.php           playerul care se încarcă la clic
-inc/antet.php           bara de ajutor, A/A+/A++, logo, căutare, meniu
+inc/antet.php           logo, căutare, A/A+/A++, bara de meniu, meniul de pe telefon
+inc/titluri.php         titlurile cu MAJUSCULE apar pe site în scriere normală
 inc/subsol.php          banda „Nu găsiți ce căutați?” și subsolul
 inc/episod.php          episodul anterior / următor, cele mai noi materiale
 inc/import-youtube.php  importul din YouTube și sincronizarea zilnică

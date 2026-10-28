@@ -50,43 +50,54 @@ while ( have_posts() ) :
 					}
 					?>
 
-					<p class="aptv-episod-pagina__meta">
-						<?php
-						$bucati = array();
-						if ( $categorie ) {
-							$bucati[] = '<a href="' . esc_url( get_term_link( $categorie ) ) . '">' . esc_html( $categorie->name ) . '</a>';
-						}
-						if ( $numar ) {
-							$bucati[] = 'Episodul ' . (int) $numar;
-						}
-						$bucati[] = esc_html( get_the_date( 'j F Y' ) );
-						if ( $durata ) {
-							$bucati[] = esc_html( $durata );
-						}
-						echo implode( ' · ', $bucati ); // phpcs:ignore -- elementele sunt escapate mai sus.
-						?>
-					</p>
-					<h1><?php the_title(); ?></h1>
+					<div class="aptv-etichete aptv-episod-pagina__etichete">
+						<?php echo aptv_eticheta( $categorie ); // phpcs:ignore -- escapat în funcție. ?>
+						<?php if ( $e_emisiune && aptv_e_arhiva() ) : ?><span class="aptv-eticheta aptv-eticheta--arhiva">ARHIVĂ</span><?php endif; ?>
+						<?php if ( aptv_e_nou() ) : ?><span class="aptv-eticheta aptv-eticheta--nou">NOU</span><?php endif; ?>
+						<span class="aptv-episod-pagina__meta">
+							<?php
+							$bucati = array();
+							if ( $numar ) {
+								$bucati[] = 'Episodul ' . (int) $numar;
+							}
+							$bucati[] = esc_html( get_the_date( 'j F Y' ) );
+							if ( $durata ) {
+								$bucati[] = esc_html( $durata );
+							}
+							echo implode( ' · ', $bucati ); // phpcs:ignore -- elementele sunt escapate mai sus.
+							?>
+						</span>
+					</div>
+					<h1 class="aptv-titlu-banda"><?php the_title(); ?></h1>
 
 					<?php if ( trim( wp_strip_all_tags( $continut ) ) || false !== strpos( $continut, 'aptv-player' ) ) : ?>
 						<div class="aptv-episod-pagina__descriere entry-content"><?php echo $continut; // phpcs:ignore -- conținut WordPress filtrat. ?></div>
 					<?php endif; ?>
 
 					<?php if ( $e_emisiune ) : ?>
+						<?php if ( $urmatoare ) : ?>
+							<div class="aptv-urmeaza">
+								<span class="aptv-eticheta aptv-eticheta--urmeaza">URMEAZĂ</span>
+								<a class="aptv-urmeaza__link" href="<?php echo esc_url( get_permalink( $urmatoare[0] ) ); ?>">
+									<span>
+										<span class="aptv-urmeaza__supra">Episodul <?php echo (int) ( $numar + 1 ); ?> · <?php echo esc_html( get_the_date( 'j F Y', $urmatoare[0] ) ); ?></span>
+										<span class="aptv-urmeaza__titlu"><?php echo esc_html( get_the_title( $urmatoare[0] ) ); ?></span>
+									</span>
+									<span class="aptv-buton">Episodul următor ›</span>
+								</a>
+							</div>
+						<?php else : ?>
+							<p class="aptv-gol">Acesta este cel mai nou episod al emisiunii.</p>
+						<?php endif; ?>
 						<nav class="aptv-butoane aptv-episod-pagina__nav" aria-label="Alte episoade">
-							<?php if ( $urmatoare ) : ?>
-								<a class="aptv-buton aptv-buton--mare" href="<?php echo esc_url( get_permalink( $urmatoare[0] ) ); ?>">Episodul următor: <?php echo esc_html( get_the_title( $urmatoare[0] ) ); ?> →</a>
-							<?php else : ?>
-								<span class="aptv-buton aptv-buton--inactiv">Acesta este cel mai nou episod</span>
-							<?php endif; ?>
 							<?php if ( $anterior ) : ?>
-								<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_permalink( $anterior ) ); ?>">← Episodul anterior</a>
+								<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_permalink( $anterior ) ); ?>">‹ Episodul anterior</a>
 							<?php endif; ?>
-							<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>">Toate episoadele <?php echo esc_html( $categorie->name ); ?></a>
+							<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>"><?php echo $categorie->count > 1 ? 'Toate cele ' . esc_html( aptv_plural( (int) $categorie->count, 'episod', 'episoade' ) ) . ' ' . esc_html( $categorie->name ) : 'Pagina emisiunii ' . esc_html( $categorie->name ); ?></a>
 						</nav>
 					<?php elseif ( $categorie ) : ?>
 						<nav class="aptv-butoane aptv-episod-pagina__nav" aria-label="Alte știri">
-							<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>">← Toate știrile <?php echo esc_html( mb_strtolower( $categorie->name ) ); ?></a>
+							<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>">‹ Toate știrile <?php echo esc_html( mb_strtolower( $categorie->name ) ); ?></a>
 						</nav>
 					<?php endif; ?>
 
@@ -100,7 +111,7 @@ while ( have_posts() ) :
 
 				<?php if ( $laterale ) : ?>
 					<aside class="aptv-episod-pagina__lateral" aria-labelledby="aptv-urmeaza">
-						<h2 id="aptv-urmeaza"><?php echo $e_emisiune ? 'Urmează în ' . esc_html( $categorie->name ) : 'Alte știri'; ?></h2>
+						<h2 id="aptv-urmeaza" class="aptv-titlu-banda"><?php echo $e_emisiune ? 'Mai departe în ' . esc_html( $categorie->name ) : 'Alte știri'; ?></h2>
 						<div class="aptv-lista-mica">
 							<?php foreach ( $laterale as $p ) : ?>
 								<?php aptv_card( $p, 'lista' ); ?>

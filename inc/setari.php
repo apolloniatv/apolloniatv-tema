@@ -32,8 +32,7 @@ function aptv_setari_implicite() {
 		'facebook'        => 'https://www.facebook.com/ApolloniaTV',
 		'instagram'       => 'https://www.instagram.com/apolloniatv/',
 		'tiktok'          => 'https://www.tiktok.com/@apolloniatv',
-		'hero_titlu'      => 'Emisiunile Apollonia TV, la un clic distanță',
-		'hero_text'       => 'Aici găsiți emisiunile, știrile și reportajele noastre. Nu aveți nevoie de cont și nu trebuie să instalați nimic: alegeți ce vă interesează și apăsați „Pornește”.',
+		'bun_venit'       => 'Bine ați venit! Alegeți o temă de mai jos sau porniți materialul recomandat.',
 		'despre'          => 'Platforma media educațională a Universității „Apollonia” din Iași: emisiuni, știri și reportaje, gratuit, pentru toată lumea.',
 	);
 }
@@ -90,7 +89,7 @@ add_action(
 		$implicite = aptv_setari_implicite();
 		$noi       = array();
 		$campuri_url   = array( 'youtube', 'facebook', 'instagram', 'tiktok' );
-		$campuri_lungi = array( 'hero_text', 'despre' );
+		$campuri_lungi = array( 'bun_venit', 'despre' );
 
 		foreach ( array_keys( $implicite ) as $cheie ) {
 			$valoare = isset( $_POST[ $cheie ] ) ? wp_unslash( $_POST[ $cheie ] ) : '';
@@ -135,8 +134,7 @@ function aptv_pagina_setari() {
 		'facebook'   => array( 'Link Facebook', 'url' ),
 		'instagram'  => array( 'Link Instagram', 'url' ),
 		'tiktok'     => array( 'Link TikTok', 'url' ),
-		'hero_titlu' => array( 'Prima pagină — titlul de bun venit', 'text' ),
-		'hero_text'  => array( 'Prima pagină — textul de bun venit', 'textarea' ),
+		'bun_venit'  => array( 'Prima pagină — rândul de bun venit (deasupra materialului recomandat)', 'textarea' ),
 		'despre'     => array( 'Subsol — scurtă descriere a Apollonia TV', 'textarea' ),
 	);
 	$are_cheie = '' !== aptv_cheie_youtube();

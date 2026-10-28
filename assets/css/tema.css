@@ -1,12 +1,16 @@
 /* ==========================================================================
-   Apollonia TV — stilurile site-ului
+   Apollonia TV — stilurile site-ului, direcția „TV” (v0.2)
    --------------------------------------------------------------------------
+   Limbajul vizual vine din brandbook-ul Apollonia TV (mai 2023): blocuri drepte
+   de culoare (fără colțuri rotunjite), banda roșie verticală din burtiere,
+   etichete pline cu majuscule (ca „DIRECT”, „URMEAZĂ”), text negru, Arial.
+
    CUPRINS
      1. Culori și mărimi (variabile)  ← aici se schimbă culorile pe tot site-ul
      2. Bază (text, linkuri, focus)
      3. Ajustări GeneratePress
-     4. Elemente comune (container, butoane, etichete, grile)
-     5. Antet: bara de ajutor, logo, căutare, meniu, panouri
+     4. Elemente comune (container, titluri cu bandă, butoane, etichete, grile)
+     5. Antet (calculator) și meniul de pe telefon
      6. Carduri de episod
      7. Prima pagină
      8. Pagini de categorie (emisiuni, teme, știri)
@@ -14,26 +18,27 @@
     10. Subsol
     11. Telefon și tabletă
 
-   REGULI DE ACCESIBILITATE respectate (pentru vizitatorii vârstnici):
-     - text de bază mare (20px), care crește cu butoanele A+ / A++;
-     - contrast suficient: albastrul deschis (#26A3FC) NU se folosește pentru text pe alb;
-     - butoane de minimum 44px înălțime;
-     - contur galben-bleumarin foarte vizibil la navigarea cu tastatura.
+   REGULI DE ACCESIBILITATE (pentru vizitatorii vârstnici):
+     - text de bază 20px (18px pe telefon), care crește cu A+ / A++; niciun text sub 16px;
+     - contrast cel puțin 7:1 pentru textul obișnuit (AAA);
+     - orice buton sau link de cel puțin 44px înălțime;
+     - contur galben-negru foarte vizibil la navigarea cu tastatura.
    ========================================================================== */
 
 /* 1. Culori și mărimi ---------------------------------------------------- */
 :root {
-	--aptv-bleumarin: #0E2235;       /* text principal, butoane închise */
-	--aptv-albastru-inchis: #14527F; /* butoane, linkuri, bara de sus */
-	--aptv-albastru: #26A3FC;        /* albastrul din logo — doar pentru suprafețe, nu pentru text */
-	--aptv-rosu: #FC4F4C;            /* roșul din logo */
-	--aptv-galben: #FFFF40;          /* evidențieri, banda de ajutor */
-	--aptv-text-secundar: #22384D;
-	--aptv-gri: #44566A;             /* texte mici (contrast verificat pe alb) */
-	--aptv-linie: #D5E3F0;           /* chenare */
-	--aptv-fundal-deschis: #EEF6FF;  /* fundaluri de secțiune */
-	--aptv-raza: 14px;               /* colțuri rotunjite */
+	--aptv-negru: #000000;           /* textul (culoarea textului din brandbook) */
+	--aptv-albastru-inchis: #14527F; /* bara de meniu, butoane, linkuri */
+	--aptv-albastru-hover: #0E3F63;
+	--aptv-albastru: #26A3FC;        /* albastrul din logo — doar suprafețe, nu text pe alb */
+	--aptv-rosu: #FC4F4C;            /* roșul din logo: banda titlurilor, eticheta RECOMANDAT */
+	--aptv-galben: #FFFF40;          /* evidențieri, banda de ajutor, eticheta NOU */
+	--aptv-gri: #444444;             /* texte secundare (9,7:1 pe alb) */
+	--aptv-linie: #BBBBBB;           /* linii de despărțire */
+	--aptv-fundal: #F2F2F2;          /* fundaluri de secțiune */
+	--aptv-imagine: #23313F;         /* fundal până se încarcă imaginea */
 	--aptv-latime: 1240px;           /* lățimea maximă a conținutului */
+	--aptv-text-mic: max(16px, 0.8rem); /* cel mai mic text de pe site */
 }
 
 /* Mărimea textului: butoanele A / A+ / A++ schimbă doar această valoare. */
@@ -46,14 +51,14 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 1rem;
 	line-height: 1.5;
-	color: var(--aptv-bleumarin);
+	color: var(--aptv-negru);
 	background: #FFFFFF;
 }
-h1, h2, h3 { color: var(--aptv-bleumarin); font-family: inherit; font-weight: 700; line-height: 1.2; }
+h1, h2, h3 { color: var(--aptv-negru); font-family: inherit; font-weight: 700; line-height: 1.2; }
 a { color: var(--aptv-albastru-inchis); }
-a:hover { color: var(--aptv-bleumarin); }
-.aptv-main h1 { font-size: 2.2rem; margin: 0.3em 0 0.4em; }
-.aptv-main h2 { font-size: 1.5rem; margin: 0 0 0.6em; }
+a:hover { color: var(--aptv-negru); }
+.aptv-main h1 { font-size: 2.1rem; margin: 0.3em 0 0.5em; }
+.aptv-main h2 { font-size: 1.55rem; margin: 0 0 0.6em; }
 
 a:focus-visible,
 button:focus-visible,
@@ -61,334 +66,388 @@ input:focus-visible,
 select:focus-visible {
 	outline: 4px solid var(--aptv-galben);
 	outline-offset: 2px;
-	box-shadow: 0 0 0 7px var(--aptv-bleumarin);
+	box-shadow: 0 0 0 7px var(--aptv-negru);
 }
+.aptv-meniu-deschis { overflow: hidden; } /* pagina nu se derulează sub meniul de pe telefon */
 
 /* 3. Ajustări GeneratePress ---------------------------------------------- */
-/* Pe paginile noastre conținutul merge pe toată lățimea; fiecare secțiune își are propriul container. */
 .aptv-sablon .site.grid-container { max-width: none; padding: 0; background: transparent; }
 .aptv-sablon .site-content { display: block; padding: 0; }
 .site-footer { background: transparent; }
 
 /* 4. Elemente comune ----------------------------------------------------- */
 .aptv-container { max-width: var(--aptv-latime); margin-inline: auto; padding-inline: 1.2rem; box-sizing: border-box; }
-.aptv-sectiune { padding-block: 2.2rem 0.6rem; }
-.aptv-sectiune__cap { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: baseline; justify-content: space-between; margin-bottom: 0.9rem; }
+.aptv-sectiune { padding-block: 2.4rem 0.4rem; }
+.aptv-sectiune__cap { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; align-items: baseline; justify-content: space-between; margin-bottom: 0.9rem; }
 .aptv-sectiune__cap h2 { margin: 0; }
-.aptv-sectiune__cap > a { font-weight: 700; }
-.aptv-sectiune__intro { color: var(--aptv-gri); margin: -0.3rem 0 1rem; max-width: 46rem; }
-.aptv-titlu-pagina { margin-top: 0.3em; }
-.aptv-mic { font-size: 0.9rem; color: var(--aptv-gri); }
-.aptv-gol { padding: 1.4rem; border: 2px dashed #9DB4CA; border-radius: var(--aptv-raza); color: var(--aptv-text-secundar); }
+.aptv-sectiune__cap > a { font-weight: 700; display: inline-flex; align-items: center; min-height: 44px; }
+.aptv-sectiune__intro { color: var(--aptv-gri); margin: -0.3rem 0 1.1rem; max-width: 46rem; }
+.aptv-titlu-pagina { margin-top: 0.4em; }
+.aptv-mic { font-size: var(--aptv-text-mic); color: var(--aptv-gri); }
+.aptv-gol { padding: 1.2rem 1.4rem; background: var(--aptv-fundal); color: var(--aptv-negru); }
+
+/* Titlu cu banda roșie verticală, ca în burtierele de pe post. */
+.aptv-titlu-banda { border-left: 8px solid var(--aptv-rosu); padding-left: 0.7rem; }
 
 .aptv-buton {
 	display: inline-flex; align-items: center; justify-content: center; gap: 0.5em;
-	min-height: 44px; box-sizing: border-box;
-	padding: 0.7em 1.3em; border-radius: 12px; border: 2px solid var(--aptv-albastru-inchis);
+	min-height: 52px; box-sizing: border-box;
+	padding: 0.6em 1.3em; border-radius: 0; border: 2px solid var(--aptv-albastru-inchis);
 	background: var(--aptv-albastru-inchis); color: #FFFFFF;
 	font-size: 1.05rem; font-weight: 700; line-height: 1.25; text-decoration: none; text-align: center;
 }
-.aptv-buton:hover { background: var(--aptv-bleumarin); border-color: var(--aptv-bleumarin); color: #FFFFFF; }
-.aptv-buton svg { width: 1.2em; height: 1.2em; flex: none; }
-.aptv-buton--contur { background: #FFFFFF; color: var(--aptv-albastru-inchis); }
-.aptv-buton--contur:hover { background: var(--aptv-fundal-deschis); color: var(--aptv-bleumarin); }
-.aptv-buton--inchis { background: var(--aptv-bleumarin); border-color: var(--aptv-bleumarin); }
-.aptv-buton--alb { background: #FFFFFF; border-color: #FFFFFF; color: var(--aptv-bleumarin); }
-.aptv-buton--alb:hover { background: var(--aptv-fundal-deschis); color: var(--aptv-bleumarin); }
-.aptv-buton--mare { font-size: 1.15rem; padding: 0.85em 1.5em; }
-.aptv-buton--mic { font-size: 0.95rem; padding: 0.5em 1em; min-height: 40px; }
-.aptv-buton--inactiv { background: #EEF2F6; border-color: #EEF2F6; color: var(--aptv-gri); }
+.aptv-buton:hover { background: var(--aptv-albastru-hover); border-color: var(--aptv-albastru-hover); color: #FFFFFF; }
+.aptv-buton svg { width: 1.1em; height: 1.1em; flex: none; }
+.aptv-buton--contur { background: #FFFFFF; color: var(--aptv-negru); border-color: var(--aptv-negru); }
+.aptv-buton--contur:hover { background: var(--aptv-fundal); color: var(--aptv-negru); border-color: var(--aptv-negru); }
+.aptv-buton--inchis { background: var(--aptv-negru); border-color: var(--aptv-negru); }
+.aptv-buton--inchis:hover { background: #333333; border-color: #333333; }
+.aptv-buton--alb { background: #FFFFFF; border-color: #FFFFFF; color: var(--aptv-negru); }
+.aptv-buton--alb:hover { background: var(--aptv-fundal); color: var(--aptv-negru); }
+.aptv-buton--galben { background: var(--aptv-galben); border-color: var(--aptv-galben); color: var(--aptv-negru); }
+.aptv-buton--galben:hover { background: #F0F000; border-color: #F0F000; color: var(--aptv-negru); }
+.aptv-buton--mare { font-size: 1.2rem; min-height: 60px; padding: 0.6em 1.5em; }
+.aptv-buton--mic { font-size: var(--aptv-text-mic); min-height: 44px; padding: 0.4em 1em; }
 .aptv-butoane { display: flex; flex-wrap: wrap; gap: 0.7rem; }
 
-.aptv-eticheta { display: inline-block; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; padding: 0.25em 0.7em; border-radius: 6px; }
-.aptv-eticheta--galben { background: var(--aptv-galben); color: var(--aptv-bleumarin); }
-.aptv-eticheta--rosu { background: var(--aptv-rosu); color: var(--aptv-bleumarin); }
-.aptv-eticheta--pe-inchis { color: var(--aptv-galben); padding-inline: 0; }
+/* Etichete pline, ca pe post (DIRECT, URMEAZĂ...). */
+.aptv-etichete { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+.aptv-eticheta {
+	display: inline-block; font-size: var(--aptv-text-mic); font-weight: 700; letter-spacing: 0.04em;
+	text-transform: uppercase; line-height: 1.35; padding: 0.1em 0.5em;
+}
+.aptv-eticheta--nou { background: var(--aptv-galben); color: var(--aptv-negru); }
+.aptv-eticheta--recomandat { background: var(--aptv-rosu); color: #FFFFFF; font-size: 20px; padding: 0.1em 0.55em; } /* 20px bold = text mare: contrastul 3,3:1 e suficient */
+.aptv-eticheta--arhiva { background: var(--aptv-gri); color: #FFFFFF; }
+.aptv-eticheta--urmeaza { background: var(--aptv-albastru-inchis); color: #FFFFFF; }
+.aptv-eticheta--alb { background: #FFFFFF; color: var(--aptv-negru); }
 
-.aptv-grila { display: grid; gap: 1.2rem; }
+.aptv-grila { display: grid; gap: 1.6rem 1.4rem; }
 .aptv-grila--3 { grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
-.aptv-grila--4 { grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); }
-.aptv-grila--scurte { grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 1rem; }
-.aptv-grila--stiri { grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1rem; }
+.aptv-grila--4 { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); }
+.aptv-grila--teme { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1.2rem; }
+.aptv-grila--scurte { grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 1.2rem 1rem; }
+.aptv-grila--stiri { grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 0 1.6rem; }
 
 /* „Fișe”: rânduri de butoane pentru teme, tipuri de știri, ordinea episoadelor */
-.aptv-file { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.4rem; }
+.aptv-file { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.4rem; }
 .aptv-file a {
-	display: inline-flex; align-items: center; min-height: 44px; box-sizing: border-box;
-	padding: 0.55em 1.1em; border-radius: 12px; border: 2px solid var(--aptv-linie);
-	background: #FFFFFF; color: var(--aptv-bleumarin); font-weight: 700; text-decoration: none;
+	display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box;
+	padding: 0.4em 1.1em; border-radius: 0; border: 2px solid var(--aptv-negru);
+	background: #FFFFFF; color: var(--aptv-negru); font-weight: 700; text-decoration: none;
 }
-.aptv-file a:hover { border-color: var(--aptv-albastru-inchis); }
+.aptv-file a:hover { background: var(--aptv-fundal); color: var(--aptv-negru); }
 .aptv-file a.is-curent { background: var(--aptv-albastru-inchis); border-color: var(--aptv-albastru-inchis); color: #FFFFFF; }
-.aptv-file a.aptv-file__toate { background: var(--aptv-fundal-deschis); border-color: var(--aptv-fundal-deschis); color: var(--aptv-albastru-inchis); }
+.aptv-file a.aptv-file__toate { border-color: var(--aptv-fundal); background: var(--aptv-fundal); color: var(--aptv-albastru-inchis); }
 .aptv-sectiune__cap .aptv-file { margin-bottom: 0; }
 
 /* „Unde vă aflați” */
-.aptv-firul { font-size: 0.95rem; color: var(--aptv-gri); padding-top: 0.3rem; }
-.aptv-firul a { color: inherit; }
-.aptv-firul strong { color: var(--aptv-bleumarin); }
+.aptv-firul { font-size: var(--aptv-text-mic); color: var(--aptv-gri); padding-top: 0.6rem; }
+.aptv-firul a { color: inherit; display: inline-block; padding-block: 0.4rem; }
+.aptv-firul strong { color: var(--aptv-negru); }
 .aptv-banda .aptv-firul, .aptv-banda .aptv-firul strong { color: inherit; }
 
 /* 5. Antet --------------------------------------------------------------- */
-.aptv-bara-ajutor { background: var(--aptv-albastru-inchis); color: #FFFFFF; font-size: 0.9rem; }
-.aptv-bara-ajutor__in { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: center; justify-content: space-between; padding-block: 0.45rem; }
-.aptv-bara-ajutor__tel { margin: 0; }
-.aptv-bara-ajutor a { color: #FFFFFF; font-weight: 700; }
-.aptv-marime { display: flex; align-items: center; gap: 0.4rem; }
-.aptv-marime button {
-	min-width: 2.6em; min-height: 40px; padding: 0.15em 0.6em;
-	font: inherit; font-weight: 700; color: #FFFFFF;
-	background: transparent; border: 2px solid #FFFFFF; border-radius: 8px; cursor: pointer;
-}
-.aptv-marime button[aria-pressed="true"] { background: var(--aptv-galben); border-color: var(--aptv-galben); color: var(--aptv-bleumarin); }
+.aptv-antet { background: #FFFFFF; position: relative; z-index: 20; }
+.aptv-antet__sus { display: flex; flex-wrap: wrap; gap: 0.8rem 2rem; align-items: center; justify-content: space-between; padding-block: 0.9rem; }
+.aptv-antet__logo { display: block; line-height: 0; flex: none; }
+.aptv-logo { height: 44px; width: auto; display: block; }
+.aptv-antet__unelte { display: flex; flex-wrap: wrap; gap: 0.8rem 1.4rem; align-items: center; justify-content: flex-end; flex: 1 1 28rem; }
 
-.aptv-antet { background: #FFFFFF; border-bottom: 2px solid var(--aptv-linie); position: relative; z-index: 20; }
-.aptv-antet__sus { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; padding-block: 1rem; }
-.aptv-antet__logo { display: block; line-height: 0; }
-.aptv-logo { height: 2.4rem; width: auto; display: block; }
-.aptv-cautare { display: flex; gap: 0.5rem; flex: 1 1 20rem; max-width: 36rem; }
+.aptv-cautare { display: flex; flex: 1 1 18rem; max-width: 34rem; }
 .aptv-cautare input[type="search"] {
-	flex: 1 1 auto; min-width: 0; min-height: 44px; box-sizing: border-box;
-	font: inherit; padding: 0.55em 0.8em; color: var(--aptv-bleumarin);
-	border: 2px solid var(--aptv-gri); border-radius: 10px; background: #FFFFFF;
+	flex: 1 1 auto; min-width: 0; min-height: 48px; box-sizing: border-box;
+	font: inherit; font-size: 1rem; padding: 0.3em 0.7em; color: var(--aptv-negru);
+	border: 2px solid var(--aptv-negru); border-right: 0; border-radius: 0; background: #FFFFFF;
 }
+.aptv-cautare input[type="search"]::placeholder { color: #595959; }
 .aptv-cautare button {
-	min-height: 44px; padding: 0.55em 1.1em; font: inherit; font-weight: 700;
-	border: 0; border-radius: 10px; background: var(--aptv-albastru-inchis); color: #FFFFFF; cursor: pointer;
+	min-height: 48px; padding: 0 1.1em; font: inherit; font-weight: 700;
+	border: 2px solid var(--aptv-negru); border-radius: 0; background: var(--aptv-negru); color: #FFFFFF; cursor: pointer;
 }
-.aptv-cautare button:hover { background: var(--aptv-bleumarin); }
+.aptv-cautare button:hover { background: #333333; }
 
-.aptv-meniu { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-bottom: 0.9rem; }
+.aptv-marime { display: flex; align-items: center; gap: 0.3rem; flex: none; }
+.aptv-marime__eticheta { font-size: var(--aptv-text-mic); font-weight: 700; color: var(--aptv-gri); margin-right: 0.3rem; }
+.aptv-marime button {
+	min-width: 48px; min-height: 48px; padding: 0 0.4em;
+	font: inherit; font-size: 18px; font-weight: 700; color: var(--aptv-negru);
+	background: #FFFFFF; border: 2px solid var(--aptv-negru); border-radius: 0; cursor: pointer;
+}
+.aptv-marime button[aria-pressed="true"] { background: var(--aptv-negru); color: #FFFFFF; }
+
+.aptv-meniu-buton { display: none; }
+
+/* Bara de meniu albastră, ca bara de pe post. */
+.aptv-bara-meniu { background: var(--aptv-albastru-inchis); }
+.aptv-meniu { display: flex; flex-wrap: wrap; }
 .aptv-meniu__link {
-	display: inline-flex; align-items: center; gap: 0.3em; min-height: 44px; box-sizing: border-box;
-	padding: 0.5em 1em; border-radius: 10px; border: 2px solid var(--aptv-linie);
-	font-size: 1.05rem; font-weight: 700; color: var(--aptv-bleumarin); text-decoration: none;
+	display: inline-flex; align-items: center; gap: 0.3em; min-height: 56px; box-sizing: border-box;
+	padding: 0 1.1em; font-size: 1.05rem; font-weight: 700; color: #FFFFFF; text-decoration: none;
 }
-.aptv-meniu__link:hover { border-color: var(--aptv-albastru-inchis); color: var(--aptv-bleumarin); }
-.aptv-meniu__link.is-curent { background: var(--aptv-bleumarin); border-color: var(--aptv-bleumarin); color: #FFFFFF; }
-.aptv-meniu__link[aria-expanded="true"] { background: var(--aptv-albastru-inchis); border-color: var(--aptv-albastru-inchis); color: #FFFFFF; }
+.aptv-meniu__link:hover { background: var(--aptv-albastru-hover); color: #FFFFFF; }
+.aptv-meniu__link.is-curent { background: var(--aptv-galben); color: var(--aptv-negru); }
+.aptv-meniu__link[aria-expanded="true"] { background: #FFFFFF; color: var(--aptv-albastru-inchis); }
+.aptv-meniu__contact { margin-left: auto; }
 
-.aptv-panou { background: var(--aptv-fundal-deschis); border-top: 2px solid var(--aptv-linie); padding-block: 1.2rem; }
+.aptv-panou { background: var(--aptv-fundal); border-bottom: 6px solid var(--aptv-albastru-inchis); padding-block: 1.2rem 1.4rem; }
 .aptv-panou[hidden] { display: none; }
 .aptv-panou__indemn { color: var(--aptv-gri); margin: 0 0 0.8rem; }
 .aptv-panou__grila { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1rem; }
-.aptv-panou__tema { background: #FFFFFF; border: 2px solid var(--aptv-linie); border-radius: var(--aptv-raza); padding: 1rem; }
-.aptv-panou__titlu { display: flex; align-items: center; gap: 0.5em; font-size: 1.15rem; font-weight: 700; color: var(--aptv-bleumarin); text-decoration: none; }
-.aptv-panou__tema ul { list-style: none; margin: 0.5rem 0 0; padding: 0; }
-.aptv-panou__tema li a { display: block; padding: 0.35em 0; }
-.aptv-panou__toate { display: inline-block; margin-top: 1rem; font-weight: 700; }
-.aptv-panou__butoane { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+.aptv-panou__tema { background: #FFFFFF; }
+.aptv-panou__titlu { display: block; padding: 0.5em 0.8em; font-size: 1.15rem; font-weight: 700; text-decoration: none; }
+.aptv-panou__titlu:hover { text-decoration: underline; }
+.aptv-panou__tema ul { list-style: none; margin: 0; padding: 0.2rem 0.8rem 0.5rem; }
+.aptv-panou__tema li a { display: flex; align-items: center; min-height: 44px; color: var(--aptv-negru); font-weight: 700; }
+.aptv-panou__toate { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0.6rem; font-weight: 700; }
+.aptv-panou__butoane { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .aptv-panou__butoane a {
-	display: inline-flex; align-items: center; min-height: 44px; padding: 0.6em 1.3em;
-	background: #FFFFFF; border: 2px solid var(--aptv-linie); border-radius: 12px;
-	font-weight: 700; color: var(--aptv-bleumarin); text-decoration: none;
+	display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.2em;
+	background: #FFFFFF; border: 2px solid var(--aptv-negru); font-weight: 700; color: var(--aptv-negru); text-decoration: none;
 }
-.aptv-punct { width: 0.8em; height: 0.8em; border-radius: 50%; flex: none; border: 2px solid var(--aptv-bleumarin); }
+
+/* Meniul de pe telefon: un ecran întreg. */
+.aptv-meniu-mobil { position: fixed; inset: 0; z-index: 1000; background: #FFFFFF; overflow-y: auto; }
+.aptv-meniu-mobil[hidden] { display: none; }
+.aptv-meniu-mobil__cap {
+	display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+	min-height: 72px; padding: 0 16px; border-bottom: 6px solid var(--aptv-albastru-inchis);
+	position: sticky; top: 0; background: #FFFFFF;
+}
+.aptv-meniu-mobil__cap .aptv-logo { height: 30px; }
+.aptv-meniu-mobil__inchide {
+	display: inline-flex; align-items: center; gap: 0.4em; min-height: 48px; padding: 0 1em;
+	font: inherit; font-weight: 700; color: var(--aptv-negru); background: #FFFFFF;
+	border: 2px solid var(--aptv-negru); border-radius: 0; cursor: pointer;
+}
+.aptv-meniu-mobil__inchide svg { width: 18px; height: 18px; }
+.aptv-meniu-mobil__corp { padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 1.4rem; }
+.aptv-meniu-mobil__corp .aptv-cautare { max-width: none; flex: none; }
+.aptv-meniu-mobil__lista, .aptv-meniu-mobil__lista ul { list-style: none; margin: 0; padding: 0; }
+.aptv-meniu-mobil__lista { border-top: 2px solid var(--aptv-negru); }
+.aptv-meniu-mobil__lista > li > a {
+	display: flex; align-items: center; min-height: 60px; border-bottom: 1px solid var(--aptv-linie);
+	font-size: 1.15rem; font-weight: 700; color: var(--aptv-negru); text-decoration: none;
+}
+.aptv-meniu-mobil__lista ul a {
+	display: flex; align-items: center; min-height: 52px; padding-left: 1.2rem; border-bottom: 1px solid var(--aptv-linie);
+	font-weight: 700; color: var(--aptv-albastru-inchis); text-decoration: none;
+}
+.aptv-meniu-mobil .aptv-marime__eticheta { color: var(--aptv-negru); font-size: 1rem; }
+.aptv-meniu-mobil__tel { width: 100%; }
 
 /* 6. Carduri de episod --------------------------------------------------- */
-.aptv-card {
-	display: flex; flex-direction: column; overflow: hidden;
-	background: #FFFFFF; border: 2px solid var(--aptv-linie); border-radius: 16px;
-	color: var(--aptv-bleumarin); text-decoration: none;
-}
-.aptv-card:hover { border-color: var(--aptv-albastru-inchis); color: var(--aptv-bleumarin); }
-.aptv-card__media {
-	position: relative; display: flex; align-items: center; justify-content: center;
-	aspect-ratio: 16 / 9; background: var(--aptv-albastru-inchis); overflow: hidden;
-}
+.aptv-card { display: flex; flex-direction: column; gap: 0.6rem; color: var(--aptv-negru); text-decoration: none; }
+.aptv-card:hover { color: var(--aptv-negru); }
+.aptv-card:hover .aptv-card__titlu { text-decoration: underline; }
+.aptv-card__media { position: relative; display: block; aspect-ratio: 16 / 9; background: var(--aptv-imagine); overflow: hidden; }
 .aptv-card__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.aptv-card__play {
-	position: relative; display: flex; align-items: center; justify-content: center;
-	width: 3.1rem; height: 3.1rem; border-radius: 50%; background: #FFFFFF;
-	box-shadow: 0 2px 10px rgba(14, 34, 53, 0.35);
+.aptv-card__text { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.aptv-card__supra { font-size: var(--aptv-text-mic); font-weight: 700; color: var(--aptv-albastru-inchis); }
+.aptv-card__titlu {
+	font-size: 1.1rem; font-weight: 700; line-height: 1.3;
+	display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
-.aptv-card__play svg { width: 1.5rem; height: 1.5rem; margin-left: 0.15rem; }
-.aptv-card__durata {
-	position: absolute; right: 0.5rem; bottom: 0.5rem;
-	font-size: 0.85rem; font-weight: 700; padding: 0.15em 0.5em; border-radius: 6px;
-	background: var(--aptv-bleumarin); color: #FFFFFF;
+.aptv-card__data { font-size: var(--aptv-text-mic); color: var(--aptv-gri); }
+
+/* Butonul de redare: în colțul din stânga-jos, cu durata — nu acoperă textul din imagine. */
+.aptv-redare {
+	position: absolute; left: 0; bottom: 0; display: inline-flex; align-items: center; gap: 0.4em;
+	background: var(--aptv-albastru-inchis); color: #FFFFFF; padding: 0.3em 0.6em;
+	font-size: var(--aptv-text-mic); font-weight: 700; line-height: 1.2;
 }
-.aptv-card__text { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.9rem 1rem 1.1rem; }
-.aptv-card__eticheta { font-size: 0.85rem; font-weight: 700; color: var(--aptv-albastru-inchis); }
-.aptv-card__titlu { font-size: 1.1rem; font-weight: 700; line-height: 1.3; }
-.aptv-card__data { font-size: 0.9rem; color: var(--aptv-gri); }
+.aptv-redare svg { width: 0.85em; height: 0.85em; flex: none; }
+.aptv-redare--mare { font-size: 1.05rem; padding: 0.55em 0.9em; }
 
 /* Clip vertical (știri științifice) */
-.aptv-card--scurt .aptv-card__media { aspect-ratio: 4 / 5; }
-.aptv-card--scurt .aptv-card__text { padding: 0.7rem 0.8rem 0.9rem; }
-.aptv-card--scurt .aptv-card__titlu { font-size: 0.95rem; }
+.aptv-card--scurt .aptv-card__media { aspect-ratio: 3 / 4; }
+.aptv-card--scurt .aptv-card__titlu { font-size: 1rem; }
 
-/* Rând orizontal (liste de știri, „Urmează”) */
-.aptv-card--lista, .aptv-card--lista-scurt { flex-direction: row; align-items: center; gap: 0.9rem; padding: 0.7rem; }
-.aptv-card--lista .aptv-card__media { flex: 0 0 7.5rem; border-radius: 10px; }
-.aptv-card--lista-scurt .aptv-card__media { flex: 0 0 4.4rem; aspect-ratio: 3 / 4; border-radius: 10px; }
-.aptv-card--lista .aptv-card__text, .aptv-card--lista-scurt .aptv-card__text { padding: 0; min-width: 0; }
-.aptv-card--lista .aptv-card__play, .aptv-card--lista-scurt .aptv-card__play { width: 2.2rem; height: 2.2rem; }
-.aptv-card--lista .aptv-card__play svg, .aptv-card--lista-scurt .aptv-card__play svg { width: 1.1rem; height: 1.1rem; }
-.aptv-card--lista .aptv-card__durata { font-size: 0.75rem; right: 0.3rem; bottom: 0.3rem; }
+/* Rând orizontal (liste de știri, „Mai departe în ...”) */
+.aptv-card--lista, .aptv-card--lista-scurt { flex-direction: row; align-items: flex-start; gap: 0.9rem; padding-block: 0.9rem; border-top: 1px solid var(--aptv-linie); }
+.aptv-card--lista .aptv-card__media { flex: 0 0 8rem; }
+.aptv-card--lista-scurt .aptv-card__media { flex: 0 0 4.6rem; aspect-ratio: 3 / 4; }
 .aptv-card--lista .aptv-card__titlu, .aptv-card--lista-scurt .aptv-card__titlu { font-size: 1rem; }
+.aptv-card--lista .aptv-redare span:not(.screen-reader-text), .aptv-card--lista-scurt .aptv-redare span:not(.screen-reader-text) { display: none; }
 
 /* 7. Prima pagină -------------------------------------------------------- */
-.aptv-hero { background: var(--aptv-fundal-deschis); }
-.aptv-hero__in { display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; padding-block: 2.4rem; }
-.aptv-hero__text { flex: 1 1 26rem; min-width: 0; }
-.aptv-hero h1 { font-size: 2.3rem; line-height: 1.15; margin: 0.4em 0; }
-.aptv-hero__intro { font-size: 1.1rem; color: var(--aptv-text-secundar); max-width: 32rem; margin: 0 0 1.2rem; }
-.aptv-hero__recomandat { flex: 1 1 24rem; min-width: 0; position: relative; }
-.aptv-hero__insigna { position: absolute; top: 0.8rem; left: 0.8rem; z-index: 2; }
-.aptv-card--mare { border: 0; border-radius: 18px; box-shadow: 0 10px 30px rgba(20, 82, 127, 0.18); }
-.aptv-card--mare .aptv-card__play { width: 4.2rem; height: 4.2rem; }
-.aptv-card--mare .aptv-card__play svg { width: 1.9rem; height: 1.9rem; }
-.aptv-card--mare .aptv-card__titlu { font-size: 1.25rem; }
+.aptv-recomandat { padding-top: 1.8rem; }
+.aptv-recomandat__bun-venit { margin: 0 0 1.1rem; font-size: 1.05rem; color: var(--aptv-gri); }
+.aptv-recomandat__in { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.4rem 1.8rem; align-items: start; }
+.aptv-recomandat__media { min-width: 0; position: relative; display: block; aspect-ratio: 16 / 9; background: var(--aptv-imagine); overflow: hidden; }
+.aptv-recomandat__text { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+.aptv-recomandat__text h1 { font-size: 1.75rem; margin: 0.1em 0 0; }
+.aptv-recomandat__text h1 a { color: var(--aptv-negru); text-decoration: none; }
+.aptv-recomandat__text h1 a:hover { text-decoration: underline; }
+.aptv-recomandat__meta { margin: 0; color: var(--aptv-gri); }
 
-.aptv-pasi { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
-.aptv-pasi li { display: flex; gap: 0.9rem; align-items: flex-start; padding: 1.1rem; border: 2px solid var(--aptv-linie); border-radius: 16px; }
-.aptv-pasi li > span:last-child { display: flex; flex-direction: column; color: var(--aptv-gri); }
-.aptv-pasi strong { font-size: 1.15rem; color: var(--aptv-bleumarin); }
-.aptv-pasi__nr {
-	flex: none; width: 2.2em; height: 2.2em; border-radius: 50%;
-	display: flex; align-items: center; justify-content: center;
-	background: var(--aptv-albastru); color: var(--aptv-bleumarin); font-size: 1.2rem; font-weight: 700;
+.aptv-tema { border: 2px solid var(--aptv-negru); display: flex; flex-direction: column; }
+.aptv-tema__cap { display: block; padding: 0.55em 0.8em; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
+.aptv-tema__cap:hover { text-decoration: underline; }
+.aptv-tema__emisiune {
+	display: flex; justify-content: space-between; align-items: center; gap: 0.6rem;
+	min-height: 52px; padding: 0.3em 0.8em; border-top: 1px solid var(--aptv-linie);
+	color: var(--aptv-negru); font-weight: 700; text-decoration: none;
 }
+.aptv-tema__emisiune:hover { background: var(--aptv-fundal); color: var(--aptv-negru); }
+.aptv-tema__nr { font-weight: 400; font-size: var(--aptv-text-mic); color: var(--aptv-gri); white-space: nowrap; }
 
-.aptv-tema {
-	display: flex; flex-direction: column; gap: 0.5rem; padding: 1.3rem;
-	border: 2px solid var(--aptv-linie); border-radius: 18px; background: #FFFFFF;
-	color: var(--aptv-bleumarin); text-decoration: none;
-}
-.aptv-tema:hover { border-color: var(--aptv-albastru-inchis); color: var(--aptv-bleumarin); }
-.aptv-tema__nume { align-self: flex-start; font-size: 1.25rem; font-weight: 700; padding: 0.3em 0.75em; border-radius: 10px; }
-.aptv-tema__desc { color: var(--aptv-text-secundar); }
-.aptv-tema__lista { font-size: 0.95rem; color: var(--aptv-gri); }
-.aptv-tema__lista strong { color: var(--aptv-bleumarin); }
-.aptv-tema__mergi { margin-top: auto; font-weight: 700; color: var(--aptv-albastru-inchis); }
-
-.aptv-univ { background: var(--aptv-bleumarin); color: #FFFFFF; border-radius: 22px; padding: 2rem; display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; align-items: center; }
-.aptv-univ h2 { color: #FFFFFF; margin: 0.3em 0 0.4em; }
-.aptv-univ p { color: var(--aptv-linie); margin: 0; }
-.aptv-univ__text, .aptv-univ__lista { flex: 1 1 22rem; min-width: 0; }
-.aptv-univ__lista { display: flex; flex-direction: column; gap: 0.8rem; }
+.aptv-univ { background: var(--aptv-negru); color: #FFFFFF; display: flex; flex-wrap: wrap; }
+.aptv-univ__text { flex: 1 1 22rem; min-width: 0; padding: 1.6rem 1.6rem 1.4rem; }
+.aptv-univ h2 { color: #FFFFFF; margin: 0.6em 0 0.35em; }
+.aptv-univ p { color: #DDDDDD; margin: 0; }
+.aptv-univ__lista { flex: 1 1 22rem; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding: 1rem 1.6rem; }
 .aptv-univ__lista a {
-	display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-	padding: 1rem 1.2rem; border-radius: var(--aptv-raza); background: #FFFFFF;
-	color: var(--aptv-bleumarin); text-decoration: none;
+	display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 64px;
+	border-bottom: 1px solid #555555; color: #FFFFFF; font-size: 1.1rem; font-weight: 700; text-decoration: none;
 }
-.aptv-univ__lista strong { font-size: 1.1rem; }
-.aptv-univ__mergi { font-weight: 700; color: var(--aptv-albastru-inchis); flex: none; }
-
-.aptv-retea {
-	display: flex; align-items: center; gap: 0.8rem; padding: 1rem 1.2rem;
-	border: 2px solid var(--aptv-linie); border-radius: var(--aptv-raza);
-	color: var(--aptv-bleumarin); font-size: 1.05rem; font-weight: 700; text-decoration: none;
-}
-.aptv-retea:hover { border-color: var(--aptv-albastru-inchis); color: var(--aptv-bleumarin); }
-.aptv-retea svg { width: 1.8rem; height: 1.8rem; color: var(--aptv-albastru-inchis); flex: none; }
+.aptv-univ__lista a:last-child { border-bottom: 0; }
+.aptv-univ__lista a:hover { text-decoration: underline; }
+.aptv-univ__nr { font-weight: 400; font-size: var(--aptv-text-mic); color: #DDDDDD; white-space: nowrap; }
 
 /* 8. Pagini de categorie ------------------------------------------------- */
-.aptv-banda { padding-block: 1.2rem 2.2rem; }
-.aptv-banda__in { display: flex; flex-wrap: wrap; gap: 1.5rem 3rem; align-items: flex-end; justify-content: space-between; margin-top: 1.2rem; }
+.aptv-banda { padding-block: 0.8rem 2.2rem; }
+.aptv-banda__in { display: flex; flex-wrap: wrap; gap: 1.5rem 3rem; align-items: flex-end; justify-content: space-between; margin-top: 1rem; }
 .aptv-banda__text { flex: 1 1 26rem; min-width: 0; }
-.aptv-banda__supra { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; }
-.aptv-banda h1 { color: inherit; font-size: 2.8rem; line-height: 1.05; margin: 0.15em 0 0.35em; }
+.aptv-banda__supra { font-size: var(--aptv-text-mic); font-weight: 700; letter-spacing: 0.08em; }
+.aptv-banda h1 { color: inherit; font-size: 2.7rem; line-height: 1.05; margin: 0.15em 0 0.35em; }
 .aptv-banda p { font-size: 1.1rem; margin: 0 0 0.5rem; max-width: 34rem; }
 .aptv-banda__info { font-weight: 700; }
+.aptv-banda .aptv-buton--inchis { border-color: #000000; }
 
-.aptv-episoade { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1rem; }
+.aptv-episoade { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--aptv-linie); }
 .aptv-episod {
-	display: flex; flex-wrap: wrap; gap: 1rem 1.4rem; align-items: center; padding: 0.9rem;
-	border: 2px solid var(--aptv-linie); border-radius: 16px; background: #FFFFFF;
-	color: var(--aptv-bleumarin); text-decoration: none;
+	display: flex; flex-wrap: wrap; gap: 1rem 1.4rem; align-items: center; padding-block: 1rem;
+	border-top: 1px solid var(--aptv-linie); color: var(--aptv-negru); text-decoration: none;
 }
-.aptv-episod:hover { border-color: var(--aptv-albastru-inchis); color: var(--aptv-bleumarin); }
-.aptv-episod__media { position: relative; flex: 0 0 13rem; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.aptv-episod__text { flex: 1 1 16rem; min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+.aptv-episod:hover { color: var(--aptv-negru); }
+.aptv-episod:hover .aptv-episod__titlu { text-decoration: underline; }
+.aptv-episod__media { position: relative; flex: 0 0 13rem; max-width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
+.aptv-episod__text { flex: 1 1 16rem; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+.aptv-episod__text .aptv-card__eticheta { font-size: var(--aptv-text-mic); font-weight: 700; color: var(--aptv-gri); }
 .aptv-episod__titlu { font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
 .aptv-episod__porneste { flex: none; }
 
 .aptv-alte { margin-top: 2.4rem; }
-.aptv-grup { margin-bottom: 2rem; }
+.aptv-grup { margin-bottom: 2.2rem; }
 .aptv-grup h2 a { color: inherit; text-decoration: none; }
+.aptv-grup h2 a:hover { text-decoration: underline; }
 
-.aptv-emisiune {
-	display: flex; flex-direction: column; overflow: hidden;
-	border: 2px solid var(--aptv-linie); border-radius: 18px; background: #FFFFFF;
-	color: var(--aptv-bleumarin); text-decoration: none;
-}
-.aptv-emisiune:hover { border-color: var(--aptv-albastru-inchis); color: var(--aptv-bleumarin); }
-.aptv-emisiune__afis { min-height: 8.5rem; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.6rem; }
-.aptv-emisiune__tema { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; }
-.aptv-emisiune__nume { font-size: 1.7rem; font-weight: 700; line-height: 1.1; }
-.aptv-emisiune__corp { flex: 1 1 auto; padding: 1rem 1.2rem 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; color: var(--aptv-text-secundar); }
+.aptv-emisiune { display: flex; flex-direction: column; border: 2px solid var(--aptv-negru); color: var(--aptv-negru); text-decoration: none; }
+.aptv-emisiune:hover { color: var(--aptv-negru); }
+.aptv-emisiune:hover .aptv-emisiune__nume { text-decoration: underline; }
+.aptv-emisiune__afis { min-height: 8rem; padding: 1rem 1.1rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.6rem; }
+.aptv-emisiune__tema { font-size: var(--aptv-text-mic); font-weight: 700; letter-spacing: 0.08em; }
+.aptv-emisiune__nume { font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
+.aptv-emisiune__corp { flex: 1 1 auto; padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; color: #222222; }
 .aptv-emisiune__corp .aptv-buton { margin-top: auto; align-self: flex-start; }
 
 .navigation.pagination { margin-top: 1.6rem; }
 .navigation.pagination .nav-links { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 .navigation.pagination .page-numbers {
-	display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px;
-	padding: 0.3em 0.8em; box-sizing: border-box; border: 2px solid var(--aptv-linie); border-radius: 10px;
-	font-weight: 700; text-decoration: none;
+	display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 48px;
+	padding: 0.2em 0.8em; box-sizing: border-box; border: 2px solid var(--aptv-negru); border-radius: 0;
+	font-weight: 700; color: var(--aptv-negru); text-decoration: none;
 }
 .navigation.pagination .page-numbers.current { background: var(--aptv-albastru-inchis); border-color: var(--aptv-albastru-inchis); color: #FFFFFF; }
+.navigation.pagination .page-numbers.dots { border-color: transparent; }
 
 /* 9. Pagina episodului și playerul -------------------------------------- */
-.aptv-episod-pagina { display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start; margin-top: 1rem; }
+.aptv-episod-pagina { display: flex; flex-wrap: wrap; gap: 2.2rem; align-items: flex-start; margin-top: 0.8rem; }
 .aptv-episod-pagina__principal { flex: 999 1 36rem; min-width: 0; }
 .aptv-episod-pagina__lateral { flex: 1 1 18rem; min-width: 0; }
 .aptv-episod-pagina__lateral h2 { font-size: 1.3rem; }
-.aptv-episod-pagina__meta { margin: 1.2rem 0 0; font-size: 0.95rem; font-weight: 700; color: var(--aptv-albastru-inchis); }
-.aptv-episod-pagina h1 { font-size: 2rem; margin: 0.2em 0 0.5em; }
-.aptv-episod-pagina__descriere { color: var(--aptv-text-secundar); max-width: 40rem; }
-.aptv-episod-pagina__nav { margin-top: 1.4rem; }
-.aptv-lista-mica { display: flex; flex-direction: column; gap: 0.8rem; }
-.aptv-lista-mica__toate { display: inline-block; margin-top: 0.8rem; font-weight: 700; }
+.aptv-episod-pagina__etichete { margin-top: 1.2rem; }
+.aptv-episod-pagina__meta { font-size: var(--aptv-text-mic); color: var(--aptv-gri); padding-left: 0.2rem; }
+.aptv-episod-pagina h1 { font-size: 2rem; margin: 0.5em 0 0.5em; }
+.aptv-episod-pagina__descriere { color: #222222; max-width: 40rem; }
+.aptv-episod-pagina__nav { margin-top: 1rem; }
 
-.aptv-sfat { display: flex; gap: 0.9rem; align-items: flex-start; margin-top: 1.6rem; padding: 1.1rem 1.3rem; border-radius: var(--aptv-raza); background: #FFFFB3; }
+.aptv-urmeaza { margin-top: 1.8rem; border: 2px solid var(--aptv-negru); }
+.aptv-urmeaza__link {
+	display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.8rem 1.4rem;
+	padding: 0.8rem 1rem 1rem; color: var(--aptv-negru); text-decoration: none;
+}
+.aptv-urmeaza__link:hover { color: var(--aptv-negru); }
+.aptv-urmeaza__link:hover .aptv-urmeaza__titlu { text-decoration: underline; }
+.aptv-urmeaza__supra { display: block; font-size: var(--aptv-text-mic); color: var(--aptv-gri); }
+.aptv-urmeaza__titlu { display: block; font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
+.aptv-lista-mica { display: flex; flex-direction: column; border-bottom: 1px solid var(--aptv-linie); }
+.aptv-lista-mica__toate { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0.6rem; font-weight: 700; }
+
+.aptv-sfat { display: flex; gap: 0.9rem; align-items: flex-start; margin-top: 1.6rem; padding: 1rem 1.2rem; background: #FFFFB3; }
 .aptv-sfat svg { width: 1.6rem; height: 1.6rem; flex: none; }
 .aptv-sfat p { margin: 0; }
 
-.aptv-player {
-	position: relative; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden;
-	background: var(--aptv-bleumarin); display: flex; align-items: center; justify-content: center;
-}
+.aptv-player { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--aptv-imagine); }
 .aptv-player--scurt { aspect-ratio: 9 / 16; max-width: 24rem; max-height: 80vh; margin-inline: auto; }
-.aptv-player__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+.aptv-player__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .aptv-player__buton {
-	position: relative; display: inline-flex; align-items: center; gap: 0.6rem;
-	min-height: 56px; padding: 0.8em 1.7em; border: 0; border-radius: 999px; cursor: pointer;
-	background: #FFFFFF; color: var(--aptv-bleumarin);
-	font: inherit; font-size: 1.4rem; font-weight: 700;
-	box-shadow: 0 6px 24px rgba(14, 34, 53, 0.4);
+	position: absolute; left: 0; bottom: 0; display: inline-flex; align-items: center; gap: 0.6rem;
+	min-height: 72px; padding: 0 1.6em; border: 0; border-radius: 0; cursor: pointer;
+	background: var(--aptv-albastru-inchis); color: #FFFFFF;
+	font: inherit; font-size: 1.35rem; font-weight: 700;
 }
-.aptv-player__buton:hover { background: var(--aptv-galben); }
-.aptv-player__buton svg { width: 1.3em; height: 1.3em; }
+.aptv-player__buton:hover { background: var(--aptv-negru); }
+.aptv-player__buton svg { width: 1.1em; height: 1.1em; }
 .aptv-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 /* 10. Subsol ------------------------------------------------------------- */
-.aptv-ajutor { padding-block: 2.4rem; }
-.aptv-ajutor__in { background: var(--aptv-galben); color: var(--aptv-bleumarin); border-radius: 22px; padding: 1.8rem 2rem; display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
+.aptv-ajutor { padding-block: 2.6rem 2.4rem; }
+.aptv-ajutor__in { background: var(--aptv-galben); color: var(--aptv-negru); padding: 1.6rem 1.8rem; display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
 .aptv-ajutor h2 { font-size: 1.5rem; margin: 0 0 0.2em; }
 .aptv-ajutor p { margin: 0; }
 .aptv-ajutor__butoane { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+.aptv-ajutor .aptv-buton { white-space: nowrap; }
 
-.aptv-subsol { border-top: 2px solid var(--aptv-linie); background: #F5F9FD; color: var(--aptv-text-secundar); font-size: 0.95rem; }
+.aptv-subsol { border-top: 6px solid var(--aptv-albastru-inchis); background: var(--aptv-fundal); color: #222222; font-size: 18px; }
 .aptv-subsol__grila { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1.5rem; padding-block: 2rem; }
-.aptv-subsol__logo { height: 1.9rem; width: auto; display: block; margin-bottom: 0.8rem; }
-.aptv-subsol__titlu { font-size: 1rem; margin: 0 0 0.5rem; }
-.aptv-subsol ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
-.aptv-subsol__retele a { display: inline-flex; align-items: center; gap: 0.5rem; }
+.aptv-subsol__logo { height: 32px; width: auto; display: block; margin-bottom: 0.8rem; background: #FFFFFF; padding: 6px 8px; }
+.aptv-subsol__titlu { font-size: 18px; margin: 0 0 0.3rem; }
+.aptv-subsol ul { list-style: none; margin: 0; padding: 0; }
+.aptv-subsol li a { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; }
+.aptv-subsol p a { display: inline-block; padding-block: 0.5rem; }
 .aptv-subsol__retele svg { width: 1.3rem; height: 1.3rem; }
-.aptv-subsol__copyright { padding-bottom: 1.6rem; margin-block: 0; font-size: 0.85rem; color: var(--aptv-gri); }
+.aptv-subsol__copyright { padding-bottom: 1.6rem; margin-block: 0; font-size: 16px; color: var(--aptv-gri); }
 
 /* 11. Telefon și tabletă ------------------------------------------------- */
-@media (max-width: 700px) {
+@media (max-width: 760px) {
 	html { font-size: 18px; }
 	html.aptv-text-mare { font-size: 21px; }
 	html.aptv-text-foarte-mare { font-size: 24px; }
-	.aptv-hero h1 { font-size: 1.9rem; }
-	.aptv-banda h1 { font-size: 2.1rem; }
-	.aptv-meniu__link { flex: 1 1 auto; justify-content: center; }
+
+	/* Antet compact: logo + „Meniu”, rămâne sus la derulare. */
+	.aptv-antet { position: sticky; top: 0; border-bottom: 6px solid var(--aptv-albastru-inchis); }
+	.admin-bar .aptv-antet { top: 46px; }
+	.aptv-antet__sus { flex-wrap: nowrap; min-height: 66px; padding-block: 0; }
+	.aptv-logo { height: 30px; }
+	.aptv-antet__unelte, .aptv-bara-meniu, .aptv-panou { display: none !important; }
+	.aptv-meniu-buton {
+		display: inline-flex; align-items: center; gap: 0.4em; min-height: 48px; padding: 0 1em;
+		font: inherit; font-size: 18px; font-weight: 700; color: #FFFFFF;
+		background: var(--aptv-albastru-inchis); border: 0; border-radius: 0; cursor: pointer;
+	}
+	.aptv-meniu-buton svg { width: 20px; height: 20px; }
+
+	.aptv-recomandat { padding-top: 1rem; }
+	.aptv-recomandat__bun-venit { display: none; }
+	.aptv-recomandat__text h1 { font-size: 1.45rem; }
+	.aptv-recomandat__text .aptv-buton { width: 100%; }
+	.aptv-main h1 { font-size: 1.6rem; }
+	.aptv-banda h1 { font-size: 2rem; }
+	.aptv-episod-pagina h1 { font-size: 1.5rem; }
 	.aptv-episod__media { flex-basis: 100%; }
 	.aptv-episod__porneste { width: 100%; }
-	.aptv-univ { padding: 1.4rem; }
-	.aptv-ajutor__in { padding: 1.4rem; }
+	.aptv-recomandat__in { grid-template-columns: 1fr; }
+	/* Pe telefon, „Cele mai noi” devine o listă: imagine mică în stânga, textul în dreapta. */
+	.aptv-grila--4 { grid-template-columns: 1fr; gap: 0; }
+	.aptv-grila--4 .aptv-card { flex-direction: row; align-items: flex-start; gap: 0.8rem; padding-block: 0.9rem; border-top: 1px solid var(--aptv-linie); }
+	.aptv-grila--4 .aptv-card__media { flex: 0 0 42%; }
+	.aptv-grila--4 .aptv-card__titlu { font-size: 1rem; }
+	.aptv-grila--4 .aptv-card__data { display: none; }
+	.aptv-grila--scurte { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.aptv-univ__text, .aptv-univ__lista { padding-inline: 1.1rem; }
+	.aptv-ajutor__in { padding: 1.2rem; }
+	.aptv-ajutor .aptv-buton { width: 100%; }
+	.aptv-player__buton { min-height: 60px; font-size: 1.1rem; padding: 0 1.1em; }
 }

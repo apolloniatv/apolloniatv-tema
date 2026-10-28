@@ -27,10 +27,10 @@ $emisiuni = $cautat ? get_terms(
 <main id="main" class="aptv-main">
 	<div class="aptv-container aptv-sectiune">
 		<?php aptv_unde_va_aflati( null, 'Căutare' ); ?>
-		<h1 class="aptv-titlu-pagina">Rezultate pentru „<?php echo esc_html( $cautat ); ?>”</h1>
+		<h1 class="aptv-titlu-pagina aptv-titlu-banda">Rezultate pentru „<?php echo esc_html( $cautat ); ?>”</h1>
 
 		<?php if ( $emisiuni && ! is_wp_error( $emisiuni ) ) : ?>
-			<h2>Emisiuni și teme</h2>
+			<h2 class="aptv-titlu-banda">Emisiuni și teme</h2>
 			<div class="aptv-file">
 				<?php foreach ( $emisiuni as $t ) : ?>
 					<a href="<?php echo esc_url( get_term_link( $t ) ); ?>"><?php echo esc_html( $t->name ); ?></a>
@@ -39,7 +39,7 @@ $emisiuni = $cautat ? get_terms(
 		<?php endif; ?>
 
 		<?php if ( have_posts() ) : ?>
-			<h2>Episoade și știri</h2>
+			<h2 class="aptv-titlu-banda">Episoade și știri</h2>
 			<div class="aptv-grila aptv-grila--stiri">
 				<?php
 				while ( have_posts() ) :

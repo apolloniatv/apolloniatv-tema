@@ -117,4 +117,73 @@
 		player.appendChild( cadru );
 		cadru.focus();
 	} );
+
+	/* 4. Meniul de pe telefon (ecran întreg) ------------------------------ */
+	var butonMeniu = document.querySelector( '.aptv-meniu-buton' );
+	var meniuMobil = document.getElementById( 'aptv-meniu-mobil' );
+
+	function inchideMeniuMobil() {
+		if ( ! meniuMobil || meniuMobil.hidden ) {
+			return;
+		}
+		meniuMobil.hidden = true;
+		document.documentElement.classList.remove( 'aptv-meniu-deschis' );
+		butonMeniu.setAttribute( 'aria-expanded', 'false' );
+		butonMeniu.focus();
+	}
+
+	if ( butonMeniu && meniuMobil ) {
+		butonMeniu.addEventListener( 'click', function () {
+			meniuMobil.hidden = false;
+			document.documentElement.classList.add( 'aptv-meniu-deschis' );
+			butonMeniu.setAttribute( 'aria-expanded', 'true' );
+			var inchide = meniuMobil.querySelector( '.aptv-meniu-mobil__inchide' );
+			if ( inchide ) {
+				inchide.focus();
+			}
+		} );
+		meniuMobil.querySelector( '.aptv-meniu-mobil__inchide' ).addEventListener( 'click', inchideMeniuMobil );
+		// „Contact și ajutor” duce la subsolul aceleiași pagini: închidem întâi meniul.
+		meniuMobil.querySelectorAll( 'a[href^="#"]' ).forEach( function ( a ) {
+			a.addEventListener( 'click', function () {
+				meniuMobil.hidden = true;
+				document.documentElement.classList.remove( 'aptv-meniu-deschis' );
+				butonMeniu.setAttribute( 'aria-expanded', 'false' );
+			} );
+		} );
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' ) {
+				inchideMeniuMobil();
+			}
+		} );
+		// Dacă ecranul se lărgește (telefon rotit, fereastră mărită), meniul de telefon se închide.
+		window.addEventListener( 'resize', function () {
+			if ( window.innerWidth > 760 ) {
+				inchideMeniuMobil();
+			}
+		} );
+	}
+
+	/* 5. Imagini mari ------------------------------------------------------- */
+	// Imaginea de sus a primei pagini se cere la rezoluție mare. Unele videoclipuri nu au
+	// una mare: YouTube trimite atunci o imagine gri de 120 px. O înlocuim cu cea obișnuită.
+	document.querySelectorAll( 'img[data-aptv-rezerva]' ).forEach( function ( img ) {
+		function verifica() {
+			if ( img.naturalWidth > 0 && img.naturalWidth <= 120 ) {
+				img.src = img.dataset.aptvRezerva;
+				img.removeAttribute( 'data-aptv-rezerva' );
+			}
+		}
+		img.addEventListener( 'error', function () {
+			if ( img.dataset.aptvRezerva ) {
+				img.src = img.dataset.aptvRezerva;
+				img.removeAttribute( 'data-aptv-rezerva' );
+			}
+		} );
+		if ( img.complete ) {
+			verifica();
+		} else {
+			img.addEventListener( 'load', verifica );
+		}
+	} );
 }() );

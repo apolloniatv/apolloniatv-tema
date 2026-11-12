@@ -40,7 +40,9 @@ function aptv_tipare_descriere() {
 		'/^(facebook|instagram|youtube|tiktok)\s*:/',
 		'/^telefon\s*:\s*0332/',
 		'/apolloniatv2015@gmail\.com/',
-		'/urmareste\s+(@apolloniatv\w*|apollonia tv)\s+pentru mai mult continut/',
+		'/urmareste\b.*\bmai mult continut/',            // „Urmărește @ApolloniatvRo (pentru) mai mult conținut științific”
+		'/\b(spune|scrie|lasa)-ne\b.*\bin comentarii\b/', // pe site nu există comentarii
+		'/\bin comentarii\s*[!.?]*\s*$/',
 		'/link-ul sursei il gasiti in primul comentariu/',
 		'/^aboneaza-te la apollonia tv/',
 		'/^hashtag(uri|s)?\s*:?\s*$/',
@@ -54,6 +56,7 @@ function aptv_tipare_descriere() {
  */
 function aptv_rand_de_eliminat( $rand ) {
 	$t = strtolower( remove_accents( html_entity_decode( wp_strip_all_tags( $rand ), ENT_QUOTES, 'UTF-8' ) ) );
+	$t = preg_replace( '/[\x{2066}-\x{2069}\x{200B}-\x{200F}\x{FE0F}]/u', '', $t ); // caractere invizibile
 	$t = trim( preg_replace( '/\s+/u', ' ', $t ), " \t\x{00A0}➡️→•-" );
 	if ( '' === $t ) {
 		return false;

@@ -35,23 +35,38 @@ const APTV_FOLDER = 'apolloniatv-tema';
  * @return string Versiunea (ex. „0.1.2”) sau șir gol dacă GitHub nu răspunde.
  */
 /**
- * Adresa arhivei temei. Cerem arhiva exactă a ultimului commit (nu „main”), pentru că
- * GitHub păstrează câteva minute în memorie arhiva „main” și ar putea trimite versiunea veche.
+ * SHA-ul ultimului commit de pe „main” (o singură întrebare pe încărcare de pagină).
+ * Folosim fișierele acelui commit exact: GitHub ține câteva minute în memorie variantele
+ * „main” ale fișierelor și ale arhivei, așa că am putea primi versiunea veche.
+ *
+ * @return string SHA (40 de caractere) sau '' dacă GitHub nu răspunde.
  */
-function aptv_pachet_github() {
-	$principal = 'https://codeload.github.com/' . APTV_GITHUB . '/zip/refs/heads/main';
-	$raspuns   = wp_remote_get(
+function aptv_sha_github() {
+	static $sha = null;
+	if ( null !== $sha ) {
+		return $sha;
+	}
+	$raspuns = wp_remote_get(
 		'https://api.github.com/repos/' . APTV_GITHUB . '/commits/main',
 		array(
 			'timeout' => 10,
 			'headers' => array( 'Accept' => 'application/vnd.github.sha' ),
 		)
 	);
-	if ( is_wp_error( $raspuns ) || 200 !== wp_remote_retrieve_response_code( $raspuns ) ) {
-		return $principal;
+	$sha = '';
+	if ( ! is_wp_error( $raspuns ) && 200 === wp_remote_retrieve_response_code( $raspuns ) ) {
+		$corp = trim( wp_remote_retrieve_body( $raspuns ) );
+		$sha  = preg_match( '/^[0-9a-f]{40}$/', $corp ) ? $corp : '';
 	}
-	$sha = trim( wp_remote_retrieve_body( $raspuns ) );
-	return preg_match( '/^[0-9a-f]{40}$/', $sha ) ? 'https://codeload.github.com/' . APTV_GITHUB . '/zip/' . $sha : $principal;
+	return $sha;
+}
+
+/**
+ * Adresa arhivei temei: arhiva commitului exact, sau „main” dacă GitHub nu dă SHA-ul.
+ */
+function aptv_pachet_github() {
+	$sha = aptv_sha_github();
+	return 'https://codeload.github.com/' . APTV_GITHUB . '/zip/' . ( $sha ? $sha : 'refs/heads/main' );
 }
 
 function aptv_versiune_github( $proaspat = false ) {
@@ -59,7 +74,8 @@ function aptv_versiune_github( $proaspat = false ) {
 	if ( ! $proaspat && false !== $memorata ) {
 		return (string) $memorata;
 	}
-	$raspuns  = wp_remote_get( 'https://raw.githubusercontent.com/' . APTV_GITHUB . '/main/style.css', array( 'timeout' => 10 ) );
+	$sha      = aptv_sha_github();
+	$raspuns  = wp_remote_get( 'https://raw.githubusercontent.com/' . APTV_GITHUB . '/' . ( $sha ? $sha : 'main' ) . '/style.css', array( 'timeout' => 10 ) );
 	$versiune = '';
 	if ( ! is_wp_error( $raspuns ) && 200 === wp_remote_retrieve_response_code( $raspuns ) ) {
 		if ( preg_match( '/^\s*Version:\s*([0-9][0-9A-Za-z.\-]*)/mi', wp_remote_retrieve_body( $raspuns ), $m ) ) {

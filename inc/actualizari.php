@@ -34,6 +34,26 @@ const APTV_FOLDER = 'apolloniatv-tema';
  * @param bool $proaspat true = ignoră memoria și întreabă GitHub acum.
  * @return string Versiunea (ex. „0.1.2”) sau șir gol dacă GitHub nu răspunde.
  */
+/**
+ * Adresa arhivei temei. Cerem arhiva exactă a ultimului commit (nu „main”), pentru că
+ * GitHub păstrează câteva minute în memorie arhiva „main” și ar putea trimite versiunea veche.
+ */
+function aptv_pachet_github() {
+	$principal = 'https://codeload.github.com/' . APTV_GITHUB . '/zip/refs/heads/main';
+	$raspuns   = wp_remote_get(
+		'https://api.github.com/repos/' . APTV_GITHUB . '/commits/main',
+		array(
+			'timeout' => 10,
+			'headers' => array( 'Accept' => 'application/vnd.github.sha' ),
+		)
+	);
+	if ( is_wp_error( $raspuns ) || 200 !== wp_remote_retrieve_response_code( $raspuns ) ) {
+		return $principal;
+	}
+	$sha = trim( wp_remote_retrieve_body( $raspuns ) );
+	return preg_match( '/^[0-9a-f]{40}$/', $sha ) ? 'https://codeload.github.com/' . APTV_GITHUB . '/zip/' . $sha : $principal;
+}
+
 function aptv_versiune_github( $proaspat = false ) {
 	$memorata = get_site_transient( 'aptv_versiune_github' );
 	if ( ! $proaspat && false !== $memorata ) {
@@ -72,7 +92,7 @@ add_filter(
 				'theme'       => APTV_FOLDER,
 				'new_version' => $noua,
 				'url'         => 'https://github.com/' . APTV_GITHUB,
-				'package'     => 'https://codeload.github.com/' . APTV_GITHUB . '/zip/refs/heads/main',
+				'package'     => aptv_pachet_github(),
 			);
 		} else {
 			unset( $actualizari->response[ APTV_FOLDER ] );

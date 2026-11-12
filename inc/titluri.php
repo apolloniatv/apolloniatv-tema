@@ -252,7 +252,7 @@ function aptv_titlu_fara_prefix( $titlu, $post_id = 0 ) {
 	}
 	// „Andreea Barbieru · X”, „Andreea Barbieru, invitat X”, „redactor Andreea Barbieru-invitat X” → „X” / „Invitat X”.
 	$norm = mb_strtolower( remove_accents( $titlu ) );
-	if ( ! preg_match( '/^\s*(redactor\s+|moderator\s+)?' . preg_quote( $prefix, '/' ) . '\s*(·|,|-|–|:)\s*/u', $norm, $m ) ) {
+	if ( ! preg_match( '/^\s*(redactor\s+|moderator\s+|realizator\s+)?' . preg_quote( $prefix, '/' ) . '\s*(·|,|-|–|:)[\s\-–]*/u', $norm, $m ) ) {
 		return $titlu;
 	}
 	$rest = trim( mb_substr( $titlu, mb_strlen( $m[0] ) ) );

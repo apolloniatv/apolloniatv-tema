@@ -108,8 +108,10 @@ $scurte = $stiintifice ? aptv_cele_mai_noi( $stiintifice->term_id, 6 ) : array()
 						<?php foreach ( aptv_subcategorii_cu_continut( $tema ) as $em ) : ?>
 							<a class="aptv-tema__emisiune" href="<?php echo esc_url( get_term_link( $em ) ); ?>">
 								<?php echo aptv_afis_emisiune( $em, 'aptv-tema__afis' ); // phpcs:ignore -- escapat în funcție. ?>
-								<span class="aptv-tema__nume"><?php echo esc_html( $em->name ); ?></span>
-								<span class="aptv-tema__nr"><?php echo esc_html( aptv_plural( (int) $em->count, 'episod', 'episoade' ) ); ?> ›</span>
+								<span class="aptv-tema__text">
+									<span class="aptv-tema__nume"><?php echo esc_html( $em->name ); ?></span>
+									<span class="aptv-tema__nr"><?php echo esc_html( aptv_plural( (int) $em->count, 'episod', 'episoade' ) ); ?> ›</span>
+								</span>
 							</a>
 						<?php endforeach; ?>
 					</div>

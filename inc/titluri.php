@@ -239,7 +239,7 @@ function aptv_prefix_emisiune( $emisiune ) {
  * Scoate din titlu începutul repetat al emisiunii (vezi aptv_prefix_emisiune).
  */
 function aptv_titlu_fara_prefix( $titlu, $post_id = 0 ) {
-	if ( ! $post_id || false === strpos( (string) $titlu, ' · ' ) || 'post' !== get_post_type( $post_id ) ) {
+	if ( ! $post_id || 'post' !== get_post_type( $post_id ) ) {
 		return $titlu;
 	}
 	$emisiune = function_exists( 'aptv_categoria_episodului' ) ? aptv_categoria_episodului( $post_id ) : null;
@@ -250,8 +250,16 @@ function aptv_titlu_fara_prefix( $titlu, $post_id = 0 ) {
 	if ( '' === $prefix ) {
 		return $titlu;
 	}
-	$bucati = explode( ' · ', $titlu, 2 );
-	return strtolower( remove_accents( trim( $bucati[0] ) ) ) === $prefix ? $bucati[1] : $titlu;
+	// „Andreea Barbieru · X”, „Andreea Barbieru, invitat X”, „redactor Andreea Barbieru-invitat X” → „X” / „Invitat X”.
+	$norm = mb_strtolower( remove_accents( $titlu ) );
+	if ( ! preg_match( '/^\s*(redactor\s+|moderator\s+)?' . preg_quote( $prefix, '/' ) . '\s*(·|,|-|–|:)\s*/u', $norm, $m ) ) {
+		return $titlu;
+	}
+	$rest = trim( mb_substr( $titlu, mb_strlen( $m[0] ) ) );
+	if ( '' === $rest ) {
+		return $titlu;
+	}
+	return mb_strtoupper( mb_substr( $rest, 0, 1 ) ) . mb_substr( $rest, 1 );
 }
 
 // Doar pe site (nu în admin), ca echipa să vadă și să editeze titlul original.

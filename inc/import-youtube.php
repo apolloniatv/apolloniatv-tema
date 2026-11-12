@@ -167,6 +167,36 @@ function aptv_slug( $text ) {
  * @param string[] $ids
  * @return string[]
  */
+/**
+ * Este categoria unul dintre tipurile de știri cu playlist propriu (Externe, Naționale, Locale)?
+ * Științificele au regulile lor (toate clipurile scurte ale canalului principal).
+ *
+ * @param WP_Term|null|WP_Error $t
+ */
+function aptv_e_tip_stiri( $t ) {
+	if ( ! $t instanceof WP_Term || ! $t->parent || 'stiintifice' === $t->slug ) {
+		return false;
+	}
+	$parinte = get_term( $t->parent, 'category' );
+	return $parinte instanceof WP_Term && 'stiri' === $parinte->slug;
+}
+
+/**
+ * ID-urile articolelor pentru o listă de ID-uri YouTube.
+ *
+ * @param string[] $ids
+ * @return int[]
+ */
+function aptv_articole_dupa_video( $ids ) {
+	global $wpdb;
+	if ( ! $ids ) {
+		return array();
+	}
+	$semne = implode( ',', array_fill( 0, count( $ids ), '%s' ) );
+	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $semne conține doar %s.
+	return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_aptv_video' AND meta_value IN ($semne)", $ids ) ) );
+}
+
 function aptv_videouri_existente( $ids ) {
 	global $wpdb;
 	if ( ! $ids ) {
@@ -312,6 +342,31 @@ function aptv_import_pas( $optiuni ) {
 	$noi       = array_values( array_diff( $ids, $existente ) );
 	$rezultat['sarite'] += count( $existente );
 
+	// Știrile Externe / Naționale / Locale au câte un playlist. O știre importată mai demult
+	// în alt tip de știri (de exemplu încadrată automat, după titlu) e mutată acolo unde
+	// a pus-o echipa pe YouTube: playlistul are ultimul cuvânt.
+	if ( $existente && aptv_e_tip_stiri( $categorie ) ) {
+		foreach ( aptv_articole_dupa_video( $existente ) as $post_id ) {
+			$actuale = wp_get_post_categories( $post_id );
+			if ( in_array( (int) $categorie->term_id, array_map( 'intval', $actuale ), true ) ) {
+				continue;
+			}
+			$din_stiri = array_filter(
+				$actuale,
+				function ( $c ) {
+					return aptv_e_tip_stiri( get_term( $c, 'category' ) );
+				}
+			);
+			if ( ! $din_stiri ) {
+				continue; // e într-o emisiune sau în Portofoliu: nu o atingem
+			}
+			if ( empty( $optiuni['simulare'] ) ) {
+				wp_set_post_categories( $post_id, array_merge( array_diff( $actuale, $din_stiri ), array( (int) $categorie->term_id ) ) );
+			}
+			$rezultat['jurnal'][] = ( empty( $optiuni['simulare'] ) ? 'Mutat la ' : 'S-ar muta la ' ) . $categorie->name . ': ' . get_the_title( $post_id );
+		}
+	}
+
 	if ( ! $noi ) {
 		return $rezultat;
 	}
@@ -377,6 +432,7 @@ function aptv_import_pas( $optiuni ) {
 		}
 
 		$descriere = preg_replace( '/(^|\s)#[\p{L}\p{N}_]+/u', '', $descriere );
+		$descriere = aptv_curata_descriere( $descriere ); // fără „abonați-vă”, „like/dislike” etc. (inc/descrieri.php)
 
 		// Emoji (📍, 📢 ...) nu pot fi salvate direct în baza de date a serverului nostru
 		// (setul de caractere „utf8”). Le transformăm în coduri HTML, care se afișează la fel.
@@ -535,6 +591,35 @@ function aptv_pagina_import() {
 		<div id="aptv-imp-stare" style="font-size:15px;font-weight:600"></div>
 		<ol id="aptv-imp-jurnal" style="max-height:420px;overflow:auto;background:#fff;border:1px solid #ccd0d4;padding:12px 12px 12px 36px;display:none"></ol>
 	</div>
+
+	<div class="wrap" style="margin-top:2em">
+		<h2>Curăță descrierile</h2>
+		<p>Scoate din descrierile tuturor articolelor rândurile care au sens doar pe YouTube („abonați-vă”, „like/dislike”, vechiul bloc de contact, „Urmărește @apolloniatvro…”).
+			Articolele noi vin deja curate. Textul original se păstrează ascuns, deci operația poate fi anulată de persoana responsabilă de cod.</p>
+		<p><button type="button" class="button" id="aptv-curata-start">Curăță descrierile</button> <span id="aptv-curata-stare" style="font-weight:600"></span></p>
+	</div>
+	<script>
+	( function () {
+		var b = document.getElementById( 'aptv-curata-start' ), st = document.getElementById( 'aptv-curata-stare' );
+		b.addEventListener( 'click', function () {
+			b.disabled = true;
+			var total = { v: 0, c: 0 };
+			function pas( deLa ) {
+				var d = new FormData();
+				d.append( 'action', 'aptv_curata_descrieri' );
+				d.append( 'nonce', '<?php echo esc_js( wp_create_nonce( 'aptv_import' ) ); ?>' );
+				d.append( 'de_la', deLa );
+				fetch( ajaxurl, { method: 'POST', body: d, credentials: 'same-origin' } ).then( function ( r ) { return r.json(); } ).then( function ( r ) {
+					if ( ! r.success ) { throw new Error( 'eroare' ); }
+					total.v += r.data.verificate; total.c += r.data.curatate;
+					st.textContent = 'Verificate: ' + total.v + ' · curățate: ' + total.c;
+					if ( r.data.urmator ) { pas( r.data.urmator ); } else { st.textContent += ' · Gata.'; b.disabled = false; }
+				} ).catch( function () { st.textContent = 'Oprit din cauza unei erori.'; b.disabled = false; } );
+			}
+			pas( 0 );
+		} );
+	} )();
+	</script>
 
 	<script>
 	( function () {

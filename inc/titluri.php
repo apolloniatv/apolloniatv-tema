@@ -22,36 +22,124 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Cuvinte care își păstrează forma exactă după transformare.
+ * Țările și orașele de mai jos primesc automat și forma cu „-ei” (Polonia → Poloniei).
  */
 function aptv_cuvinte_pastrate() {
-	return array(
-		// Prescurtări.
-		'OMS', 'ONU', 'UE', 'SUA', 'UK', 'NATO', 'NASA', 'FDA', 'EMA', 'ANM', 'MIT', 'TV',
-		'ADHD', 'HPV', 'HIV', 'SIDA', 'ADN', 'ARN', 'ARNm', 'COVID', 'COVID-19', 'CO2', 'CO₂',
-		'AI', 'IA', 'IQ', 'IMC', 'BMI', 'LDL', 'HDL', 'RMN', 'ATI', 'UPU', 'SMURD', 'ISU',
-		'ChatGPT', 'SpaceX', 'YouTube', 'TikTok', 'Facebook', 'Instagram', 'Google', 'Apple',
-		// Locuri și nume proprii frecvente.
-		'Iași', 'România', 'Moldova', 'București', 'Cluj', 'Europa', 'China', 'Japonia', 'India',
-		'Rusia', 'Ucraina', 'Germania', 'Franța', 'Italia', 'Spania', 'Israel', 'Africa', 'America',
-		'Statele Unite', 'Marea Britanie', 'Anul Nou', 'Crăciun', 'Crăciunul', 'Paște', 'Paștele',
-		'Sfânta Parascheva', 'Mihai Eminescu', 'Apollonia', 'Alzheimer', 'Parkinson', 'Trump', 'Biden',
+	static $lista = null;
+	if ( null !== $lista ) {
+		return $lista;
+	}
+	$prescurtari = array(
+		'OMS', 'ONU', 'UE', 'SUA', 'UK', 'NATO', 'NASA', 'FDA', 'EMA', 'ANM', 'MIT', 'TV', 'CNAS', 'ANAF', 'BNR',
+		'ADHD', 'HPV', 'HIV', 'SIDA', 'ADN', 'ARN', 'ARNm', 'COVID', 'COVID-19', 'CO2', 'CO₂', 'AVC', 'BAC',
+		'AI', 'IA', 'IQ', 'IMC', 'BMI', 'LDL', 'HDL', 'RMN', 'ATI', 'UPU', 'SMURD', 'ISU', 'UNAGE',
+		'ChatGPT', 'SpaceX', 'YouTube', 'TikTok', 'Facebook', 'Instagram', 'Google', 'Apple', 'Tivoli', 'Mar-a-Lago',
 	);
+	// Locuri. Cele terminate în „a” primesc și forma de genitiv („-ei”).
+	$locuri = array(
+		'România', 'Moldova', 'Europa', 'Africa', 'America', 'Asia', 'Australia', 'Antarctica', 'China', 'Japonia', 'India', 'Coreea',
+		'Rusia', 'Ucraina', 'Germania', 'Franța', 'Italia', 'Spania', 'Portugalia', 'Polonia', 'Ungaria', 'Bulgaria', 'Serbia',
+		'Grecia', 'Turcia', 'Austria', 'Elveția', 'Olanda', 'Belgia', 'Suedia', 'Norvegia', 'Finlanda', 'Danemarca', 'Irlanda',
+		'Cehia', 'Slovacia', 'Croația', 'Slovenia', 'Albania', 'Bosnia', 'Lituania', 'Letonia', 'Estonia', 'Georgia', 'Armenia',
+		'Siria', 'Arabia Saudită', 'Columbia', 'Argentina', 'Brazilia', 'Venezuela', 'Bolivia', 'Nigeria', 'Kenya', 'Indonezia',
+		'Malaezia', 'Mongolia', 'Groenlanda', 'Islanda', 'Canada', 'Cuba', 'Roma', 'Moscova', 'Varșovia', 'Viena', 'Praga',
+		'Dobrogea', 'Transilvania', 'Bucovina', 'Muntenia', 'Oltenia', 'Suceava', 'Constanța', 'Marea Neagră', 'Dunărea',
+	);
+	$fara_genitiv = array(
+		'Iași', 'Iașul', 'Iașului', 'București', 'Bucureștiul', 'Bucureștiului', 'Cluj', 'Cluj-Napoca', 'Timișoara', 'Brașov', 'Bacău',
+		'Bârlad', 'Vaslui', 'Botoșani', 'Neamț', 'Piatra Neamț', 'Galați', 'Brăila', 'Focșani', 'Pașcani', 'Hârlău', 'Sibiu', 'Oradea',
+		'Craiova', 'Ploiești', 'Pitești', 'Cernavodă', 'Chișinău', 'Kiev', 'Paris', 'Londra', 'Berlin', 'Madrid', 'Bruxelles',
+		'Washington', 'New York', 'Beijing', 'Tokyo', 'Ierusalim', 'Gaza', 'Israel', 'Iran', 'Irak', 'Egipt', 'Maroc', 'Liban',
+		'Peru', 'Chile', 'Mexic', 'Vietnam', 'Pakistan', 'Afganistan', 'Statele Unite', 'Marea Britanie', 'Regatul Unit', 'Vatican',
+		'Copou', 'Carpați', 'Făgăraș', 'Munții Făgăraș', 'Bucegi', 'Delta Dunării',
+		// Sărbători, oameni, boli cu nume propriu.
+		'Anul Nou', 'Crăciun', 'Crăciunul', 'Paște', 'Paștele', 'Sfânta Parascheva', 'Sfântul Dumitru', 'Sfântul Andrei',
+		'Mihai Eminescu', 'Apollonia', 'Alzheimer', 'Parkinson', 'Trump', 'Biden', 'Putin', 'Zelenski', 'Macron', 'Merz', 'Orban',
+		'Vučić', 'Leon', 'Francisc',
+	);
+	$lista = array_merge( $prescurtari, $fara_genitiv );
+	foreach ( $locuri as $loc ) {
+		$lista[] = $loc;
+		if ( 'a' === mb_substr( $loc, -1 ) && false === strpos( $loc, ' ' ) ) {
+			$lista[] = mb_substr( $loc, 0, -1 ) . 'ei'; // Polonia → Poloniei, Franța → Franței
+		}
+	}
+	return $lista;
+}
+
+/**
+ * Numele proprii scrise corect în descrierea articolului (de obicei scrisă normal, nu cu majuscule):
+ * cuvintele cu literă mare care NU stau la început de propoziție. Ex.: „... papa Leon al XIV-lea, în Peru.”
+ *
+ * @param int $post_id
+ * @return string[] [ 'forma mică' => 'Forma corectă' ]
+ */
+function aptv_nume_din_descriere( $post_id ) {
+	static $memorie = array();
+	$post_id = (int) $post_id;
+	if ( ! $post_id ) {
+		return array();
+	}
+	if ( isset( $memorie[ $post_id ] ) ) {
+		return $memorie[ $post_id ];
+	}
+	$text  = html_entity_decode( wp_strip_all_tags( (string) get_post_field( 'post_content', $post_id ) ), ENT_QUOTES, 'UTF-8' );
+	$nume  = array();
+	// Un cuvânt cu majusculă precedat de literă mică/cifră/virgulă + spațiu = în mijlocul propoziției.
+	if ( preg_match_all( '/(?<=[\p{Ll}\p{N},;:„"(]\s)(\p{Lu}[\p{L}\-]*)/u', $text, $m ) ) {
+		foreach ( $m[1] as $cuvant ) {
+			$litere = preg_replace( '/[^\p{L}]/u', '', $cuvant );
+			// Sărim peste cuvintele scrise integral cu majuscule (titluri repetate), afară de numerele romane.
+			if ( mb_strlen( $litere ) > 1 && mb_strtoupper( $litere ) === $litere && ! preg_match( '/^[IVXLC]+(-lea|-a)?$/u', $cuvant ) ) {
+				continue;
+			}
+			$nume[ mb_strtolower( $cuvant ) ] = $cuvant;
+		}
+	}
+	return $memorie[ $post_id ] = $nume;
 }
 
 /**
  * Transformă o bucată de text scrisă cu majuscule în scriere normală.
+ *
+ * @param string   $text
+ * @param string[] $nume_extra Nume proprii învățate din descriere (vezi aptv_nume_din_descriere).
  */
-function aptv_din_majuscule( $text ) {
+function aptv_din_majuscule( $text, $nume_extra = array() ) {
 	$litere = preg_replace( '/[^\p{L}]/u', '', $text );
 	if ( mb_strlen( $litere ) < 6 || mb_strtoupper( $litere ) !== $litere ) {
 		return $text; // Nu e scris (doar) cu majuscule: rămâne cum e.
 	}
-	$rezultat = mb_strtolower( $text );
+	// Diacriticele vechi cu sedilă (ş, ţ) devin cele corecte, cu virgulă (ș, ț).
+	$rezultat = mb_strtolower( strtr( $text, array( 'Ş' => 'Ș', 'Ţ' => 'Ț', 'ş' => 'ș', 'ţ' => 'ț' ) ) );
 
 	// Cuvintele păstrate își recapătă forma (comparat fără să țină cont de litere mari/mici).
-	foreach ( aptv_cuvinte_pastrate() as $cuvant ) {
+	$cuvinte = array_merge( aptv_cuvinte_pastrate(), array_values( $nume_extra ) );
+	usort(
+		$cuvinte,
+		function ( $a, $b ) {
+			return mb_strlen( $b ) - mb_strlen( $a ); // întâi expresiile lungi („Piatra Neamț” înaintea lui „Neamț”)
+		}
+	);
+	foreach ( $cuvinte as $cuvant ) {
 		$rezultat = preg_replace( '/(?<![\p{L}\p{N}])' . preg_quote( mb_strtolower( $cuvant ), '/' ) . '(?![\p{L}\p{N}])/u', $cuvant, $rezultat );
 	}
+
+	// Numere romane: „al xiv-lea”, „secolul xx”, „carol i” → XIV-lea, XX, I.
+	$rezultat = preg_replace_callback(
+		'/(?<![\p{L}\p{N}])([ivxlc]+)(-lea|-a)(?![\p{L}])/u',
+		function ( $m ) {
+			return mb_strtoupper( $m[1] ) . $m[2];
+		},
+		$rezultat
+	);
+	$rezultat = preg_replace_callback(
+		'/(?<![\p{L}\p{N}])(ii|iii|iv|vii|viii|ix|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx|xxi)(?![\p{L}\p{N}])/u',
+		function ( $m ) {
+			return mb_strtoupper( $m[1] );
+		},
+		$rezultat
+	);
 
 	// Literă mare la început și după . ? !
 	$rezultat = preg_replace_callback(
@@ -66,20 +154,36 @@ function aptv_din_majuscule( $text ) {
 
 /**
  * Aplică transformarea fiecărei bucăți dintr-un titlu („TITLU MARE · Subtitlu normal”).
+ *
+ * @param string $titlu
+ * @param int    $post_id Articolul (pentru numele proprii din descriere); 0 = fără.
  */
-function aptv_titlu_lizibil( $titlu ) {
-	$bucati = explode( ' · ', (string) $titlu );
-	return implode( ' · ', array_map( 'aptv_din_majuscule', $bucati ) );
+function aptv_titlu_lizibil( $titlu, $post_id = 0 ) {
+	$titlu = (string) $titlu;
+	if ( ! preg_match( '/\p{Lu}{4}/u', $titlu ) ) {
+		return $titlu; // nicio bucată cu majuscule: nimic de făcut
+	}
+	$nume   = $post_id ? aptv_nume_din_descriere( $post_id ) : array();
+	$bucati = explode( ' · ', $titlu );
+	return implode(
+		' · ',
+		array_map(
+			function ( $b ) use ( $nume ) {
+				return aptv_din_majuscule( $b, $nume );
+			},
+			$bucati
+		)
+	);
 }
 
 // Doar pe site (nu în admin), ca echipa să vadă și să editeze titlul original.
 if ( ! is_admin() ) {
-	add_filter( 'the_title', 'aptv_titlu_lizibil', 5 );
+	add_filter( 'the_title', 'aptv_titlu_lizibil', 5, 2 );
 	add_filter(
 		'document_title_parts',
 		function ( $parti ) {
 			if ( isset( $parti['title'] ) ) {
-				$parti['title'] = aptv_titlu_lizibil( $parti['title'] );
+				$parti['title'] = aptv_titlu_lizibil( $parti['title'], is_singular() ? get_queried_object_id() : 0 );
 			}
 			return $parti;
 		}

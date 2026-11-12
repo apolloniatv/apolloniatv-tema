@@ -37,14 +37,12 @@ function aptv_structura() {
 		'stiri'        => array(
 			'nume'     => 'Știri',
 			'desc'     => 'Ce se întâmplă în Iași, în țară și în lume.',
-			// Playlistul „Stiri” de pe canalul @apolloniatvcultural. Fiecare știre importată aici
-			// e pusă automat la Locale, Naționale sau Externe (vezi aptv_ruteaza_stire în import-youtube.php).
-			'playlist' => 'PLZiC4LBfhp6o',
-			'auto'     => true,
+			// Fiecare tip de știri (Externe, Naționale, Locale) are playlistul lui pe @apolloniatvcultural.
+			// Secțiunea „Știri” nu mai are playlist (încadrarea automată după titlu rămâne doar ca rezervă).
 			'copii'  => array(
 				'externe'     => array( 'nume' => 'Externe', 'ordine' => 1, 'desc' => 'Ce se întâmplă în lume, pe scurt.' ),
 				'nationale'   => array( 'nume' => 'Naționale', 'ordine' => 2, 'desc' => 'Știri din țară: sănătate, societate, viața de zi cu zi.' ),
-				'locale'      => array( 'nume' => 'Locale', 'ordine' => 3, 'desc' => 'Știri din Iași și din Moldova.' ),
+				'locale'      => array( 'nume' => 'Locale', 'ordine' => 3, 'desc' => 'Știri din Iași și din Moldova.', 'playlist' => 'PLZiC4LBfhp6o', 'auto' => true ), // „Știri Locale”
 				// Toate încărcările canalului (UU...), doar clipurile scurte, importate automat zilnic.
 				'stiintifice' => array( 'nume' => 'Științifice', 'ordine' => 4, 'desc' => 'Studii și descoperiri din medicină și știință, explicate în mai puțin de un minut.', 'playlist' => 'UUA5cYbtmQExq5QuYj3U8OlQ', 'filtru' => 'scurte', 'auto' => true ),
 			),
@@ -160,6 +158,31 @@ add_action(
 			}
 		}
 		update_option( 'aptv_versiune_structura', 2 );
+	}
+);
+
+/**
+ *  - 3: câte un playlist pentru fiecare tip de știri. „Știri Locale” (fostul playlist „Stiri”)
+ *       trece la categoria Locale; secțiunea „Știri” nu mai importă și nu mai încadrează după titlu.
+ *       Playlisturile pentru Externe și Naționale se completează la categoria lor (Articole → Categorii).
+ */
+add_action(
+	'admin_init',
+	function () {
+		if ( (int) get_option( 'aptv_versiune_structura', 1 ) >= 3 || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$stiri  = get_term_by( 'slug', 'stiri', 'category' );
+		$locale = get_term_by( 'slug', 'locale', 'category' );
+		if ( $stiri ) {
+			delete_term_meta( $stiri->term_id, 'aptv_playlist' );
+			delete_term_meta( $stiri->term_id, 'aptv_auto' );
+		}
+		if ( $locale ) {
+			update_term_meta( $locale->term_id, 'aptv_playlist', 'PLZiC4LBfhp6o' );
+			update_term_meta( $locale->term_id, 'aptv_auto', 1 );
+		}
+		update_option( 'aptv_versiune_structura', 3 );
 	}
 );
 

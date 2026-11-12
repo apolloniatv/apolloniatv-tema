@@ -138,13 +138,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 				<?php endwhile; ?>
 			</ol>
 			<?php
-			the_posts_pagination(
-				array(
-					'prev_text'          => '← Episoadele anterioare',
-					'next_text'          => 'Episoadele următoare →',
-					'screen_reader_text' => 'Mai multe episoade',
-				)
-			);
+			aptv_paginare( 'Mai multe episoade', '← Episoadele anterioare', 'Episoadele următoare →' );
 			?>
 		<?php else : ?>
 			<p class="aptv-gol">Episoadele acestei emisiuni vor fi adăugate în curând.</p>
@@ -186,18 +180,12 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 				<?php
 				while ( have_posts() ) :
 					the_post();
-					aptv_card( get_post(), get_post_meta( get_the_ID(), '_aptv_scurt', true ) ? 'lista-scurt' : 'lista' );
+					aptv_card( get_post(), aptv_e_vertical() ? 'lista-scurt' : 'lista' );
 				endwhile;
 				?>
 			</div>
 			<?php
-			the_posts_pagination(
-				array(
-					'prev_text'          => '← Mai noi',
-					'next_text'          => 'Mai vechi →',
-					'screen_reader_text' => 'Mai multe știri',
-				)
-			);
+			aptv_paginare( 'Mai multe știri', '← Mai noi', 'Mai vechi →' );
 			?>
 		<?php else : ?>
 			<p class="aptv-gol">Știrile din această categorie vor fi adăugate în curând.</p>
@@ -251,13 +239,7 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 					?>
 				</div>
 				<?php
-				the_posts_pagination(
-					array(
-						'prev_text'          => '← Mai noi',
-						'next_text'          => 'Mai vechi →',
-						'screen_reader_text' => 'Mai multe proiecte',
-					)
-				);
+				aptv_paginare( 'Mai multe proiecte', '← Mai noi', 'Mai vechi →' );
 				?>
 			<?php else : ?>
 				<p class="aptv-gol">Proiectele vor fi adăugate în curând.</p>

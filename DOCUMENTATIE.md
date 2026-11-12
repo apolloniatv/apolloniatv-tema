@@ -39,7 +39,7 @@ Conținutul vine de pe două canale YouTube: canalul principal Apollonia TV și 
 - **Un episod = un articol** WordPress, pus în categoria emisiunii lui.
 - **Meniul și prima pagină se construiesc singure** din aceste categorii. Nu există un meniu de editat de mână.
 - **Meniul arată doar ce are conținut.** O emisiune sau un tip de știri fără niciun episod publicat nu apare în meniu și pe prima pagină; apare singur după primul episod.
-- **Titlurile cu MAJUSCULE** sunt afișate pe site în scriere normală; în admin rămân cum au fost scrise. Un nume propriu care apare greșit (cu literă mică) se adaugă în lista din `inc/titluri.php`.
+- **Titlurile cu MAJUSCULE** sunt afișate pe site în scriere normală; în admin rămân cum au fost scrise. Numele proprii se iau din descrierea articolului (unde sunt scrise corect) și dintr-o listă de țări, orașe și prescurtări din `inc/titluri.php`. Cel mai simplu remediu pentru un titlu greșit: rescrieți-l normal în WordPress — un titlu care nu e scris cu majuscule nu mai e transformat.
 - **Data articolului = data difuzării.** Episoadele unei emisiuni apar în ordinea datei (primul episod sus).
 
 ---
@@ -93,23 +93,17 @@ Videoclipurile private și cele care nu permit încorporarea sunt sărite (apar 
 Scena, Ediție Specială și Tribuna liberă.
 
 ### Știrile de pe @apolloniatvcultural (Locale / Naționale / Externe)
-Puneți știrea în playlistul **„Stiri”** al canalului @apolloniatvcultural. Site-ul o preia zilnic și o pune singur
-la Locale, Naționale sau Externe:
-- dacă în titlu sau în descrierea de pe YouTube scrie **#locale**, **#nationale** sau **#externe**, eticheta decide;
-- altfel, după titlu: Iași, Bacău, Bârlad, Suceava... → Locale; țări, capitale, lideri străini → Externe; restul → Naționale.
+Fiecare tip de știri are playlistul lui pe @apolloniatvcultural: „Știri Locale” → Locale, „Interne” → Naționale,
+„Externe” → Externe. Playlistul se scrie la categorie (Articole → Categorii → Editează → „Playlist YouTube”),
+cu „Importă automat zilnic” bifat. Playlisturile trebuie să fie **publice sau nelistate**, nu private.
 
-Dacă o știre ajunge greșit, o mutați din WordPress (Articole → editare → Categorii). Lista de cuvinte este în
-`inc/import-youtube.php` (funcția `aptv_ruteaza_stire`).
+Dacă o știre e mutată în alt playlist, la următorul import site-ul o mută și el în categoria potrivită.
+Doar știrile științifice sunt afișate vertical (9:16); toate celelalte materiale sunt 16:9.
 
----
-
-## 4. Lucruri care se fac o singură dată (la instalare)
-
-1. **Setări → General → Limba site-ului: Română.** (Altfel datele apar în engleză: „26 November”.)
-2. **Setări → Legături permanente: „Denumire articol”.**
-3. Ștergeți articolul „Hello world!” / „Salut, lume!”.
-4. Apollonia TV → Structură → **Creează structura**.
-5. Apollonia TV → Setări → completați datele reale și **cheia YouTube API** (vezi mai jos).
+### Descrieri curate
+Rândurile de promovare de pe YouTube („abonați-vă”, „like/dislike”, vechiul bloc de contact, „Urmărește @apolloniatvro…”)
+nu apar pe site. Lista lor e în `inc/descrieri.php`. Pentru articolele vechi: Apollonia TV → Import YouTube → **Curăță descrierile**
+(textul original rămâne păstrat ascuns, în `_aptv_descriere_yt`).
 
 ### Cum se obține cheia YouTube API (gratuită)
 1. Intrați pe console.cloud.google.com cu un cont Google al echipei.

@@ -30,7 +30,7 @@ while ( have_posts() ) :
 	$e_proiect   = 'portofoliu' === $tip;
 	$numar       = $e_emisiune ? aptv_numar_episod( $post_curent, $categorie ) : 0;
 	$video       = aptv_video_id();
-	$scurt       = (bool) get_post_meta( get_the_ID(), '_aptv_scurt', true );
+	$scurt       = aptv_e_vertical(); // doar știrile științifice sunt verticale
 	$durata      = aptv_durata_text();
 	$urmatoare   = $e_emisiune ? aptv_episoade_urmatoare( $post_curent, $categorie, 3 ) : array();
 	$anterior    = $e_emisiune ? aptv_episod_anterior( $post_curent, $categorie ) : null;
@@ -45,12 +45,7 @@ while ( have_posts() ) :
 
 			<div class="aptv-episod-pagina">
 				<article class="aptv-episod-pagina__principal">
-					<?php
-					if ( $video && false === strpos( $continut, 'aptv-player' ) ) {
-						echo aptv_player( $video, get_the_title(), $scurt ); // phpcs:ignore -- HTML escapat în aptv_player().
-					}
-					?>
-
+					<?php // Ordinea: titlul, playerul, „Urmează”, apoi descrierea (ca titlul și „Pornește” să fie vizibile fără derulare). ?>
 					<div class="aptv-etichete aptv-episod-pagina__etichete">
 						<?php echo aptv_eticheta( $categorie ); // phpcs:ignore -- escapat în funcție. ?>
 						<?php if ( $e_emisiune && aptv_e_arhiva() ) : ?><span class="aptv-eticheta aptv-eticheta--arhiva">ARHIVĂ</span><?php endif; ?>
@@ -71,9 +66,11 @@ while ( have_posts() ) :
 					</div>
 					<h1 class="aptv-titlu-banda"><?php the_title(); ?></h1>
 
-					<?php if ( trim( wp_strip_all_tags( $continut ) ) || false !== strpos( $continut, 'aptv-player' ) ) : ?>
-						<div class="aptv-episod-pagina__descriere entry-content"><?php echo $continut; // phpcs:ignore -- conținut WordPress filtrat. ?></div>
-					<?php endif; ?>
+					<?php
+					if ( $video && false === strpos( $continut, 'aptv-player' ) ) {
+						echo aptv_player( $video, get_the_title(), $scurt ); // phpcs:ignore -- HTML escapat în aptv_player().
+					}
+					?>
 
 					<?php if ( $e_emisiune ) : ?>
 						<?php if ( $urmatoare ) : ?>
@@ -105,6 +102,10 @@ while ( have_posts() ) :
 						<nav class="aptv-butoane aptv-episod-pagina__nav" aria-label="Alte știri">
 							<a class="aptv-buton aptv-buton--contur" href="<?php echo esc_url( get_term_link( $categorie ) ); ?>">‹ Toate știrile <?php echo esc_html( mb_strtolower( $categorie->name ) ); ?></a>
 						</nav>
+					<?php endif; ?>
+
+					<?php if ( trim( wp_strip_all_tags( $continut ) ) || false !== strpos( $continut, 'aptv-player' ) ) : ?>
+						<div class="aptv-episod-pagina__descriere entry-content"><?php echo $continut; // phpcs:ignore -- conținut WordPress filtrat. ?></div>
 					<?php endif; ?>
 
 					<?php if ( $video ) : ?>

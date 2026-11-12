@@ -279,3 +279,58 @@ function aptv_cerere_oferta( $titlu = 'Aveți un eveniment? Spuneți-ne despre e
 	</section>
 	<?php
 }
+
+/**
+ * Este clipul vertical (9:16)? Doar știrile științifice sunt filmate vertical;
+ * restul materialelor (știri, emisiuni, proiecte) sunt 16:9, chiar dacă sunt scurte.
+ *
+ * @param int|WP_Post|null $post
+ */
+function aptv_e_vertical( $post = null ) {
+	$post = get_post( $post );
+	if ( ! $post ) {
+		return false;
+	}
+	$stiintifice = get_term_by( 'slug', 'stiintifice', 'category' );
+	return $stiintifice && has_term( $stiintifice->term_id, 'category', $post );
+}
+
+/**
+ * Paginarea listelor: butoane mari, „Pagina 2 din 5”, link înapoi și înainte.
+ *
+ * @param string $eticheta Numele listei pentru cititoarele de ecran (ex. „Pagini cu episoade”).
+ * @param string $inapoi   Textul butonului spre pagina anterioară.
+ * @param string $inainte  Textul butonului spre pagina următoare.
+ */
+function aptv_paginare( $eticheta = 'Alte pagini', $inapoi = '← Înapoi', $inainte = 'Mai departe →' ) {
+	global $wp_query;
+	$total = (int) $wp_query->max_num_pages;
+	if ( $total < 2 ) {
+		return;
+	}
+	$curenta = max( 1, (int) get_query_var( 'paged' ) );
+	$linkuri = paginate_links(
+		array(
+			'total'     => $total,
+			'current'   => $curenta,
+			'mid_size'  => 1,
+			'end_size'  => 1,
+			'prev_text' => $inapoi,
+			'next_text' => $inainte,
+			'type'      => 'array',
+		)
+	);
+	if ( ! $linkuri ) {
+		return;
+	}
+	?>
+	<nav class="aptv-paginare" aria-label="<?php echo esc_attr( $eticheta ); ?>">
+		<p class="aptv-paginare__stare">Pagina <?php echo (int) $curenta; ?> din <?php echo (int) $total; ?></p>
+		<ul class="aptv-paginare__lista">
+			<?php foreach ( $linkuri as $link ) : ?>
+				<li><?php echo $link; // phpcs:ignore -- generat de WordPress. ?></li>
+			<?php endforeach; ?>
+		</ul>
+	</nav>
+	<?php
+}

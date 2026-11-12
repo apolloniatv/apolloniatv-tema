@@ -89,6 +89,7 @@ select:focus-visible {
 /* 4. Elemente comune ----------------------------------------------------- */
 .aptv-container { max-width: var(--aptv-latime); margin-inline: auto; padding-inline: 1.2rem; box-sizing: border-box; }
 .aptv-sectiune { padding-block: 2.4rem 0.4rem; }
+.aptv-main > .aptv-container.aptv-sectiune:first-child { padding-top: 1.2rem; }
 .aptv-sectiune__cap { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; align-items: baseline; justify-content: space-between; margin-bottom: 0.9rem; }
 .aptv-sectiune__cap h2 { margin: 0; }
 .aptv-sectiune__cap > a { font-weight: 700; display: inline-flex; align-items: center; min-height: 44px; }
@@ -358,24 +359,32 @@ select:focus-visible {
 .aptv-emisiune__corp { flex: 1 1 auto; padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; color: #222222; }
 .aptv-emisiune__corp .aptv-buton { margin-top: auto; align-self: flex-start; }
 
-.navigation.pagination { margin-top: 1.6rem; }
-.navigation.pagination .nav-links { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
-.navigation.pagination .page-numbers {
+/* Paginarea (aptv_paginare în ajutoare.php): butoane de cel puțin 48 × 48 px. */
+.aptv-paginare { margin-top: 1.8rem; }
+.aptv-paginare__stare { margin: 0 0 0.6rem; font-weight: 700; }
+.aptv-paginare__lista { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.aptv-paginare__lista li { margin: 0; }
+.aptv-paginare .page-numbers {
 	display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 48px;
-	padding: 0.2em 0.8em; box-sizing: border-box; border: 2px solid var(--aptv-chenar); border-radius: 0;
-	font-weight: 700; color: var(--aptv-negru); text-decoration: none;
+	padding: 0.2em 0.9em; box-sizing: border-box; border: 2px solid var(--aptv-chenar); border-radius: 0;
+	font-weight: 700; color: var(--aptv-negru); text-decoration: none; background: #FFFFFF;
 }
-.navigation.pagination .page-numbers.current { background: var(--aptv-albastru-inchis); border-color: var(--aptv-albastru-inchis); color: #FFFFFF; }
-.navigation.pagination .page-numbers.dots { border-color: transparent; }
+.aptv-paginare a.page-numbers:hover { background: var(--aptv-albastru-inchis); border-color: var(--aptv-albastru-inchis); color: #FFFFFF; }
+.aptv-paginare .page-numbers.current { background: var(--aptv-albastru-inchis); border-color: var(--aptv-albastru-inchis); color: #FFFFFF; }
+.aptv-paginare .page-numbers.dots { border-color: transparent; background: transparent; min-width: 1.5em; padding: 0; }
 
 /* 9. Pagina episodului și playerul -------------------------------------- */
 .aptv-episod-pagina { display: flex; flex-wrap: wrap; gap: 2.2rem; align-items: flex-start; margin-top: 0.8rem; }
 .aptv-episod-pagina__principal { flex: 999 1 36rem; min-width: 0; }
 .aptv-episod-pagina__lateral { flex: 1 1 18rem; min-width: 0; }
 .aptv-episod-pagina__lateral h2 { font-size: 1.3rem; }
-.aptv-episod-pagina__etichete { margin-top: 1.2rem; }
+.aptv-episod-pagina__etichete { margin-top: 0.4rem; }
 .aptv-episod-pagina__meta { font-size: var(--aptv-text-mic); color: var(--aptv-gri); padding-left: 0.2rem; }
-.aptv-episod-pagina h1 { font-size: 2rem; margin: 0.5em 0 0.5em; }
+.aptv-episod-pagina h1 { font-size: 2rem; margin: 0.4em 0 0.6em; }
+/* Titlul e deasupra playerului; playerul se micșorează ca să încapă în ecran (laptopuri cu ecran mic). */
+.aptv-episod-pagina__principal > .aptv-player:not(.aptv-player--scurt) { width: min(100%, max(30rem, calc((100vh - 300px) * 16 / 9))); }
+.aptv-episod-pagina__principal > .aptv-player + * { margin-top: 1.4rem; }
+.aptv-episod-pagina .aptv-urmeaza { margin-top: 1.4rem; }
 .aptv-episod-pagina__descriere { color: #222222; max-width: 40rem; }
 .aptv-episod-pagina__nav { margin-top: 1rem; }
 
@@ -399,7 +408,8 @@ select:focus-visible {
 .aptv-player--scurt { aspect-ratio: 9 / 16; max-width: 24rem; max-height: 80vh; margin-inline: auto; }
 .aptv-player__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .aptv-player__buton {
-	position: absolute; left: 0; bottom: 0; display: inline-flex; align-items: center; gap: 0.6rem;
+	position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 0.6rem;
+	box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
 	min-height: 72px; padding: 0 1.6em; border: 0; border-radius: 0; cursor: pointer;
 	background: var(--aptv-albastru-inchis); color: #FFFFFF;
 	font: inherit; font-size: 1.35rem; font-weight: 700;

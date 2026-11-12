@@ -21,6 +21,7 @@
  *   import-youtube.php   – aduce episoadele din playlist-urile YouTube
  *   actualizari.php      – versiunile noi ale temei de pe GitHub apar în Panou → Actualizări
  *   titluri.php          – titlurile scrise cu MAJUSCULE apar pe site în scriere normală
+ *   descrieri.php        – scoate din descrieri textele de promovare de pe YouTube („abonați-vă”...)
  *
  * @package apolloniatv
  */
@@ -47,6 +48,7 @@ require APTV_DIR . '/inc/episod.php';
 require APTV_DIR . '/inc/import-youtube.php';
 require APTV_DIR . '/inc/actualizari.php';
 require APTV_DIR . '/inc/titluri.php';
+require APTV_DIR . '/inc/descrieri.php';
 
 /**
  * Încarcă stilurile și scripturile temei.

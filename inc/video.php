@@ -35,12 +35,14 @@ function aptv_player( $video_id, $titlu = '', $scurt = false ) {
 	if ( ! $video_id ) {
 		return '';
 	}
-	// hqdefault există pentru orice videoclip (imaginea e decupată la 16:9 din CSS).
-	$imagine = 'https://i.ytimg.com/vi/' . $video_id . '/hqdefault.jpg';
+	// Pentru clipurile 16:9 cerem imaginea mare (1280 px). Nu există la toate videoclipurile:
+	// atunci tema.js o înlocuiește cu hqdefault (480 px), care există mereu.
+	$rezerva = 'https://i.ytimg.com/vi/' . $video_id . '/hqdefault.jpg';
+	$imagine = $scurt ? $rezerva : 'https://i.ytimg.com/vi/' . $video_id . '/maxresdefault.jpg';
 	ob_start();
 	?>
 	<div class="aptv-player<?php echo $scurt ? ' aptv-player--scurt' : ''; ?>" data-video="<?php echo esc_attr( $video_id ); ?>" data-titlu="<?php echo esc_attr( $titlu ); ?>">
-		<img class="aptv-player__img" src="<?php echo esc_url( $imagine ); ?>" alt="" decoding="async">
+		<img class="aptv-player__img" src="<?php echo esc_url( $imagine ); ?>"<?php echo $scurt ? '' : ' data-aptv-rezerva="' . esc_url( $rezerva ) . '"'; ?> alt="" decoding="async" fetchpriority="high">
 		<button type="button" class="aptv-player__buton">
 			<?php echo aptv_icon_play(); // phpcs:ignore ?>
 			<span>Pornește</span>

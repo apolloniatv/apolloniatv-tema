@@ -48,7 +48,7 @@ $emisiuni = $cautat ? get_terms(
 				endwhile;
 				?>
 			</div>
-			<?php the_posts_pagination( array( 'prev_text' => '← Înapoi', 'next_text' => 'Mai multe rezultate →' ) ); ?>
+			<?php aptv_paginare( 'Mai multe rezultate', '← Înapoi', 'Mai multe rezultate →' ); ?>
 		<?php else : ?>
 			<p class="aptv-gol">Nu am găsit nimic. Încercați un alt cuvânt sau <a href="#contact">sunați-ne</a> și vă ajutăm.</p>
 		<?php endif; ?>

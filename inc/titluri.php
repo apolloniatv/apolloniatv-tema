@@ -50,7 +50,7 @@ function aptv_cuvinte_pastrate() {
 		'Bârlad', 'Vaslui', 'Botoșani', 'Neamț', 'Piatra Neamț', 'Galați', 'Brăila', 'Focșani', 'Pașcani', 'Hârlău', 'Sibiu', 'Oradea',
 		'Craiova', 'Ploiești', 'Pitești', 'Cernavodă', 'Chișinău', 'Kiev', 'Paris', 'Londra', 'Berlin', 'Madrid', 'Bruxelles',
 		'Washington', 'New York', 'Beijing', 'Tokyo', 'Ierusalim', 'Gaza', 'Israel', 'Iran', 'Irak', 'Egipt', 'Maroc', 'Liban',
-		'Peru', 'Chile', 'Mexic', 'Vietnam', 'Pakistan', 'Afganistan', 'Statele Unite', 'Marea Britanie', 'Regatul Unit', 'Vatican',
+		'Republica Moldova', 'Republicii Moldova', 'Peru', 'Chile', 'Mexic', 'Vietnam', 'Pakistan', 'Afganistan', 'Statele Unite', 'Marea Britanie', 'Regatul Unit', 'Vatican',
 		'Copou', 'Carpați', 'Făgăraș', 'Munții Făgăraș', 'Bucegi', 'Delta Dunării',
 		// Sărbători, oameni, boli cu nume propriu.
 		'Anul Nou', 'Crăciun', 'Crăciunul', 'Paște', 'Paștele', 'Sfânta Parascheva', 'Sfântul Dumitru', 'Sfântul Andrei',
@@ -169,7 +169,17 @@ function aptv_titlu_lizibil( $titlu, $post_id = 0 ) {
 		' · ',
 		array_map(
 			function ( $b ) use ( $nume ) {
-				return aptv_din_majuscule( $b, $nume );
+				// Și propozițiile din aceeași bucată: „GUMĂ DE MESTECAT ÎMPOTRIVA HPV? Rezultate surprinzătoare”.
+				$propozitii = preg_split( '/(?<=[.?!])\s+/u', $b );
+				return implode(
+					' ',
+					array_map(
+						function ( $p ) use ( $nume ) {
+							return aptv_din_majuscule( $p, $nume );
+						},
+						$propozitii
+					)
+				);
 			},
 			$bucati
 		)

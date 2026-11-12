@@ -27,24 +27,28 @@ $sectiune  = aptv_sectiune( $categorie );
 /**
  * Cardul unei emisiuni (folosit doar pe această pagină).
  */
-$card_emisiune = function ( $emisiune ) {
-	$parinte               = $emisiune->parent ? get_term( $emisiune->parent, 'category' ) : null;
+$card_emisiune = function ( $emisiune, $tema = null ) {
+	$afis = aptv_afis_emisiune( $emisiune, 'aptv-emisiune__img' );
 	?>
-	<a class="aptv-emisiune" href="<?php echo esc_url( get_term_link( $emisiune ) ); ?>">
-		<?php $afis = aptv_afis_emisiune( $emisiune, 'aptv-emisiune__img' ); ?>
-		<span class="aptv-emisiune__afis aptv-c<?php echo $afis ? ' aptv-emisiune__afis--imagine' : ''; ?>" style="<?php echo esc_attr( aptv_stil_culoare( $emisiune ) ); ?>">
-			<?php echo $afis; // phpcs:ignore -- escapat în aptv_afis_emisiune(). ?>
-			<?php if ( $parinte ) : ?>
-				<span class="aptv-emisiune__tema"><?php echo esc_html( mb_strtoupper( $parinte->name ) ); ?></span>
-			<?php endif; ?>
-			<span class="aptv-emisiune__nume"><?php echo esc_html( $emisiune->name ); ?></span>
+	<a class="aptv-emisiune" href="<?php echo esc_url( get_term_link( $emisiune ) ); ?>" style="<?php echo esc_attr( aptv_stil_culoare( $emisiune ) ); ?>">
+		<span class="aptv-emisiune__afis<?php echo $afis ? '' : ' aptv-c'; ?>">
+			<?php
+			// Imaginea emisiunii; fără imagine, un panou în culoarea temei cu numele emisiunii.
+			echo $afis ? $afis : '<span class="aptv-emisiune__fara-imagine" aria-hidden="true">' . esc_html( $emisiune->name ) . '</span>'; // phpcs:ignore -- escapat.
+			?>
 		</span>
 		<span class="aptv-emisiune__corp">
-			<?php if ( $emisiune->description ) : ?>
-				<span><?php echo esc_html( $emisiune->description ); ?></span>
+			<?php if ( $tema ) : ?>
+				<span class="aptv-etichete"><?php echo aptv_eticheta( $tema ); // phpcs:ignore -- escapat în funcție. ?></span>
 			<?php endif; ?>
-			<span class="aptv-mic"><?php echo esc_html( aptv_plural( (int) $emisiune->count, 'episod', 'episoade' ) ); ?></span>
-			<span class="aptv-buton aptv-buton--mic">Vezi episoadele ›</span>
+			<span class="aptv-emisiune__nume"><?php echo esc_html( $emisiune->name ); ?></span>
+			<?php if ( $emisiune->description ) : ?>
+				<span class="aptv-emisiune__desc"><?php echo esc_html( $emisiune->description ); ?></span>
+			<?php endif; ?>
+			<span class="aptv-emisiune__meta">
+				<span><?php echo esc_html( aptv_plural( (int) $emisiune->count, 'episod', 'episoade' ) ); ?></span>
+				<span class="aptv-emisiune__vezi">Vezi episoadele ›</span>
+			</span>
 		</span>
 	</a>
 	<?php
@@ -268,29 +272,33 @@ $butoane = function ( $parinte, $curent, $eticheta_toate ) {
 		<?php endif; ?>
 
 		<?php
-		// Pe „Emisiuni”: toate temele, fiecare cu emisiunile ei. Altfel: emisiunile categoriei curente.
-		$grupuri = ( 'sectiune' === $tip && $e_emisiuni ) ? aptv_subcategorii_cu_continut( $categorie ) : array( $categorie );
-		foreach ( $grupuri as $grup ) :
-			$emisiuni_grup = aptv_subcategorii_cu_continut( $grup );
-			if ( ! $emisiuni_grup ) {
-				continue;
+		// Pe „Emisiuni”: toate emisiunile într-o singură grilă, în ordinea temelor, fiecare cu eticheta temei
+		// (grupuri separate de 1–4 emisiuni lăsau goluri mari). Pe o temă / Universitate: emisiunile ei.
+		$lista = array();
+		if ( 'sectiune' === $tip && $e_emisiuni ) {
+			foreach ( aptv_subcategorii_cu_continut( $categorie ) as $tema ) {
+				foreach ( aptv_subcategorii_cu_continut( $tema ) as $em ) {
+					$lista[] = array( $em, $tema );
+				}
 			}
-			?>
-			<section class="aptv-grup">
-				<?php if ( count( $grupuri ) > 1 ) : ?>
-					<h2><a href="<?php echo esc_url( get_term_link( $grup ) ); ?>"><?php echo esc_html( $grup->name ); ?></a></h2>
-				<?php elseif ( 'tema' === $tip ) : ?>
-					<h2>Emisiuni de <?php echo esc_html( mb_strtolower( $grup->name ) ); ?></h2>
-				<?php endif; ?>
-				<div class="aptv-grila aptv-grila--3">
-					<?php
-					foreach ( $emisiuni_grup as $em ) {
-						$card_emisiune( $em );
-					}
-					?>
-				</div>
-			</section>
-		<?php endforeach; ?>
+		} else {
+			foreach ( aptv_subcategorii_cu_continut( $categorie ) as $em ) {
+				$lista[] = array( $em, null );
+			}
+		}
+		?>
+		<?php if ( $lista ) : ?>
+			<?php if ( 'tema' === $tip ) : ?>
+				<h2 class="aptv-grup__titlu" style="<?php echo esc_attr( aptv_stil_culoare( $categorie ) ); ?>">Emisiuni de <?php echo esc_html( mb_strtolower( $categorie->name ) ); ?> <span class="aptv-grup__numar"><?php echo esc_html( aptv_plural( count( $lista ), 'emisiune', 'emisiuni' ) ); ?></span></h2>
+			<?php endif; ?>
+			<div class="aptv-grila aptv-grila--emisiuni aptv-grup">
+				<?php
+				foreach ( $lista as $element ) {
+					$card_emisiune( $element[0], $element[1] );
+				}
+				?>
+			</div>
+		<?php endif; ?>
 	</div>
 <?php endif; ?>
 

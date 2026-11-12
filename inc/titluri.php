@@ -192,10 +192,10 @@ function aptv_titlu_lizibil( $titlu, $post_id = 0 ) {
  * Repetat în fiecare titlu, ascunde subiectul. Se calculează o dată pe zi.
  *
  * @param WP_Term $emisiune
- * @return string Începutul (fără „ · ”) sau '' dacă nu există unul repetat la cel puțin jumătate din episoade.
+ * @return string Începutul (fără „ · ”) sau '' dacă nu se repetă la cel puțin 10 episoade și 30% din ele.
  */
 function aptv_prefix_emisiune( $emisiune ) {
-	$cheie   = 'aptv_prefix_' . $emisiune->term_id;
+	$cheie   = 'aptv_prefix2_' . $emisiune->term_id; // „2”: regula s-a schimbat, nu folosim calculele vechi
 	$memorat = get_transient( $cheie );
 	if ( false !== $memorat ) {
 		return (string) $memorat;
@@ -225,7 +225,8 @@ function aptv_prefix_emisiune( $emisiune ) {
 		if ( $numar ) {
 			arsort( $numar );
 			$k = (string) array_key_first( $numar );
-			if ( $numar[ $k ] >= count( $titluri ) / 2 ) {
+			// Repetat la cel puțin 10 episoade și la cel puțin 30% dintre ele: e un nume, nu un subiect.
+			if ( $numar[ $k ] >= 10 && $numar[ $k ] >= 0.3 * count( $titluri ) ) {
 				$prefix = $k; // forma fără diacritice; potrivirea se face tot fără diacritice
 			}
 		}

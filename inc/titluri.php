@@ -186,9 +186,77 @@ function aptv_titlu_lizibil( $titlu, $post_id = 0 ) {
 	);
 }
 
+/**
+ * Începutul repetat al titlurilor unei emisiuni, de obicei numele moderatorului
+ * („Andreea Barbieru · Tineri dirijori...”, la aproape toate episoadele Mirajul Muzicii).
+ * Repetat în fiecare titlu, ascunde subiectul. Se calculează o dată pe zi.
+ *
+ * @param WP_Term $emisiune
+ * @return string Începutul (fără „ · ”) sau '' dacă nu există unul repetat la cel puțin jumătate din episoade.
+ */
+function aptv_prefix_emisiune( $emisiune ) {
+	$cheie   = 'aptv_prefix_' . $emisiune->term_id;
+	$memorat = get_transient( $cheie );
+	if ( false !== $memorat ) {
+		return (string) $memorat;
+	}
+	global $wpdb;
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	$titluri = $wpdb->get_col(
+		$wpdb->prepare(
+			"SELECT p.post_title FROM {$wpdb->posts} p JOIN {$wpdb->term_relationships} r ON r.object_id = p.ID JOIN {$wpdb->term_taxonomy} t ON t.term_taxonomy_id = r.term_taxonomy_id
+			 WHERE t.term_id = %d AND p.post_type = 'post' AND p.post_status = 'publish' LIMIT 300",
+			$emisiune->term_id
+		)
+	);
+	$prefix = '';
+	if ( count( $titluri ) >= 5 ) {
+		$numar = array();
+		$forme = array();
+		foreach ( $titluri as $t ) {
+			$bucati = explode( ' · ', $t, 2 );
+			if ( 2 !== count( $bucati ) || mb_strlen( $bucati[0] ) > 40 ) {
+				continue;
+			}
+			$k             = strtolower( remove_accents( trim( $bucati[0] ) ) );
+			$numar[ $k ]   = ( $numar[ $k ] ?? 0 ) + 1;
+			$forme[ $k ][] = trim( $bucati[0] );
+		}
+		if ( $numar ) {
+			arsort( $numar );
+			$k = (string) array_key_first( $numar );
+			if ( $numar[ $k ] >= count( $titluri ) / 2 ) {
+				$prefix = $k; // forma fără diacritice; potrivirea se face tot fără diacritice
+			}
+		}
+	}
+	set_transient( $cheie, $prefix, DAY_IN_SECONDS );
+	return $prefix;
+}
+
+/**
+ * Scoate din titlu începutul repetat al emisiunii (vezi aptv_prefix_emisiune).
+ */
+function aptv_titlu_fara_prefix( $titlu, $post_id = 0 ) {
+	if ( ! $post_id || false === strpos( (string) $titlu, ' · ' ) || 'post' !== get_post_type( $post_id ) ) {
+		return $titlu;
+	}
+	$emisiune = function_exists( 'aptv_categoria_episodului' ) ? aptv_categoria_episodului( $post_id ) : null;
+	if ( ! $emisiune || 'emisiune' !== aptv_tip_categorie( $emisiune ) ) {
+		return $titlu;
+	}
+	$prefix = aptv_prefix_emisiune( $emisiune );
+	if ( '' === $prefix ) {
+		return $titlu;
+	}
+	$bucati = explode( ' · ', $titlu, 2 );
+	return strtolower( remove_accents( trim( $bucati[0] ) ) ) === $prefix ? $bucati[1] : $titlu;
+}
+
 // Doar pe site (nu în admin), ca echipa să vadă și să editeze titlul original.
 if ( ! is_admin() ) {
 	add_filter( 'the_title', 'aptv_titlu_lizibil', 5, 2 );
+	add_filter( 'the_title', 'aptv_titlu_fara_prefix', 6, 2 );
 	add_filter(
 		'document_title_parts',
 		function ( $parti ) {

@@ -170,13 +170,11 @@ function aptv_card( $post, $varianta = 'normal' ) {
 			<span class="aptv-redare"><?php echo aptv_icon_play(); // phpcs:ignore ?><?php echo ( $durata && ! $e_scurt ) ? '<span>' . esc_html( $durata ) . '</span>' : ''; ?><span class="screen-reader-text">Pornește</span></span>
 		</span>
 		<span class="aptv-card__text">
-			<?php if ( ! $e_scurt && 'lista' !== $varianta ) : ?>
+			<?php if ( ! $e_scurt ) : // aceeași etichetă colorată în toate listele (nu text simplu în unele) ?>
 				<span class="aptv-etichete">
 					<?php echo aptv_eticheta( $categorie ); // phpcs:ignore -- escapat în funcție. ?>
 					<?php if ( aptv_e_nou( $post ) ) : ?><span class="aptv-eticheta aptv-eticheta--nou">NOU</span><?php endif; ?>
 				</span>
-			<?php elseif ( 'lista' === $varianta && $categorie ) : ?>
-				<span class="aptv-card__supra"><?php echo esc_html( $categorie->name ); ?></span>
 			<?php endif; ?>
 			<span class="aptv-card__titlu"><?php echo esc_html( get_the_title( $post ) ); ?></span>
 			<?php if ( ! $e_scurt ) : ?>
@@ -333,4 +331,78 @@ function aptv_paginare( $eticheta = 'Alte pagini', $inapoi = '← Înapoi', $ina
 		</ul>
 	</nav>
 	<?php
+}
+
+/**
+ * Imaginea unei emisiuni („afișul”): imaginea pusă de echipă la categorie (câmpul „Afiș”)
+ * sau, dacă nu e pusă, imaginea celui mai nou episod.
+ *
+ * @param WP_Term $emisiune
+ * @param string  $clasa    Clasa CSS a imaginii.
+ * @return string HTML (gol dacă emisiunea nu are niciun episod cu video).
+ */
+function aptv_afis_emisiune( $emisiune, $clasa = '' ) {
+	$url = (string) get_term_meta( $emisiune->term_id, 'aptv_afis', true );
+	if ( ! $url ) {
+		$cache = 'aptv_afis_' . $emisiune->term_id;
+		$url   = get_transient( $cache );
+		if ( false === $url ) {
+			$ultim = get_posts(
+				array(
+					'cat'            => $emisiune->term_id,
+					'posts_per_page' => 1,
+					'no_found_rows'  => true,
+					'fields'         => 'ids',
+					'meta_key'       => '_aptv_video', // phpcs:ignore WordPress.DB.SlowDBQuery
+				)
+			);
+			$video = $ultim ? preg_replace( '/[^A-Za-z0-9_-]/', '', (string) get_post_meta( $ultim[0], '_aptv_video', true ) ) : '';
+			// mqdefault: 320 × 180, 16:9, există pentru orice videoclip.
+			$url = $video ? 'https://i.ytimg.com/vi/' . $video . '/mqdefault.jpg' : '';
+			set_transient( $cache, $url, DAY_IN_SECONDS );
+		}
+	}
+	if ( ! $url ) {
+		return '';
+	}
+	return '<img class="' . esc_attr( $clasa ) . '" src="' . esc_url( $url ) . '" alt="" loading="lazy" decoding="async">';
+}
+
+/**
+ * Categoriile (emisiuni, teme, tipuri de știri) potrivite cu textul căutat. Compară fără diacritice
+ * și după rădăcina cuvântului (primele 5 litere): „muzica” → „Mirajul Muzicii”.
+ *
+ * @param string $cautat
+ * @return WP_Term[] Maximum 6.
+ */
+function aptv_categorii_potrivite( $cautat ) {
+	$norm     = function ( $t ) {
+		return strtolower( remove_accents( (string) $t ) );
+	};
+	$cuvinte  = array_filter(
+		preg_split( '/[^a-z0-9]+/', $norm( $cautat ) ),
+		function ( $c ) {
+			return strlen( $c ) >= 4;
+		}
+	);
+	if ( ! $cuvinte ) {
+		return array();
+	}
+	$potrivite = array();
+	foreach ( get_terms( array( 'taxonomy' => 'category', 'hide_empty' => true ) ) as $t ) {
+		if ( is_wp_error( $t ) || (int) get_option( 'default_category' ) === (int) $t->term_id ) {
+			continue;
+		}
+		$nume = preg_split( '/[^a-z0-9]+/', $norm( $t->name ) );
+		foreach ( $cuvinte as $c ) {
+			$radacina = substr( $c, 0, 5 );
+			foreach ( $nume as $n ) {
+				if ( strlen( $n ) >= 4 && 0 === strpos( $n, $radacina ) ) {
+					$potrivite[ $t->term_id ] = $t;
+					break 2;
+				}
+			}
+		}
+	}
+	return array_slice( array_values( $potrivite ), 0, 6 );
 }

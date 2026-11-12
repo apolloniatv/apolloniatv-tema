@@ -4,7 +4,7 @@
  *
  * Secțiunile, de sus în jos:
  *   1. Recomandat              – episodul bifat „Recomandat” (inc/recomandat.php), mare, cu butonul „Pornește”
- *   2. Cele mai noi materiale  – automat: ultimele 4 (fără știrile științifice scurte)
+ *   2. Cele mai noi materiale  – automat: cele mai noi 2 știri + cele mai noi 2 episoade de emisiune
  *   3. Emisiuni pe teme        – automat: temele și emisiunile lor (doar cele cu episoade)
  *   4. Știri științifice       – automat: ultimele 6 din categoria „Științifice”
  *   5. Din universitate        – automat: emisiunile din categoria „Universitate”
@@ -27,17 +27,32 @@ $emisiuni     = get_term_by( 'slug', 'emisiuni', 'category' );
 $universitate = get_term_by( 'slug', 'universitate', 'category' );
 $portofoliu   = get_term_by( 'slug', 'portofoliu', 'category' );
 
-// Cele mai noi: fără clipurile scurte, fără „Necategorisite” și fără episodul deja recomandat sus.
-$cele_mai_noi = get_posts(
-	array(
-		'post_type'           => 'post',
-		'post_status'         => 'publish',
-		'posts_per_page'      => 4,
-		'no_found_rows'       => true,
-		'ignore_sticky_posts' => true,
-		'post__not_in'        => $recomandat ? array( $recomandat->ID ) : array(),
-		'category__not_in'    => array_filter( array( $stiintifice ? $stiintifice->term_id : 0, $portofoliu ? $portofoliu->term_id : 0, (int) get_option( 'default_category' ) ) ),
-	)
+// Cele mai noi: cele mai noi 2 știri (Externe, Naționale, Locale) și cele mai noi 2 episoade de emisiune
+// sau din Universitate. Fără științifice (au rândul lor), Portofoliu și episodul deja recomandat sus.
+$stiri       = get_term_by( 'slug', 'stiri', 'category' );
+$fara        = array_filter( array( $stiintifice ? $stiintifice->term_id : 0, $portofoliu ? $portofoliu->term_id : 0, (int) get_option( 'default_category' ) ) );
+$baza_noi    = array(
+	'post_type'           => 'post',
+	'post_status'         => 'publish',
+	'posts_per_page'      => 2,
+	'no_found_rows'       => true,
+	'ignore_sticky_posts' => true,
+	'post__not_in'        => $recomandat ? array( $recomandat->ID ) : array(),
+	'category__not_in'    => $fara,
+);
+$stiri_noi   = $stiri ? get_posts( array_merge( $baza_noi, array( 'cat' => $stiri->term_id ) ) ) : array(); // „cat” include subcategoriile
+// Emisiunile și Universitatea, cu toate subcategoriile lor (category__in nu le include singur).
+$ids_emisiuni = array();
+foreach ( array_filter( array( $emisiuni, $universitate ) ) as $sectiune ) {
+	$ids_emisiuni = array_merge( $ids_emisiuni, array( $sectiune->term_id ), get_term_children( $sectiune->term_id, 'category' ) );
+}
+$episoade_noi = $ids_emisiuni ? get_posts( array_merge( $baza_noi, array( 'category__in' => $ids_emisiuni ) ) ) : array();
+$cele_mai_noi = array_merge( $stiri_noi, $episoade_noi );
+usort(
+	$cele_mai_noi,
+	function ( $x, $y ) {
+		return strcmp( $y->post_date, $x->post_date );
+	}
 );
 $scurte = $stiintifice ? aptv_cele_mai_noi( $stiintifice->term_id, 6 ) : array();
 ?>
@@ -92,7 +107,8 @@ $scurte = $stiintifice ? aptv_cele_mai_noi( $stiintifice->term_id, 6 ) : array()
 						<a class="aptv-tema__cap aptv-c" href="<?php echo esc_url( get_term_link( $tema ) ); ?>" style="<?php echo esc_attr( aptv_stil_culoare( $tema ) ); ?>"><?php echo esc_html( $tema->name ); ?></a>
 						<?php foreach ( aptv_subcategorii_cu_continut( $tema ) as $em ) : ?>
 							<a class="aptv-tema__emisiune" href="<?php echo esc_url( get_term_link( $em ) ); ?>">
-								<span><?php echo esc_html( $em->name ); ?></span>
+								<?php echo aptv_afis_emisiune( $em, 'aptv-tema__afis' ); // phpcs:ignore -- escapat în funcție. ?>
+								<span class="aptv-tema__nume"><?php echo esc_html( $em->name ); ?></span>
 								<span class="aptv-tema__nr"><?php echo esc_html( aptv_plural( (int) $em->count, 'episod', 'episoade' ) ); ?> ›</span>
 							</a>
 						<?php endforeach; ?>

@@ -373,6 +373,13 @@ add_action(
 			</td>
 		</tr>
 		<tr class="form-field">
+			<th scope="row"><label for="aptv-afis">Afiș (imagine)</label></th>
+			<td>
+				<input id="aptv-afis" name="aptv_afis" type="url" value="<?php echo esc_attr( get_term_meta( $categorie->term_id, 'aptv_afis', true ) ); ?>" placeholder="https://...">
+				<p class="description">Doar pentru emisiuni. Linkul unei imagini (de preferat 16:9, cel puțin 640 px lățime), de exemplu din Media → Adaugă fișier media → „Copiază URL-ul”. Gol = imaginea celui mai nou episod.</p>
+			</td>
+		</tr>
+		<tr class="form-field">
 			<th scope="row"><label for="aptv-culoare">Culoare</label></th>
 			<td>
 				<input id="aptv-culoare" name="aptv_culoare" type="text" value="<?php echo esc_attr( $culoare ); ?>" placeholder="#26A3FC">
@@ -401,6 +408,14 @@ add_action(
 				update_term_meta( $term_id, 'aptv_ordine', $ordine );
 			} else {
 				delete_term_meta( $term_id, 'aptv_ordine' );
+			}
+		}
+		if ( isset( $_POST['aptv_afis'] ) ) {
+			$afis = esc_url_raw( wp_unslash( $_POST['aptv_afis'] ) );
+			if ( $afis ) {
+				update_term_meta( $term_id, 'aptv_afis', $afis );
+			} else {
+				delete_term_meta( $term_id, 'aptv_afis' );
 			}
 		}
 		if ( isset( $_POST['aptv_culoare'] ) ) {

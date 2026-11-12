@@ -31,7 +31,9 @@ $card_emisiune = function ( $emisiune ) {
 	$parinte               = $emisiune->parent ? get_term( $emisiune->parent, 'category' ) : null;
 	?>
 	<a class="aptv-emisiune" href="<?php echo esc_url( get_term_link( $emisiune ) ); ?>">
-		<span class="aptv-emisiune__afis aptv-c" style="<?php echo esc_attr( aptv_stil_culoare( $emisiune ) ); ?>">
+		<?php $afis = aptv_afis_emisiune( $emisiune, 'aptv-emisiune__img' ); ?>
+		<span class="aptv-emisiune__afis aptv-c<?php echo $afis ? ' aptv-emisiune__afis--imagine' : ''; ?>" style="<?php echo esc_attr( aptv_stil_culoare( $emisiune ) ); ?>">
+			<?php echo $afis; // phpcs:ignore -- escapat în aptv_afis_emisiune(). ?>
 			<?php if ( $parinte ) : ?>
 				<span class="aptv-emisiune__tema"><?php echo esc_html( mb_strtoupper( $parinte->name ) ); ?></span>
 			<?php endif; ?>

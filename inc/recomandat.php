@@ -74,6 +74,9 @@ add_action(
  *
  * @return WP_Post|null
  */
+/** După câte zile o recomandare bifată de echipă e înlocuită automat cu cel mai nou episod. */
+const APTV_RECOMANDAT_ZILE = 30;
+
 function aptv_episod_recomandat() {
 	$bifate = get_posts(
 		array(
@@ -86,16 +89,21 @@ function aptv_episod_recomandat() {
 			'no_found_rows'  => true,
 		)
 	);
-	if ( $bifate ) {
+	// O recomandare mai veche de APTV_RECOMANDAT_ZILE zile nu mai e „recomandarea zilei”:
+	// atunci prima pagină arată singură cel mai nou episod, ca site-ul să nu pară neactualizat.
+	if ( $bifate && ( time() - (int) get_post_meta( $bifate[0]->ID, '_aptv_recomandat', true ) ) < APTV_RECOMANDAT_ZILE * DAY_IN_SECONDS ) {
 		return $bifate[0];
 	}
-	// Rezervă: cel mai nou episod care NU e clip scurt (un clip vertical arată prost în zona mare).
+	// Rezervă: cel mai nou episod care NU e clip scurt (un clip vertical arată prost în zona mare),
+	// în afară de proiectele din Portofoliu.
+	$portofoliu   = get_term_by( 'slug', 'portofoliu', 'category' );
 	$cele_mai_noi = get_posts(
 		array(
-			'post_type'      => 'post',
-			'post_status'    => 'publish',
-			'posts_per_page' => 1,
-			'no_found_rows'  => true,
+			'post_type'        => 'post',
+			'post_status'      => 'publish',
+			'posts_per_page'   => 1,
+			'no_found_rows'    => true,
+			'category__not_in' => array_filter( array( $portofoliu ? $portofoliu->term_id : 0, (int) get_option( 'default_category' ) ) ),
 			'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery
 				'relation' => 'OR',
 				array(

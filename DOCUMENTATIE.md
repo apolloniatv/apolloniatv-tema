@@ -40,6 +40,8 @@ Conținutul vine de pe două canale YouTube: canalul principal Apollonia TV și 
 - **Meniul și prima pagină se construiesc singure** din aceste categorii. Nu există un meniu de editat de mână.
 - **Meniul arată doar ce are conținut.** O emisiune sau un tip de știri fără niciun episod publicat nu apare în meniu și pe prima pagină; apare singur după primul episod.
 - **Titlurile cu MAJUSCULE** sunt afișate pe site în scriere normală; în admin rămân cum au fost scrise. Numele proprii se iau din descrierea articolului (unde sunt scrise corect) și dintr-o listă de țări, orașe și prescurtări din `inc/titluri.php`. Cel mai simplu remediu pentru un titlu greșit: rescrieți-l normal în WordPress — un titlu care nu e scris cu majuscule nu mai e transformat.
+- **Numele moderatorului repetat în titluri** („Andreea Barbieru · …”) e ascuns pe site când apare la cel puțin jumătate din episoadele emisiunii.
+- **Cele mai noi materiale** (prima pagină) = cele mai noi 2 știri + cele mai noi 2 episoade de emisiune.
 - **Data articolului = data difuzării.** Episoadele unei emisiuni apar în ordinea datei (primul episod sus).
 
 ---
@@ -53,6 +55,13 @@ Conținutul vine de pe două canale YouTube: canalul principal Apollonia TV și 
 
 Câștigă întotdeauna ultimul episod bifat. Nu trebuie debifat cel vechi.
 În lista de articole, coloana „★ Prima pagină” arată ce episoade sunt bifate.
+
+O recomandare mai veche de **30 de zile** e înlocuită automat cu cel mai nou episod (nu clip scurt).
+Recomandat: schimbați-o săptămânal. Pragul e `APTV_RECOMANDAT_ZILE` în `inc/recomandat.php`.
+
+### Afișul unei emisiuni
+Pe prima pagină și în paginile cu emisiuni, fiecare emisiune are o imagine: cea a celui mai nou episod.
+Pentru o imagine proprie: Articole → Categorii → Editează emisiunea → **Afiș (imagine)** (link către o imagine 16:9).
 
 ### Schimbați telefonul, WhatsApp-ul, e-mailul, adresa, linkurile rețelelor sau textul din subsol
 Apollonia TV → **Setări**. Completați și apăsați **Salvează setările**.

@@ -136,9 +136,15 @@ select:focus-visible {
 
 .aptv-grila { display: grid; gap: 1.6rem 1.4rem; }
 .aptv-grila--3 { grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
-.aptv-grila--4 { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); }
-.aptv-grila--teme { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1.2rem; }
-.aptv-grila--scurte { grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 1.2rem 1rem; }
+/* Număr fix de coloane (nu „câte încap”): fără un card singur pe ultimul rând, și când textul e mărit. */
+.aptv-grila--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.aptv-grila--teme { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; align-items: start; }
+.aptv-grila--scurte { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.2rem 1rem; }
+@media (max-width: 1100px) { .aptv-grila--teme { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+	.aptv-grila--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.aptv-grila--scurte { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 .aptv-grila--stiri { grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 0 1.6rem; }
 
 /* „Fișe”: rânduri de butoane pentru teme, tipuri de știri, ordinea episoadelor */
@@ -308,6 +314,9 @@ select:focus-visible {
 }
 .aptv-tema__emisiune:hover { background: var(--aptv-fundal); color: var(--aptv-negru); }
 .aptv-tema__nr { font-weight: 400; font-size: var(--aptv-text-mic); color: var(--aptv-gri); white-space: nowrap; }
+.aptv-tema__afis { flex: none; width: 5.2rem; aspect-ratio: 16 / 9; object-fit: cover; background: var(--aptv-imagine); }
+.aptv-tema__nume { flex: 1 1 auto; }
+.aptv-tema__emisiune { padding-block: 0.5em; }
 
 .aptv-univ { background: var(--aptv-univ-fundal); color: #FFFFFF; display: flex; flex-wrap: wrap; }
 .aptv-univ__text { flex: 1 1 22rem; min-width: 0; padding: 1.6rem 1.6rem 1.4rem; }
@@ -354,6 +363,9 @@ select:focus-visible {
 .aptv-emisiune:hover { color: var(--aptv-negru); }
 .aptv-emisiune:hover .aptv-emisiune__nume { text-decoration: underline; }
 .aptv-emisiune__afis { min-height: 8rem; padding: 1rem 1.1rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.6rem; }
+/* Cu imagine: imaginea sus, pe toată lățimea; numele emisiunii pe banda colorată de sub ea. */
+.aptv-emisiune__afis--imagine { min-height: 0; justify-content: flex-start; gap: 0.3rem; }
+.aptv-emisiune__img { display: block; width: calc(100% + 2.2rem); max-width: none; margin: -1rem -1.1rem 0.7rem; aspect-ratio: 16 / 9; object-fit: cover; background: var(--aptv-imagine); }
 .aptv-emisiune__tema { font-size: var(--aptv-text-mic); font-weight: 700; letter-spacing: 0.08em; }
 .aptv-emisiune__nume { font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
 .aptv-emisiune__corp { flex: 1 1 auto; padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; color: #222222; }
@@ -361,6 +373,7 @@ select:focus-visible {
 
 /* Paginarea (aptv_paginare în ajutoare.php): butoane de cel puțin 48 × 48 px. */
 .aptv-paginare { margin-top: 1.8rem; }
+.aptv-cautare__numar { margin: -0.2rem 0 1.4rem; color: var(--aptv-gri); }
 .aptv-paginare__stare { margin: 0 0 0.6rem; font-weight: 700; }
 .aptv-paginare__lista { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 .aptv-paginare__lista li { margin: 0; }
@@ -486,6 +499,7 @@ select:focus-visible {
 	.aptv-grila--4 .aptv-card__titlu { font-size: 1rem; }
 	.aptv-grila--4 .aptv-card__data { display: none; }
 	.aptv-grila--scurte { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.aptv-grila--teme { grid-template-columns: 1fr; }
 	.aptv-univ__text, .aptv-univ__lista { padding-inline: 1.1rem; }
 	.aptv-ajutor__in { padding: 1.2rem; }
 	.aptv-oferta { padding: 1.2rem; }

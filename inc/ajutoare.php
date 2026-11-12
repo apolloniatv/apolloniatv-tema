@@ -253,26 +253,19 @@ function aptv_icon_serviciu( $nume ) {
 }
 
 /**
- * Blocul „Aveți un eveniment?” cu telefon, WhatsApp și e-mail (Portofoliu și proiectele lui).
+ * Blocul „Aveți un eveniment?” cu datele de contact completate în Setări (Portofoliu și proiectele lui).
  *
  * @param string $titlu Titlul blocului.
  */
 function aptv_cerere_oferta( $titlu = 'Aveți un eveniment? Spuneți-ne despre el.' ) {
-	$email = aptv_setare( 'email' );
 	?>
 	<section class="aptv-oferta" aria-labelledby="aptv-oferta-titlu">
 		<div>
 			<h2 id="aptv-oferta-titlu"><?php echo esc_html( $titlu ); ?></h2>
-			<p>Sunați-ne (<?php echo esc_html( aptv_setare( 'program' ) ); ?>) sau scrieți-ne. Vă răspundem cu o ofertă potrivită evenimentului dumneavoastră.</p>
+			<p><?php echo esc_html( aptv_telefon_link() ? aptv_indemn_contact() . ' sau scrieți-ne.' : 'Scrieți-ne pe e-mail.' ); ?> Vă răspundem cu o ofertă potrivită evenimentului dumneavoastră.</p>
 		</div>
 		<div class="aptv-oferta__butoane">
-			<a class="aptv-buton aptv-buton--galben" href="<?php echo esc_attr( aptv_telefon_link() ); ?>">Sunați: <?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a>
-			<?php if ( aptv_whatsapp_link() ) : ?>
-				<a class="aptv-buton aptv-buton--alb" href="<?php echo esc_url( aptv_whatsapp_link() ); ?>" target="_blank" rel="noopener"><?php echo aptv_icon_whatsapp(); // phpcs:ignore ?> WhatsApp</a>
-			<?php endif; ?>
-			<?php if ( $email ) : ?>
-				<a class="aptv-buton aptv-buton--alb" href="<?php echo esc_attr( 'mailto:' . $email . '?subject=' . rawurlencode( 'Cerere de ofertă — servicii video' ) ); ?>">Cereți o ofertă pe e-mail</a>
-			<?php endif; ?>
+			<?php aptv_butoane_contact( 'Cerere de ofertă — servicii video', 'inchis' ); ?>
 		</div>
 	</section>
 	<?php

@@ -373,6 +373,8 @@ select:focus-visible {
 
 /* Paginarea (aptv_paginare în ajutoare.php): butoane de cel puțin 48 × 48 px. */
 .aptv-paginare { margin-top: 1.8rem; }
+.aptv-buton--email, .aptv-ajutor .aptv-buton--email { white-space: normal; max-width: 100%; }
+.aptv-buton--email > span { min-width: 0; }
 .aptv-cautare__numar { margin: -0.2rem 0 1.4rem; color: var(--aptv-gri); }
 .aptv-paginare__stare { margin: 0 0 0.6rem; font-weight: 700; }
 .aptv-paginare__lista { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
@@ -438,6 +440,8 @@ select:focus-visible {
 .aptv-ajutor p { margin: 0; }
 .aptv-ajutor__butoane { display: flex; flex-wrap: wrap; gap: 0.7rem; }
 .aptv-ajutor .aptv-buton { white-space: nowrap; }
+.aptv-ajutor .aptv-buton--email { white-space: normal; } /* adresa lungă se poate rupe pe telefon */
+.aptv-ajutor__butoane { min-width: 0; max-width: 100%; }
 
 .aptv-subsol { border-top: 6px solid var(--aptv-albastru-inchis); background: var(--aptv-fundal); color: #222222; font-size: 18px; }
 .aptv-subsol__grila { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1.5rem; padding-block: 2rem; }

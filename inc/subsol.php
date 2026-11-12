@@ -3,7 +3,7 @@
  * MODUL: Subsolul site-ului (partea de jos a fiecărei pagini).
  *
  * CE CONȚINE:
- *  1. Banda galbenă „Nu găsiți ce căutați? Sunați-ne” — pe toate paginile,
+ *  1. Banda galbenă „Nu găsiți ce căutați? Scrieți-ne” — pe toate paginile,
  *     pentru că e cel mai important ajutor pentru vizitatorii vârstnici.
  *  2. Coloanele: despre Apollonia TV, linkuri, contact, rețele sociale.
  *
@@ -65,16 +65,10 @@ add_action(
 			<div class="aptv-ajutor__in">
 				<div>
 					<h2 id="aptv-ajutor-titlu">Nu găsiți ce căutați?</h2>
-					<p>Sunați-ne (<?php echo esc_html( aptv_setare( 'program' ) ); ?>) și vă ajutăm să ajungeți la emisiunea dorită.</p>
+					<p><?php echo esc_html( aptv_indemn_contact() ); ?> și vă ajutăm să ajungeți la emisiunea dorită.</p>
 				</div>
 				<div class="aptv-ajutor__butoane">
-					<a class="aptv-buton aptv-buton--inchis" href="<?php echo esc_attr( aptv_telefon_link() ); ?>">Sunați: <?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a>
-					<?php if ( aptv_whatsapp_link() ) : ?>
-						<a class="aptv-buton aptv-buton--alb" href="<?php echo esc_url( aptv_whatsapp_link() ); ?>" target="_blank" rel="noopener"><?php echo aptv_icon_whatsapp(); // phpcs:ignore ?> Scrieți-ne pe WhatsApp</a>
-					<?php endif; ?>
-					<?php if ( $email ) : ?>
-						<a class="aptv-buton aptv-buton--alb" href="<?php echo esc_attr( 'mailto:' . $email ); ?>">Scrieți-ne un e-mail</a>
-					<?php endif; ?>
+					<?php aptv_butoane_contact( 'Ajutor pe site-ul Apollonia TV', 'banda' ); ?>
 				</div>
 			</div>
 		</section>
@@ -100,7 +94,9 @@ add_action(
 				<div>
 					<h2 class="aptv-subsol__titlu">Contact</h2>
 					<p>
-						Telefon: <a href="<?php echo esc_attr( aptv_telefon_link() ); ?>"><?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a><br>
+						<?php if ( aptv_telefon_link() ) : ?>
+							Telefon: <a href="<?php echo esc_attr( aptv_telefon_link() ); ?>"><?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a><br>
+						<?php endif; ?>
 						<?php if ( aptv_whatsapp_link() ) : ?>
 							WhatsApp: <a href="<?php echo esc_url( aptv_whatsapp_link() ); ?>" target="_blank" rel="noopener"><?php echo esc_html( aptv_setare( 'whatsapp' ) ); ?></a><br>
 						<?php endif; ?>

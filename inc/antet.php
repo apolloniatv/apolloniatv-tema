@@ -8,7 +8,7 @@
  *     „Știri” și „Emisiuni” deschid, la clic, un panou cu temele și emisiunile.
  *
  * PE TELEFON: doar logo-ul și butonul „Meniu” (72 px înălțime, rămâne sus la derulare).
- * „Meniu” deschide un ecran întreg cu căutarea, toate secțiunile, mărimea textului și telefonul.
+ * „Meniu” deschide un ecran întreg cu căutarea, toate secțiunile, mărimea textului și contactul.
  *
  * TELEFONUL DE AJUTOR nu mai e în antet: apare în banda galbenă de jos a fiecărei pagini
  * (inc/subsol.php), în meniul de pe telefon și la „Contact și ajutor”.
@@ -311,10 +311,7 @@ add_action(
 				<?php aptv_butoane_marime( true ); ?>
 				<div class="aptv-meniu-mobil__ajutor">
 					<p>Aveți nevoie de ajutor?</p>
-					<a class="aptv-buton aptv-buton--galben aptv-buton--mare" href="<?php echo esc_attr( aptv_telefon_link() ); ?>">Sunați: <?php echo esc_html( aptv_setare( 'telefon' ) ); ?></a>
-					<?php if ( aptv_whatsapp_link() ) : ?>
-						<a class="aptv-buton aptv-buton--contur aptv-buton--mare" href="<?php echo esc_url( aptv_whatsapp_link() ); ?>" target="_blank" rel="noopener"><?php echo aptv_icon_whatsapp(); // phpcs:ignore ?> Scrieți-ne pe WhatsApp</a>
-					<?php endif; ?>
+					<?php aptv_butoane_contact( 'Ajutor pe site-ul Apollonia TV', 'meniu' ); ?>
 				</div>
 			</div>
 		</div>

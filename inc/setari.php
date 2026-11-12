@@ -24,11 +24,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function aptv_setari_implicite() {
 	return array(
-		'telefon'         => '0232 000 000',
-		'whatsapp'        => '0770 960 762',
-		'program'         => 'luni–vineri, 9–17',
-		'email'           => 'contact@apolloniatv.ro',
-		'adresa'          => '[Adresa redacției], Iași',
+		// Pe site apare doar ce e completat. Acum: doar e-mailul.
+		'telefon'         => '',
+		'whatsapp'        => '',
+		'program'         => '',
+		'email'           => 'apolloniatv2015@gmail.com',
+		'adresa'          => '',
 		'youtube'         => 'https://www.youtube.com/channel/UCA5cYbtmQExq5QuYj3U8OlQ',
 		'facebook'        => 'https://www.facebook.com/ApolloniaTV',
 		'instagram'       => 'https://www.instagram.com/apolloniatv/',
@@ -70,10 +71,54 @@ function aptv_servicii() {
 }
 
 /**
- * Telefonul în format pentru linkuri „tel:” (doar cifre și +).
+ * Telefonul în format pentru linkuri „tel:”. Șir gol dacă nu e completat.
  */
 function aptv_telefon_link() {
-	return 'tel:' . preg_replace( '/[^0-9+]/', '', aptv_setare( 'telefon' ) );
+	$cifre = preg_replace( '/[^0-9+]/', '', aptv_setare( 'telefon' ) );
+	return $cifre ? 'tel:' . $cifre : '';
+}
+
+/**
+ * Butoanele de contact, doar pentru datele completate în Setări (telefon, WhatsApp, e-mail).
+ *
+ * @param string $subiect Subiectul e-mailului (opțional).
+ * @param string $stil    'banda' (pe fundal galben) | 'inchis' (pe fundal albastru) | 'meniu' (meniul de telefon).
+ */
+function aptv_butoane_contact( $subiect = '', $stil = 'banda' ) {
+	$tel   = aptv_telefon_link();
+	$wa    = aptv_whatsapp_link();
+	$email = aptv_setare( 'email' );
+	$prim  = 'banda' === $stil ? 'aptv-buton--inchis' : 'aptv-buton--galben';
+	$mare  = 'meniu' === $stil ? ' aptv-buton--mare' : '';
+	if ( $tel ) {
+		echo '<a class="aptv-buton ' . esc_attr( $prim . $mare ) . '" href="' . esc_attr( $tel ) . '">Sunați: ' . esc_html( aptv_setare( 'telefon' ) ) . '</a>';
+		$prim = 'aptv-buton--alb';
+	}
+	if ( $wa ) {
+		echo '<a class="aptv-buton ' . esc_attr( $prim . $mare ) . '" href="' . esc_url( $wa ) . '" target="_blank" rel="noopener">' . aptv_icon_whatsapp() . ' Scrieți-ne pe WhatsApp</a>'; // phpcs:ignore
+		$prim = 'aptv-buton--alb';
+	}
+	if ( $email ) {
+		$link = 'mailto:' . $email . ( $subiect ? '?subject=' . rawurlencode( $subiect ) : '' );
+		echo '<a class="aptv-buton aptv-buton--email ' . esc_attr( $prim . $mare ) . '" href="' . esc_attr( $link ) . '">' . aptv_icon_email() . '<span>' . str_replace( '@', '@<wbr>', esc_html( $email ) ) . '</span></a>'; // pe ecran îngust se rupe după „@” // phpcs:ignore
+	}
+}
+
+/**
+ * Pictograma plic.
+ */
+function aptv_icon_email() {
+	return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3.5 6 8.5 7 8.5-7"/></svg>';
+}
+
+/**
+ * Îndemnul de contact potrivit datelor completate: „Sunați-ne (program)” sau „Scrieți-ne”.
+ */
+function aptv_indemn_contact() {
+	if ( aptv_telefon_link() ) {
+		return 'Sunați-ne' . ( aptv_setare( 'program' ) ? ' (' . aptv_setare( 'program' ) . ')' : '' );
+	}
+	return 'Scrieți-ne';
 }
 
 /**
@@ -170,11 +215,11 @@ function aptv_pagina_setari() {
 		return;
 	}
 	$etichete = array(
-		'telefon'    => array( 'Telefon (apare în bara de sus și în subsol)', 'text' ),
-		'program'    => array( 'Programul la telefon', 'text' ),
+		'telefon'    => array( 'Telefon (lăsați gol ca să nu apară pe site)', 'text' ),
+		'program'    => array( 'Programul la telefon (apare doar dacă e completat telefonul)', 'text' ),
 		'whatsapp'   => array( 'Număr WhatsApp (lăsați gol ca să nu apară pe site)', 'text' ),
 		'email'      => array( 'E-mail de contact', 'email' ),
-		'adresa'     => array( 'Adresa redacției', 'text' ),
+		'adresa'     => array( 'Adresa redacției (lăsați gol ca să nu apară pe site)', 'text' ),
 		'youtube'    => array( 'Link YouTube', 'url' ),
 		'facebook'   => array( 'Link Facebook', 'url' ),
 		'instagram'  => array( 'Link Instagram', 'url' ),
@@ -225,3 +270,24 @@ function aptv_pagina_setari() {
 	</div>
 	<?php
 }
+
+/**
+ * O singură dată: datele de contact rămase pe site sunt doar e-mailul apolloniatv2015@gmail.com
+ * (telefonul, WhatsApp-ul, programul și adresa se golesc; se pot completa oricând din Setări).
+ */
+add_action(
+	'admin_init',
+	function () {
+		if ( get_option( 'aptv_contact_doar_email' ) || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$setari = get_option( 'aptv_setari', array() );
+		$setari = is_array( $setari ) ? $setari : array();
+		foreach ( array( 'telefon', 'whatsapp', 'program', 'adresa' ) as $cheie ) {
+			$setari[ $cheie ] = '';
+		}
+		$setari['email'] = 'apolloniatv2015@gmail.com';
+		update_option( 'aptv_setari', $setari );
+		update_option( 'aptv_contact_doar_email', 1 );
+	}
+);

@@ -65,6 +65,7 @@ Pentru o imagine proprie: Articole → Categorii → Editează emisiunea → **A
 
 ### Schimbați telefonul, WhatsApp-ul, e-mailul, adresa, linkurile rețelelor sau textul din subsol
 Apollonia TV → **Setări**. Completați și apăsați **Salvează setările**.
+Pe site apare doar ce e completat. Acum e completat doar e-mailul (apolloniatv2015@gmail.com): telefonul, WhatsApp-ul și adresa sunt goale, deci nu apar nicăieri.
 
 ### Portofoliu: serviciile și proiectele
 - **Serviciile** (înregistrare, live, montaj...) se schimbă din Apollonia TV → **Setări** → „Portofoliu — serviciile oferite”:

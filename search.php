@@ -54,7 +54,7 @@ $gasite   = (int) $GLOBALS['wp_query']->found_posts;
 			</div>
 			<?php aptv_paginare( 'Mai multe rezultate', '← Înapoi', 'Mai multe rezultate →' ); ?>
 		<?php else : ?>
-			<p class="aptv-gol">Nu am găsit nimic. Încercați un alt cuvânt sau <a href="#contact">sunați-ne</a> și vă ajutăm.</p>
+			<p class="aptv-gol">Nu am găsit nimic. Încercați un alt cuvânt sau <a href="#contact">scrieți-ne</a> și vă ajutăm.</p>
 		<?php endif; ?>
 	</div>
 </main>

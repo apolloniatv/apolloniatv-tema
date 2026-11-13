@@ -303,8 +303,8 @@ function aptv_ruteaza_stire( $titlu, $descriere = '' ) {
 
 /**
  * Actualizează titlul unui articol când titlul videoclipului s-a schimbat pe YouTube.
- * Nu atinge titlurile rescrise de echipă în WordPress. Adresa (slug-ul) rămâne aceeași,
- * ca linkurile deja trimise să meargă în continuare.
+ * Nu atinge titlurile rescrise de echipă în WordPress. Se schimbă și adresa paginii;
+ * adresa veche duce în continuare la articol (WordPress o redirecționează).
  *
  * @param int     $post_id
  * @param string  $titlu_nou Titlul actual de pe YouTube.
@@ -340,10 +340,12 @@ function aptv_actualizeaza_titlu( $post_id, $titlu_nou, $categorie, $simulare = 
 	}
 	$nou = wp_encode_emoji( aptv_curata_titlu( $titlu_nou, $cat_post ? $cat_post->name : $categorie->name ) );
 	if ( ! $simulare ) {
+		// Și adresa: WordPress ține minte adresa veche și trimite automat vizitatorii la cea nouă.
 		wp_update_post(
 			array(
 				'ID'         => $post_id,
 				'post_title' => $nou,
+				'post_name'  => aptv_slug( ( $cat_post ? $cat_post->name : $categorie->name ) . ' ' . $nou ),
 			)
 		);
 		update_post_meta( $post_id, '_aptv_titlu_yt', wp_encode_emoji( $titlu_nou ) );

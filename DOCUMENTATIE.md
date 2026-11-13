@@ -112,7 +112,7 @@ Doar știrile științifice sunt afișate vertical (9:16); toate celelalte mater
 
 ### Titluri schimbate pe YouTube
 Dacă schimbați titlul unui videoclip pe YouTube, site-ul îl preia la următorul import (automat, zilnic,
-sau imediat din Apollonia TV → Import YouTube). Adresa paginii rămâne aceeași.
+sau imediat din Apollonia TV → Import YouTube). Se schimbă și adresa paginii; adresa veche duce automat la cea nouă.
 Un titlu pe care l-ați rescris în WordPress nu mai e schimbat de import.
 
 ### Descrieri curate

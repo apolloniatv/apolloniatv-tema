@@ -110,6 +110,11 @@ cu „Importă automat zilnic” bifat. Playlisturile trebuie să fie **publice 
 Dacă o știre e mutată în alt playlist, la următorul import site-ul o mută și el în categoria potrivită.
 Doar știrile științifice sunt afișate vertical (9:16); toate celelalte materiale sunt 16:9.
 
+### Titluri schimbate pe YouTube
+Dacă schimbați titlul unui videoclip pe YouTube, site-ul îl preia la următorul import (automat, zilnic,
+sau imediat din Apollonia TV → Import YouTube). Adresa paginii rămâne aceeași.
+Un titlu pe care l-ați rescris în WordPress nu mai e schimbat de import.
+
 ### Descrieri curate
 Rândurile de promovare de pe YouTube („abonați-vă”, „like/dislike”, vechiul bloc de contact, „Urmărește @apolloniatvro…”)
 nu apar pe site. Lista lor e în `inc/descrieri.php`. Pentru articolele vechi: Apollonia TV → Import YouTube → **Curăță descrierile**

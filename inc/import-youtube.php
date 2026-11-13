@@ -301,13 +301,63 @@ function aptv_ruteaza_stire( $titlu, $descriere = '' ) {
 	return 'nationale';
 }
 
+/**
+ * Actualizează titlul unui articol când titlul videoclipului s-a schimbat pe YouTube.
+ * Nu atinge titlurile rescrise de echipă în WordPress. Adresa (slug-ul) rămâne aceeași,
+ * ca linkurile deja trimise să meargă în continuare.
+ *
+ * @param int     $post_id
+ * @param string  $titlu_nou Titlul actual de pe YouTube.
+ * @param WP_Term $categorie Categoria importului (pentru curățarea titlului).
+ * @param bool    $simulare
+ * @return string Mesaj pentru jurnal ('' = nimic de făcut).
+ */
+function aptv_actualizeaza_titlu( $post_id, $titlu_nou, $categorie, $simulare = false ) {
+	$titlu_nou = trim( (string) $titlu_nou );
+	$vechi     = (string) get_post_meta( $post_id, '_aptv_titlu_yt', true );
+	if ( '' === $titlu_nou || in_array( $titlu_nou, array( 'Private video', 'Deleted video' ), true ) || wp_encode_emoji( $titlu_nou ) === $vechi ) {
+		return '';
+	}
+	$post = get_post( $post_id );
+	if ( ! $post ) {
+		return '';
+	}
+	if ( '' === $vechi ) {
+		// Nu știm cu ce titlu a fost importat: nu riscăm să suprascriem o corectură; doar ținem minte titlul actual.
+		if ( ! $simulare ) {
+			update_post_meta( $post_id, '_aptv_titlu_yt', wp_encode_emoji( $titlu_nou ) );
+		}
+		return '';
+	}
+	// Ce ar fi pus importul din titlul vechi; dacă articolul are alt titlu, l-a rescris cineva.
+	$generate = array( $vechi, wp_encode_emoji( aptv_curata_titlu( html_entity_decode( $vechi ), $categorie->name ) ) );
+	$cat_post = aptv_categoria_episodului( $post_id );
+	if ( $cat_post ) {
+		$generate[] = wp_encode_emoji( aptv_curata_titlu( html_entity_decode( $vechi ), $cat_post->name ) );
+	}
+	if ( ! in_array( $post->post_title, $generate, true ) ) {
+		return 'Titlu schimbat pe YouTube, dar rescris în WordPress (neatins): ' . $post->post_title;
+	}
+	$nou = wp_encode_emoji( aptv_curata_titlu( $titlu_nou, $cat_post ? $cat_post->name : $categorie->name ) );
+	if ( ! $simulare ) {
+		wp_update_post(
+			array(
+				'ID'         => $post_id,
+				'post_title' => $nou,
+			)
+		);
+		update_post_meta( $post_id, '_aptv_titlu_yt', wp_encode_emoji( $titlu_nou ) );
+	}
+	return ( $simulare ? 'S-ar actualiza titlul: ' : 'Titlu actualizat: ' ) . $post->post_title . ' → ' . $nou;
+}
+
 function aptv_import_pas( $optiuni ) {
 	$categorie = get_term( (int) $optiuni['categorie'], 'category' );
 	if ( ! $categorie || is_wp_error( $categorie ) ) {
 		return new WP_Error( 'aptv_categorie', 'Categoria aleasă nu există.' );
 	}
 	$parametri = array(
-		'part'       => 'contentDetails,status',
+		'part'       => 'snippet,contentDetails,status',
 		'playlistId' => $optiuni['playlist'],
 		'maxResults' => 50,
 	);
@@ -327,11 +377,13 @@ function aptv_import_pas( $optiuni ) {
 		'jurnal'  => array(),
 	);
 
-	$ids = array();
+	$ids     = array();
+	$titluri = array(); // titlul actual de pe YouTube, pentru videoclipurile deja importate
 	foreach ( $lista['items'] ?? array() as $element ) {
 		$id = $element['contentDetails']['videoId'] ?? '';
 		if ( $id ) {
-			$ids[] = $id;
+			$ids[]          = $id;
+			$titluri[ $id ] = (string) ( $element['snippet']['title'] ?? '' );
 		}
 	}
 	if ( ! $ids ) {
@@ -364,6 +416,18 @@ function aptv_import_pas( $optiuni ) {
 				wp_set_post_categories( $post_id, array_merge( array_diff( $actuale, $din_stiri ), array( (int) $categorie->term_id ) ) );
 			}
 			$rezultat['jurnal'][] = ( empty( $optiuni['simulare'] ) ? 'Mutat la ' : 'S-ar muta la ' ) . $categorie->name . ': ' . get_the_title( $post_id );
+		}
+	}
+
+	// Titluri schimbate pe YouTube după import: le actualizăm și pe site
+	// (doar dacă echipa nu a rescris între timp titlul în WordPress).
+	if ( $existente ) {
+		foreach ( aptv_articole_dupa_video( $existente ) as $post_id ) {
+			$video = (string) get_post_meta( $post_id, '_aptv_video', true );
+			$mesaj = aptv_actualizeaza_titlu( $post_id, $titluri[ $video ] ?? '', $categorie, ! empty( $optiuni['simulare'] ) );
+			if ( $mesaj ) {
+				$rezultat['jurnal'][] = $mesaj;
+			}
 		}
 	}
 

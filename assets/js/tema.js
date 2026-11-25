@@ -130,11 +130,15 @@
 		}
 		var player = buton.closest( '.aptv-player' );
 		var id = player.dataset.video;
-		if ( ! /^[A-Za-z0-9_-]{11}$/.test( id ) ) {
-			return;
+		var adresa = player.dataset.src || ''; // transmisiunea în direct: adresa completă (live.php)
+		if ( ! /^https:\/\/www\.youtube\.com\/embed\//.test( adresa ) ) {
+			if ( ! /^[A-Za-z0-9_-]{11}$/.test( id ) ) {
+				return;
+			}
+			adresa = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1';
 		}
 		var cadru = document.createElement( 'iframe' );
-		cadru.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1';
+		cadru.src = adresa;
 		cadru.title = player.dataset.titlu || 'Film Apollonia TV';
 		cadru.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
 		cadru.allowFullscreen = true;
@@ -142,6 +146,29 @@
 		player.appendChild( cadru );
 		cadru.focus();
 	} );
+
+	/* 3b. Programul săptămânii (pagina „În direct”): butoanele cu zilele -- */
+	// Fără JavaScript se văd toate zilele una sub alta; cu JavaScript, doar ziua aleasă.
+	var zile = document.querySelectorAll( '.aptv-zi' );
+	function arataZiua( tab ) {
+		zile.forEach( function ( t ) {
+			var ales = t === tab;
+			t.setAttribute( 'aria-selected', ales ? 'true' : 'false' );
+			var panou = document.getElementById( t.getAttribute( 'aria-controls' ) );
+			if ( panou ) {
+				panou.hidden = ! ales;
+			}
+		} );
+	}
+	if ( zile.length ) {
+		document.documentElement.classList.add( 'aptv-zile-js' );
+		arataZiua( document.querySelector( '.aptv-zi[aria-selected="true"]' ) || zile[ 0 ] );
+		zile.forEach( function ( t ) {
+			t.addEventListener( 'click', function () {
+				arataZiua( t );
+			} );
+		} );
+	}
 
 	/* 4. Meniul de pe telefon (ecran întreg) ------------------------------ */
 	var butonMeniu = document.querySelector( '.aptv-meniu-buton' );

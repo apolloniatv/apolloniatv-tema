@@ -58,6 +58,25 @@ $scurte = $stiintifice ? aptv_cele_mai_noi( $stiintifice->term_id, 6 ) : array()
 ?>
 <main id="main" class="aptv-main">
 
+	<!-- 0. În direct: o bandă subțire, doar când transmisiunea e pornită (Apollonia TV → În direct) -->
+	<?php if ( aptv_live_activ() ) : ?>
+		<?php list( $live_acum, $live_urm ) = aptv_acum_si_urmeaza(); ?>
+		<section class="aptv-container aptv-live-banda" aria-label="Transmisiunea în direct">
+			<a class="aptv-live-banda__in" href="<?php echo esc_url( aptv_live_url() ); ?>">
+				<span class="aptv-live-eticheta"><span class="aptv-live-punct" aria-hidden="true"></span> ÎN DIRECT</span>
+				<span class="aptv-live-banda__text">
+					<?php if ( $live_acum ) : ?>
+						<strong>Acum: <?php echo esc_html( $live_acum['titlu'] ); ?></strong>
+						<span class="aptv-live-banda__urm">Urmează la <?php echo esc_html( $live_urm['ora'] ); ?>: <?php echo esc_html( $live_urm['titlu'] ); ?></span>
+					<?php else : ?>
+						<strong>Apollonia TV transmite acum, 24 de ore din 24</strong>
+					<?php endif; ?>
+				</span>
+				<span class="aptv-buton aptv-buton--galben">Urmăriți în direct ›</span>
+			</a>
+		</section>
+	<?php endif; ?>
+
 	<!-- 1. Recomandat -->
 	<?php if ( $recomandat ) : ?>
 		<?php

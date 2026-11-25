@@ -478,6 +478,49 @@ select:focus-visible {
 .aptv-oferta__butoane { display: flex; flex-wrap: wrap; gap: 0.7rem; }
 .aptv-episod-pagina__principal .aptv-oferta { margin-top: 1.6rem; }
 
+/* 10b. Transmisiunea în direct (live.php, inc/live.php) ------------------- */
+.aptv-live-punct { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--aptv-rosu); vertical-align: 0.05em; animation: aptv-puls 1.6s ease-in-out infinite; }
+@keyframes aptv-puls { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .aptv-live-punct { animation: none; } }
+.aptv-meniu__live .aptv-live-punct { margin-right: 0.15em; }
+.aptv-meniu-mobil__live .aptv-live-punct { margin-right: 0.5em; flex: none; }
+.aptv-live-eticheta { display: inline-flex; align-items: center; gap: 0.45em; padding: 0.2em 0.6em; background: #FFFFFF; color: var(--aptv-negru); font-weight: 700; letter-spacing: 0.06em; font-size: var(--aptv-text-mic); }
+.aptv-eticheta--live { background: var(--aptv-rosu); color: #FFFFFF; }
+
+/* Banda de pe prima pagină */
+.aptv-live-banda { padding-top: 1.2rem; }
+.aptv-live-banda__in { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.4rem; padding: 0.9rem 1.2rem; background: var(--aptv-negru); color: #FFFFFF; text-decoration: none; }
+.aptv-live-banda__in:hover { color: #FFFFFF; }
+.aptv-live-banda__in:hover .aptv-buton { text-decoration: underline; }
+.aptv-live-banda__text { flex: 1 1 18rem; display: flex; flex-direction: column; gap: 0.1rem; }
+.aptv-live-banda__text strong { font-size: 1.15rem; }
+.aptv-live-banda__urm { color: #DDDDDD; font-size: var(--aptv-text-mic); }
+
+/* Pagina „În direct” */
+.aptv-live-intro { margin: -0.4rem 0 1.2rem; }
+.aptv-player--live { background: var(--aptv-albastru-inchis); }
+.aptv-player__fundal { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.4rem; background: linear-gradient(135deg, var(--aptv-albastru-inchis), var(--aptv-negru)); color: #FFFFFF; }
+.aptv-player__acum { font-size: clamp(1.3rem, 3vw, 2.2rem); font-weight: 700; max-width: 80%; line-height: 1.2; }
+.aptv-player__rezerva { margin: 0.6rem 0 0; font-size: var(--aptv-text-mic); }
+.aptv-pagina-live .aptv-player--live { width: min(100%, max(30rem, calc((100vh - 300px) * 16 / 9))); }
+.aptv-acum-urmeaza { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; }
+.aptv-acum { border: 2px solid var(--aptv-chenar); padding: 1rem 1.2rem; }
+.aptv-acum__titlu { margin: 0.5rem 0 0.2rem; font-size: 1.35rem; font-weight: 700; line-height: 1.25; }
+.aptv-acum p.aptv-mic { margin: 0; }
+.aptv-live-curand { border: 2px solid var(--aptv-chenar); padding: 1.2rem 1.4rem; max-width: 46rem; }
+
+/* Programul săptămânii */
+.aptv-zile { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem; }
+.aptv-zi[aria-selected="true"] { background: var(--aptv-albastru-inchis); border-color: var(--aptv-albastru-inchis); color: #FFFFFF; }
+html:not(.aptv-zile-js) .aptv-zile { display: none; } /* fără JavaScript: toate zilele, una sub alta */
+.aptv-zile-js .aptv-program__zi { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.aptv-program { margin-bottom: 1.6rem; }
+.aptv-program__lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--aptv-linie); max-width: 52rem; }
+.aptv-program__rand { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.3rem 1.2rem; margin: 0; padding: 0.75rem 0.6rem; border-bottom: 1px solid var(--aptv-linie); }
+.aptv-program__ora { flex: 0 0 4ch; font-weight: 700; font-variant-numeric: tabular-nums; }
+.aptv-program__titlu { flex: 1 1 14rem; }
+.aptv-program__rand.is-acum { background: var(--aptv-fundal); box-shadow: inset 6px 0 0 var(--aptv-rosu); }
+
 /* 11. Telefon și tabletă ------------------------------------------------- */
 @media (max-width: 760px) {
 	html { font-size: 18px; }
@@ -514,6 +557,9 @@ select:focus-visible {
 	.aptv-grila--4 .aptv-card__data { display: none; }
 	.aptv-grila--scurte { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.aptv-grila--teme { grid-template-columns: 1fr; }
+	.aptv-acum-urmeaza { grid-template-columns: 1fr; }
+	.aptv-player__fundal { padding: 0.9rem; }
+	.aptv-live-banda__in .aptv-buton { width: 100%; justify-content: center; }
 	.aptv-grila--emisiuni { grid-template-columns: 1fr; gap: 1rem; }
 	.aptv-emisiune { flex-direction: row; }
 	.aptv-emisiune__afis { flex: 0 0 38%; aspect-ratio: auto; min-height: 6.5rem; border-bottom: 0; border-left: 6px solid var(--c-tare, var(--aptv-albastru-inchis)); }

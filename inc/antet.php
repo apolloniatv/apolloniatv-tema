@@ -216,6 +216,9 @@ add_action(
 			<nav class="aptv-bara-meniu" aria-label="Meniu principal">
 				<div class="aptv-container aptv-meniu">
 					<a class="aptv-meniu__link<?php echo is_front_page() ? ' is-curent" aria-current="page' : ''; ?>" href="<?php echo esc_url( home_url( '/' ) ); ?>">Acasă</a>
+					<?php if ( aptv_live_activ() ) : ?>
+						<a class="aptv-meniu__link aptv-meniu__live<?php echo get_query_var( 'aptv_live' ) ? ' is-curent" aria-current="page' : ''; ?>" href="<?php echo esc_url( aptv_live_url() ); ?>"><span class="aptv-live-punct" aria-hidden="true"></span> În direct</a>
+					<?php endif; ?>
 					<?php if ( $stiri && $tipuri_stiri ) : ?>
 						<a class="aptv-meniu__link<?php echo $panou_stiri ? ' aptv-meniu__deschide' : ''; ?><?php echo $curent( $stiri ); // phpcs:ignore ?>" href="<?php echo esc_url( $link_stiri ); ?>"<?php echo $panou_stiri ? ' data-panou="aptv-panou-stiri" aria-controls="aptv-panou-stiri" aria-expanded="false"' : ''; ?>>Știri<?php echo $panou_stiri ? ' <span aria-hidden="true">▾</span>' : ''; ?></a>
 					<?php endif; ?>
@@ -278,6 +281,9 @@ add_action(
 				<?php aptv_formular_cautare( 'aptv-cauta-mobil' ); ?>
 				<nav aria-label="Meniu principal (telefon)">
 					<ul class="aptv-meniu-mobil__lista">
+						<?php if ( aptv_live_activ() ) : ?>
+							<li><a class="aptv-meniu-mobil__live" href="<?php echo esc_url( aptv_live_url() ); ?>"><span class="aptv-live-punct" aria-hidden="true"></span> Urmăriți în direct</a></li>
+						<?php endif; ?>
 						<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Acasă</a></li>
 						<?php if ( $stiri && $tipuri_stiri ) : ?>
 							<li><a href="<?php echo esc_url( $link_stiri ); ?>">Știri</a>

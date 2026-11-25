@@ -110,6 +110,14 @@ cu „Importă automat zilnic” bifat. Playlisturile trebuie să fie **publice 
 Dacă o știre e mutată în alt playlist, la următorul import site-ul o mută și el în categoria potrivită.
 Doar știrile științifice sunt afișate vertical (9:16); toate celelalte materiale sunt 16:9.
 
+### Transmisiunea în direct (24/24, de pe @apolloniatvcultural)
+Pagina: **www.apolloniatv.ro/in-direct/**. Se administrează din Apollonia TV → **În direct**:
+- **„Transmisiunea e pornită”**: bifat = „● În direct” apare în meniu și o bandă neagră pe prima pagină.
+  Nebifat = pagina spune „Transmisiunea în direct începe în curând”.
+- **Grila săptămânală**: zi, oră de început, titlu și (opțional) emisiunea de pe site. Fiecare program ține
+  până începe următorul; grila se repetă în fiecare săptămână. Site-ul arată singur „Acum” și „Urmează”.
+- Playerul arată automat ce transmite canalul în acel moment; „Videoclip anume” se completează doar dacă nu o găsește.
+
 ### Titluri schimbate pe YouTube
 Dacă schimbați titlul unui videoclip pe YouTube, site-ul îl preia la următorul import (automat, zilnic,
 sau imediat din Apollonia TV → Import YouTube). Se schimbă și adresa paginii; adresa veche duce automat la cea nouă.

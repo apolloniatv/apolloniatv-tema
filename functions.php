@@ -22,6 +22,7 @@
  *   actualizari.php      – versiunile noi ale temei de pe GitHub apar în Panou → Actualizări
  *   titluri.php          – titlurile scrise cu MAJUSCULE apar pe site în scriere normală
  *   descrieri.php        – scoate din descrieri textele de promovare de pe YouTube („abonați-vă”...)
+ *   live.php             – transmisiunea în direct: pagina /in-direct/, grila săptămânală, „● În direct” în meniu
  *
  * @package apolloniatv
  */
@@ -49,6 +50,7 @@ require APTV_DIR . '/inc/import-youtube.php';
 require APTV_DIR . '/inc/actualizari.php';
 require APTV_DIR . '/inc/titluri.php';
 require APTV_DIR . '/inc/descrieri.php';
+require APTV_DIR . '/inc/live.php';
 
 /**
  * Încarcă stilurile și scripturile temei.
